@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import NFTContract from '../ethereum/NFTContract';
 import PlayerCard from './PlayerCard';
 import CircularProgress from '@mui/material/CircularProgress';
-import { getPlayerTeamById } from '../utils/PlayerUtil';
+import { getPlayerNumberById, getPlayerTeamById } from '../utils/PlayerUtil';
 
 let cards = [];
 
@@ -57,8 +57,9 @@ const UserCards = ( props ) => {
     function createCards(cards) {
         return cards.map((card, i) => {
             const team = getPlayerTeamById(card.playerId);
+            const number = getPlayerNumberById(card.playerId);
             return (
-                <PlayerCard key={i} flippable={false} width='250px' team={team} attributeHash={card.attributeHash} cardType={card.cardType} />
+                <PlayerCard key={i} attributes={card.attributeHash} flippable={false} width='250px' number={Number(number)} team={team} attributeHash={card.attributeHash} cardType={card.cardType} />
             )
         });
     }
