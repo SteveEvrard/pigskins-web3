@@ -2,19 +2,19 @@ import React, { useEffect, useState } from 'react';
 import NFTContract from '../ethereum/NFTContract';
 import PlayerCard from './PlayerCard';
 import CircularProgress from '@mui/material/CircularProgress';
-import { getPlayerNumberById, getPlayerTeamById } from '../utils/PlayerUtil';
+import { getPlayerNumberById, getPlayerTeamById, getPlayerTypeById } from '../utils/PlayerUtil';
+import { useSelector } from 'react-redux';
 
 let cards = [];
 
 const UserCards = ( props ) => {
 
-    const account = props.account;
     const [cardsLoaded, setCardsLoaded] = useState(false);
     const [loading, setLoading] = useState(false);
+    const account = useSelector((state) => state.account.value);
 
     useEffect(() => {
         getNFTs();
-
         return () => {
             cards = []
         }
@@ -28,7 +28,6 @@ const UserCards = ( props ) => {
         try {
             const nftCount = await NFTContract.methods.balanceOf(account).call();
             let count = 0;
-            // await NFTContract.events.CardCreated({filter: {owner: account}}).call().then(data => console.log(data));
 
             for(let i = 0; i < nftCount; i++){
                 const owner = await NFTContract.methods.ownerOf(i).call();
@@ -58,8 +57,9 @@ const UserCards = ( props ) => {
         return cards.map((card, i) => {
             const team = getPlayerTeamById(card.playerId);
             const number = getPlayerNumberById(card.playerId);
+            const type = getPlayerTypeById(card.playerId);
             return (
-                <PlayerCard key={i} attributes={card.attributeHash} flippable={false} width='250px' number={Number(number)} team={team} attributeHash={card.attributeHash} cardType={card.cardType} />
+                <PlayerCard key={i} attributes={card.attributeHash} flippable={false} width='250px' number={Number(number)} team={team} attributeHash={card.attributeHash} type={type} cardType={card.cardType} />
             )
         });
     }

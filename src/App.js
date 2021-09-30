@@ -7,6 +7,8 @@ import Home from './components/Home';
 import Purchase from './components/Purchase';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import UserCards from './components/UserCards';
+import { useDispatch } from 'react-redux';
+import { setAccount } from './store/account/accountSlice';
 
 const theme = createTheme({
   status: {
@@ -32,9 +34,10 @@ const theme = createTheme({
 
 const App = () => {
 
+  const dispatch = useDispatch();
   const web3Context = useWeb3('wss://mainnet.infura.io/ws/v3/b83130d2e86b4a1e814500707cc18dc1');
   const { accounts } = web3Context;
-  const account = accounts[0];
+  dispatch(setAccount(accounts[0]));
 
   // const createCard = async () => {
   //   try {
@@ -61,8 +64,8 @@ const App = () => {
 
           <Switch>
             <Route path='/' exact component={Home} />
-            <Route path='/purchase'><Purchase account={account}/></Route>
-            <Route path='/cards'><UserCards account={account} /></Route>
+            <Route path='/purchase' component={Purchase} />
+            <Route path='/cards' component={UserCards} />
           </Switch>
         </ThemeProvider>
     </div>

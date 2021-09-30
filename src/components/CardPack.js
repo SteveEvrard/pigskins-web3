@@ -1,22 +1,32 @@
 import React, { useState } from 'react';
 import { Backdrop, Button } from '@mui/material';
 import PlayerCard from './PlayerCard';
-import { getPlayerTeamById } from '../utils/PlayerUtil';
+import { getPlayerNumberById, getPlayerTeamById, getPlayerTypeById } from '../utils/PlayerUtil';
 
 const CardPack = ( props ) => {
 
+    let data = props.data.CardCreated;
+    console.log('CARD DATA', data);
     const [open, setOpen] = useState(true);
     const handleClose = () => {
         setOpen(false);
     };
 
-    const topRow = props.cards.slice(0, props.cards.length / 2);
-    const bottomRow = props.cards.slice(props.cards.length / 2);
+    // useEffect(() => {
+
+    //     console.log('ID in cardpack', props.id)
+    //     getCards(props.id);
+    // // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [])
+
+    const topRow = data.slice(0, data.length / 2);
+    const bottomRow = data.slice(data.length / 2);
 
     function mapDataToCards(cards) {
         return cards.map((card, i) => {
+            console.log('CARD', card);
             return (
-                <PlayerCard key={i} flippable={true} width='250px' team={getPlayerTeamById(card.playerId)} attributeHash={card.attributeHash} cardType={card.cardType} />
+                <PlayerCard key={i} flippable={true} width='250px' team={getPlayerTeamById(card.returnValues.playerId)} number={getPlayerNumberById(card.returnValues.playerId)} attributes={card.returnValues.attributeHash} type={getPlayerTypeById(card.returnValues.playerId)} cardType={card.returnValues.cardType} />
             )
         })
     }

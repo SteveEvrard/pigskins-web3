@@ -3,7 +3,7 @@ import CardOwnership from './abi/CardOwnership.json';
 
 const instance = new web3.eth.Contract(
     CardOwnership.abi,
-    '0xB393Dd61d192d031dE16F6622E070a12A9D9Fd9F'
+    '0x102b69F2Addc04c38193d48f1Ae8091e7977F2A8'
 );
 
 export default instance;

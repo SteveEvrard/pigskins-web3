@@ -1,32 +1,19 @@
 import { Typography, Button } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import PlayerCard from './PlayerCard';
 import NFTContract from '../ethereum/NFTContract';
 import web3 from '../ethereum/web3';
 import CircularProgress from '@mui/material/CircularProgress';
 import CardPack from './CardPack';
+import { useSelector } from 'react-redux';
 
 const Purchase = ( props ) => {
 
+    const account = useSelector((state) => state.account.value);
+    const [events, setEvents] = useState([]);
+
     const [loading, setLoading] = useState(false);
     const [displayCardPack, setDisplayCardPack] = useState(false);
-
-    useEffect(() => {
-
-    }, [displayCardPack])
-
-    let cards = [
-        {cardId: 0, playerId: 5, attributeHash: 1000, cardType: 0},
-        {cardId: 1, playerId: 23, attributeHash: 1000, cardType: 0},
-        {cardId: 2, playerId: 0, attributeHash: 1000, cardType: 1},
-        {cardId: 3, playerId: 1, attributeHash: 1000, cardType: 0},
-        {cardId: 4, playerId: 9, attributeHash: 1000, cardType: 0},
-        {cardId: 5, playerId: 28, attributeHash: 1000, cardType: 3},
-        {cardId: 6, playerId: 11, attributeHash: 1000, cardType: 0},
-        {cardId: 7, playerId: 29, attributeHash: 1000, cardType: 0},
-        {cardId: 8, playerId: 30, attributeHash: 1000, cardType: 2},
-        {cardId: 9, playerId: 19, attributeHash: 1000, cardType: 1}
-    ];
 
     const buyCardPack = async () => {
         
@@ -35,15 +22,16 @@ const Purchase = ( props ) => {
 
         try {
           await NFTContract.methods.purchaseCardPack()
-            .send({from: props.account, value: web3.utils.toWei('0.005', 'ether')})
+            .send({from: account, value: web3.utils.toWei('0.005', 'ether')})
             .then(data => { 
+                console.log('DATA', data);
+                setEvents(data.events);
                 setLoading(false);
                 setDisplayCardPack(true);
              });
         } catch(err) {
           console.log(err);
         }
-
         setLoading(false);
     }
 
@@ -51,8 +39,8 @@ const Purchase = ( props ) => {
         <div>
             <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
                 <div>
-                    <PlayerCard flippable={false} width='350px' team={'9'} cardType={'3'} attrHash={1000} />
-                    <PlayerCard flippable={false} width='350px' team={'23'} cardType={'0'} attrHash={1000} />
+                    <PlayerCard flippable={false} width='350px' number={15} team={'9'} cardType={'3'} attributes={'180000000000'} />
+                    <PlayerCard flippable={false} width='350px' number={10} team={'23'} cardType={'0'} attributes={'104444000000'} />
                 </div>
                 <div style={{marginTop: '30px', width: '50%'}}>
                     <Typography sx={{color: '#fff', fontFamily: "Work Sans, sans-serif", fontWeight: 600}} variant='h2'>Purchase Card Pack Now!</Typography>
@@ -61,11 +49,11 @@ const Purchase = ( props ) => {
                     <Button disabled={loading} sx={{fontSize: '30px', fontFamily: "Work Sans, sans-serif", height: '65px', width: '50%', marginTop: '30px'}} onClick={buyCardPack} size='large' variant='contained' color='primary'>{loading ? <CircularProgress color='secondary' /> : 'Buy'}</Button>
                 </div>
                 <div>
-                    <PlayerCard flippable={false} width='350px' team={'19'} cardType={'2'} attrHash={1000} />
-                    <PlayerCard flippable={false} width='350px' team={'11'} cardType={'1'} attrHash={1000} />
+                    <PlayerCard flippable={false} width='350px' number={12} team={'19'} cardType={'2'} attributes={'193333300000'} />
+                    <PlayerCard flippable={false} width='350px' number={4} team={'11'} cardType={'1'} attributes={'100999000000'} />
                 </div>
             </div>
-            {displayCardPack ? <CardPack cards={cards}/> : null}
+            {displayCardPack ? <CardPack data={events}/> : null}
         </div>
     )
 }

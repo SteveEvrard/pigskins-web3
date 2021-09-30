@@ -23,7 +23,7 @@ const PlayerCard = ( props ) => {
         props.flippable ? 
         <ReactCardFlip isFlipped={flipped}>
             <div key='front'>
-                <img style={{position: 'absolute', width: props.width, height: props.width}} alt='N/A' src={resolveTeam(props.team)}/>
+                <img style={{position: 'absolute', width: props.width, height: props.width}} alt='N/A' src={resolveTeam(props.team, props.type)}/>
                 {props.number < 10 ? 
                     <img style={{position: 'absolute', width: props.width, height: props.width}} alt='N/A' src={resolveSingleDigitNumber(props.number)}/>
                     :
@@ -43,7 +43,7 @@ const PlayerCard = ( props ) => {
         </ReactCardFlip>
         :
         <div>
-            <img style={{position: 'absolute', width: props.width, height: props.width}} alt='N/A' src={resolveTeam(props.team)}/>
+            <img style={{position: 'absolute', width: props.width, height: props.width}} alt='N/A' src={resolveTeam(props.team, props.type)}/>
             {props.number < 10 ? 
                 <img style={{position: 'absolute', width: props.width, height: props.width}} alt='N/A' src={resolveSingleDigitNumber(props.number)}/>
                 :
