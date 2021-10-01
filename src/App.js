@@ -1,5 +1,5 @@
 import './App.css';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useWeb3 } from '@openzeppelin/network/react';
 import Header from './components/Header';
 import { Route, Switch } from 'react-router-dom';
@@ -37,24 +37,12 @@ const App = () => {
   const dispatch = useDispatch();
   const web3Context = useWeb3('wss://mainnet.infura.io/ws/v3/b83130d2e86b4a1e814500707cc18dc1');
   const { accounts } = web3Context;
-  dispatch(setAccount(accounts[0]));
 
-  // const createCard = async () => {
-  //   try {
-  //     await NFTContract.methods.mintCustomCard('0x3bfF843835CABB198912e10629843Fc65E336C84', 0, 0, 12345678963).send({from: account});
-  //   } catch(err) {
-  //     console.log(err);
-  //   }
-  // }
-
-  // const getOwner = async () => {
-  //   try {
-  //     let id = await NFTContract.methods.cards(2).call();
-  //     console.log('OWNER:', id);
-  //   } catch(err) {
-  //     console.log(err);
-  //   }
-  // }
+  useEffect(() => {
+    // return () => {
+      dispatch(setAccount(accounts[0]));
+    // }
+  })
 
   return (
     <div className="App">

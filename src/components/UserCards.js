@@ -14,16 +14,24 @@ const UserCards = ( props ) => {
     const account = useSelector((state) => state.account.value);
 
     useEffect(() => {
-        getNFTs();
+
         return () => {
             cards = []
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    useEffect(() => {
+
+        if(account) getNFTs();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [account]);
+
     const getNFTs = async () => {
 
         setLoading(true);
+        console.log('account', account);
 
         try {
             const nftCount = await NFTContract.methods.balanceOf(account).call();
