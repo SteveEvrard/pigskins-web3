@@ -15,19 +15,19 @@ const Home = ( props ) => {
     }
 
     return(
-        <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
+        <div style={{display: isMobile ? 'block' : 'flex', justifyContent: 'space-evenly'}}>
             <div>
-                <img alt='not found' style={{width: '100%'}} src={cards}/>
+                <img alt='' style={{width: '100%'}} src={cards}/>
             </div>
-            <div>
-                <Card style={{marginRight: '25px', height: '100%'}}>
+            <div style={isMobile ? {width: '90vw', margin: 'auto'} : {}}>
+                <Card style={{marginRight: isMobile ? '0' : '25px', height: '100%'}}>
                     <CardHeader title='Collectible NFT Cards' />
                     <CardContent>
                         <Typography>
                             Collect hundreds of different football cards. Each with their own attributes and rareness!
                         </Typography>
                     </CardContent>
-                    <Button size='large' onClick={goToPurchase} variant='contained' color='primary'>Get Started</Button>
+                    <Button sx={isMobile ? {marginBottom: '10vw'} : {}} size='large' onClick={goToPurchase} variant='contained' color='primary'>Get Started</Button>
                 </Card>
             </div>
         </div>
