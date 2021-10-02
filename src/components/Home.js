@@ -2,10 +2,13 @@ import React from 'react';
 import { Button, Card, CardContent, CardHeader, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import cards from '../images/cards.png';
+import { useSelector } from 'react-redux';
 
 const Home = ( props ) => {
 
     const history = useHistory();
+    const isMobile = useSelector((state) => state.mobile.value);
+    console.log(isMobile);
 
     function goToPurchase() {
         history.push('/purchase');

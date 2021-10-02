@@ -9,6 +9,9 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import UserCards from './components/UserCards';
 import { useDispatch } from 'react-redux';
 import { setAccount } from './store/account/accountSlice';
+import { useMediaQuery } from 'react-responsive';
+import ViewCard from './components/ViewCard';
+import { setMobile } from './store/device/deviceSlice';
 
 const theme = createTheme({
   status: {
@@ -26,22 +29,25 @@ const theme = createTheme({
       main: '#64748B',
       contrastText: '#fff',
     }
-  },
-  buyButton: {
-
   }
 });
 
 const App = () => {
 
+  const isMobile = useMediaQuery({
+    query: '(max-width: 428px)'
+  });
   const dispatch = useDispatch();
   const web3Context = useWeb3('wss://mainnet.infura.io/ws/v3/b83130d2e86b4a1e814500707cc18dc1');
   const { accounts } = web3Context;
 
   useEffect(() => {
-    // return () => {
-      dispatch(setAccount(accounts[0]));
-    // }
+
+    if(!window.ethereum.selectedAddress) window.ethereum.enable()
+    
+    dispatch(setMobile(isMobile));
+    dispatch(setAccount(accounts[0]));
+
   })
 
   return (
@@ -53,7 +59,8 @@ const App = () => {
           <Switch>
             <Route path='/' exact component={Home} />
             <Route path='/purchase' component={Purchase} />
-            <Route path='/cards' component={UserCards} />
+            <Route path='/cards' exact={true} component={UserCards} />
+            <Route path='/cards/:id' component={ViewCard} />
           </Switch>
         </ThemeProvider>
     </div>

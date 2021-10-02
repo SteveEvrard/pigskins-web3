@@ -191,6 +191,41 @@ const players = {
     189: {name: 'Chris Herndon', team: '31', position: 'TE', number: 89, type: '1'},
 }
 
+const teamNames = {
+    0: '49ers',
+    1: 'Bears',
+    2: 'Bengals',
+    3: 'Bills',
+    4: 'Broncos',
+    5: 'Browns',
+    6: 'Buccaneers',
+    7: 'Cardinals',
+    8: 'Chargers',
+    9: 'Chiefs',
+    10: 'Colts',
+    11: 'Cowboys',
+    12: 'Dolphins',
+    13: 'Eagles',
+    14: 'Falcons',
+    15: 'Giants',
+    16: 'Jaguars ',
+    17: 'Jets',
+    18: 'Lions',
+    19: 'Packers',
+    20: 'Panthers',
+    21: 'Patriots',
+    22: 'Raiders',
+    23: 'Rams',
+    24: 'Ravens',
+    25: 'Football Team',
+    26: 'Saints',
+    27: 'Seahawks',
+    28: 'Steelers',
+    29: 'Texans',
+    30: 'Titans',
+    31: 'Vikings'
+}
+
 export const getPlayerTeamById = (id) => {
     return players[id].team;
 }
@@ -201,4 +236,16 @@ export const getPlayerNumberById = (id) => {
 
 export const getPlayerTypeById = (id) => {
     return players[id].type;
+}
+
+export const getPlayerNameById = (id) => {
+    return players[id].name;
+}
+
+export const getPlayerPositionById = (id) => {
+    return players[id].position;
+}
+
+export const getTeamName = (id) => {
+    return teamNames[getPlayerTeamById(id)];
 }

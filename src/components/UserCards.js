@@ -3,35 +3,37 @@ import NFTContract from '../ethereum/NFTContract';
 import PlayerCard from './PlayerCard';
 import CircularProgress from '@mui/material/CircularProgress';
 import { getPlayerNumberById, getPlayerTeamById, getPlayerTypeById } from '../utils/PlayerUtil';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCardDetail } from '../store/card-detail/cardDetailSlice';
+import ViewCard from './ViewCard';
 
 let cards = [];
 
 const UserCards = ( props ) => {
 
-    const [cardsLoaded, setCardsLoaded] = useState(false);
+    const dispatch = useDispatch();
+    const [cardsLoading, setCardsLoading] = useState(false);
     const [loading, setLoading] = useState(false);
     const account = useSelector((state) => state.account.value);
+    const selectedCard = useSelector((state) => state.cardDetail.value);
+    const isMobile = useSelector((state) => state.mobile.value);
 
     useEffect(() => {
 
-        return () => {
-            cards = []
-        }
+        dispatch(setCardDetail(''));
+        cards = []
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
 
         if(account) getNFTs();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [account]);
 
     const getNFTs = async () => {
 
         setLoading(true);
-        console.log('account', account);
 
         try {
             const nftCount = await NFTContract.methods.balanceOf(account).call();
@@ -47,7 +49,7 @@ const UserCards = ( props ) => {
                 }
             }
 
-            setCardsLoaded(true);
+            setCardsLoading(true);
         } catch(err) {
             console.log(err);
         }
@@ -61,13 +63,20 @@ const UserCards = ( props ) => {
         )
     }
 
+    const setCardToView = (card) => {
+        dispatch(setCardDetail(card));
+    }
+
     function createCards(cards) {
         return cards.map((card, i) => {
-            const team = getPlayerTeamById(card.playerId);
-            const number = getPlayerNumberById(card.playerId);
-            const type = getPlayerTypeById(card.playerId);
+            const { playerId, cardType, attributeHash } = card;
+            const team = getPlayerTeamById(playerId);
+            const number = getPlayerNumberById(playerId);
+            const playerType = getPlayerTypeById(playerId);
             return (
-                <PlayerCard key={i} attributes={card.attributeHash} flippable={false} width='250px' number={Number(number)} team={team} attributeHash={card.attributeHash} type={type} cardType={card.cardType} />
+                <div style={{cursor: 'pointer'}} onClick={() => setCardToView({team, number, playerId, cardType, attributeHash})}>
+                    <PlayerCard key={i} attributes={attributeHash} flippable={false} width={isMobile ? '50vw' : '250px'} number={Number(number)} team={team} playerType={playerType} cardType={card.cardType} />
+                </div>
             )
         });
     }
@@ -75,7 +84,8 @@ const UserCards = ( props ) => {
     return (
         <div>
             {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : null}
-            {cardsLoaded ? displayCards(cards) : null}
+            {cardsLoading ? displayCards(cards) : null}
+            {selectedCard.playerId ? <ViewCard/> : null}
         </div>
     )
 

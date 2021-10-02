@@ -24,7 +24,6 @@ const Purchase = ( props ) => {
           await NFTContract.methods.purchaseCardPack()
             .send({from: account, value: web3.utils.toWei('0.005', 'ether')})
             .then(data => { 
-                console.log('DATA', data);
                 setEvents(data.events);
                 setLoading(false);
                 setDisplayCardPack(true);
