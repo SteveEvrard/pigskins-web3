@@ -2,13 +2,21 @@ import React from 'react';
 import { Button, Card, CardContent, CardHeader, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import cards from '../images/cards.png';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { setAccount } from '../store/account/accountSlice';
 
 const Home = ( props ) => {
 
+    const dispatch = useDispatch();
     const history = useHistory();
     const isMobile = useSelector((state) => state.mobile.value);
-    console.log(isMobile);
+    const account = useSelector((state) => state.account.value);
+
+    async function getAccount() {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const account = accounts[0];
+        dispatch(setAccount(account));
+    }
 
     function goToPurchase() {
         history.push('/purchase');
@@ -27,7 +35,11 @@ const Home = ( props ) => {
                             Collect hundreds of different football cards. Each with their own attributes and rareness!
                         </Typography>
                     </CardContent>
-                    <Button sx={isMobile ? {marginBottom: '10vw'} : {}} size='large' onClick={goToPurchase} variant='contained' color='primary'>Get Started</Button>
+                    {account ? 
+                        <Button sx={isMobile ? {marginBottom: '10vw'} : {}} size='large' onClick={goToPurchase} variant='contained' color='primary'>Purchase</Button>
+                        :
+                        <Button sx={isMobile ? {marginBottom: '10vw'} : {}} size='large' onClick={getAccount} variant='contained' color='primary'>Connect</Button>
+                    }
                 </Card>
             </div>
         </div>

@@ -1,6 +1,5 @@
 import './App.css';
 import React, { useEffect } from 'react';
-import { useWeb3 } from '@openzeppelin/network/react';
 import Header from './components/Header';
 import { Route, Switch } from 'react-router-dom';
 import Home from './components/Home';
@@ -41,13 +40,18 @@ const App = () => {
     query: '(max-width: 428px)'
   });
   const dispatch = useDispatch();
-  const web3Context = useWeb3('wss://mainnet.infura.io/ws/v3/b83130d2e86b4a1e814500707cc18dc1');
-  const { accounts } = web3Context;
+
+  async function getAccount() {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const account = accounts[0];
+    dispatch(setAccount(account));
+  }
 
   useEffect(() => {
 
+    getAccount();
     dispatch(setMobile(isMobile));
-    dispatch(setAccount(accounts[0]));
+    // dispatch(setAccount(accounts[0]));
 
   })
 

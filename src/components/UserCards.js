@@ -13,7 +13,7 @@ const UserCards = ( props ) => {
 
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
-    // const account = useSelector((state) => state.account.value);
+    const account = useSelector((state) => state.account.value);
     const selectedCard = useSelector((state) => state.cardDetail.value);
     const isMobile = useSelector((state) => state.mobile.value);
 
@@ -22,9 +22,11 @@ const UserCards = ( props ) => {
         dispatch(setCardDetail({}));
         setLoading(true);
         NFTContract.getPastEvents('CardCreated', {
+            filter: {owner: account},
             fromBlock: 0,
             toBlock: 'latest'
         }).then(events => {
+            console.log('events', events)
             cards = [];
             for(let i = 0; i < events.length; i++) {
                 cards.push(mapCardData(events[i]));
