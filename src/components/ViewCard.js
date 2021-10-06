@@ -145,7 +145,6 @@ const ViewCard = ( props ) => {
                 <DialogTitle sx={{backgroundColor: '#fff', color: 'black', textAlign: 'center'}}>Auction</DialogTitle>
                 <DialogContent sx={{backgroundColor: '#fff', paddingTop: '20px !important'}}>
                     { !auctionProcessing ? <div>
-                        <div>{account}</div>
                         <TextField
                             autoFocus
                             inputProps={{step: 0.1}}
