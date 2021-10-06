@@ -31,7 +31,7 @@ const Purchase = ( props ) => {
              });
         } catch(err) {
             console.log(err);
-            setErrors(err.message.toString());
+            setErrors(err.message.toString() + '/' + account);
         }
         setLoading(false);
     }
