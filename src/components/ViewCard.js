@@ -144,7 +144,8 @@ const ViewCard = ( props ) => {
             <Dialog PaperProps={{style: isMobile ? {} : {width: '30vw'}}} open={open}>
                 <DialogTitle sx={{backgroundColor: '#fff', color: 'black', textAlign: 'center'}}>Auction</DialogTitle>
                 <DialogContent sx={{backgroundColor: '#fff', paddingTop: '20px !important'}}>
-                    { !auctionProcessing ? <div >
+                    { !auctionProcessing ? <div>
+                        <div>{account}</div>
                         <TextField
                             autoFocus
                             inputProps={{step: 0.1}}
