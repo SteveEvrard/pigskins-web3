@@ -35,6 +35,37 @@ const Purchase = ( props ) => {
         setLoading(false);
     }
 
+    const buyCardPackMobile = async () => {
+        
+        setLoading(true);
+        setDisplayCardPack(false);
+
+        const data = NFTContract.methods.purchaseCardPack().encodeABI();
+
+        const params = [{
+            from: account,
+            to: '0x9aBdD48a92FBA3e702902E6B29CB7D4345381205',
+            data: data,
+            value: web3.utils.toHex(web3.utils.toWei('0.005', 'ether'))
+        }]
+
+        try {
+          await 
+            window.ethereum.request({
+                method: 'eth_sendTransaction',
+                params,
+            })
+            .then(data => { 
+                setEvents(data.events);
+                setLoading(false);
+                setDisplayCardPack(true);
+            });
+        } catch(err) {
+            setError(err.toString());
+        }
+        setLoading(false);
+    }
+
     const Errors = () => {
         return (
             <div>{error}</div>
@@ -54,7 +85,7 @@ const Purchase = ( props ) => {
                     <Typography sx={{fontSize: isMobile ? '12vw' : '7vw', color: '#fff', fontFamily: "Work Sans, sans-serif", fontWeight: 600}} variant='h2'>Purchase Card Pack Now!</Typography>
                     <Typography sx={{fontSize: isMobile ? '7vw' : '3vw', color: '#fff', fontFamily: "Work Sans, sans-serif", fontWeight: 600}} variant='h4'>Each pack contains 10 unique player cards.</Typography>
                     <Typography sx={{fontSize: isMobile ? '7vw' : '3vw', color: '#fff', fontFamily: "Work Sans, sans-serif", fontWeight: 600}} variant='h4'>Cards can be used to compete, trade, and more!</Typography>
-                    <Button disabled={loading} sx={{fontSize: '30px', fontFamily: "Work Sans, sans-serif", height: '65px', width: '50%', marginTop: '30px'}} onClick={buyCardPack} size='large' variant='contained' color='primary'>{loading ? <CircularProgress color='secondary' /> : 'Buy'}</Button>
+                    <Button disabled={loading} sx={{fontSize: '30px', fontFamily: "Work Sans, sans-serif", height: '65px', width: '50%', marginTop: '30px'}} onClick={isMobile ? buyCardPackMobile : buyCardPack} size='large' variant='contained' color='primary'>{loading ? <CircularProgress color='secondary' /> : 'Buy'}</Button>
                     {isMobile ? 
                         <div style={{display: 'flex', justifyContent: 'space-evenly', marginTop: '5vw'}}>
                             <PlayerCard flippable={false} width='50vw' number={12} team={'19'} cardType={'2'} attributes={'193333305678900'} />
