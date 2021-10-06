@@ -16,7 +16,7 @@ const CardPack = ( props ) => {
     function mapDataToCards(cards) {
         return cards.map((card, i) => {
             return (
-                <div>
+                <div key={i}>
                     <PlayerCard key={i} flippable={true} width={isMobile ? '50vw' : '250px'}team={getPlayerTeamById(card.returnValues.playerId)} number={getPlayerNumberById(card.returnValues.playerId)} attributes={card.returnValues.attributeHash} playerType={getPlayerTypeById(card.returnValues.playerId)} cardType={card.returnValues.cardType} />
                 </div>
             )

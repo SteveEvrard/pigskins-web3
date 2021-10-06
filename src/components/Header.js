@@ -7,6 +7,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 const headerOptions = [
     {label: 'Purchase', href: '/purchase'},
+    {label: 'Auction', href: '/auction'},
     {label: 'My Cards', href: '/cards'}
 ]
 

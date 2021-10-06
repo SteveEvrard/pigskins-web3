@@ -12,49 +12,36 @@ let cards = [];
 const UserCards = ( props ) => {
 
     const dispatch = useDispatch();
-    const [cardsLoading, setCardsLoading] = useState(false);
     const [loading, setLoading] = useState(false);
-    const account = useSelector((state) => state.account.value);
+    // const account = useSelector((state) => state.account.value);
     const selectedCard = useSelector((state) => state.cardDetail.value);
     const isMobile = useSelector((state) => state.mobile.value);
 
     useEffect(() => {
 
-        dispatch(setCardDetail(''));
-        cards = []
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
-
-    useEffect(() => {
-
-        if(account) getNFTs();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [account]);
-
-    const getNFTs = async () => {
-
+        dispatch(setCardDetail({}));
         setLoading(true);
-
-        try {
-            const nftCount = await NFTContract.methods.balanceOf(account).call();
-            let count = 0;
-
-            for(let i = 0; i < nftCount; i++){
-                const owner = await NFTContract.methods.ownerOf(i).call();
-                if(owner === account){
-                    const card = await NFTContract.methods.cards(i).call();
-                    cards.push(card); 
-                    // eslint-disable-next-line no-unused-vars
-                    count++;
-                }
+        NFTContract.getPastEvents('CardCreated', {
+            fromBlock: 0,
+            toBlock: 'latest'
+        }).then(events => {
+            cards = [];
+            for(let i = 0; i < events.length; i++) {
+                cards.push(mapCardData(events[i]));
             }
+            setLoading(false);
+        });
 
-            setCardsLoading(true);
-        } catch(err) {
-            console.log(err);
+        return () => {
+            dispatch(setCardDetail({}));
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-        setLoading(false);
+    function mapCardData(card) {
+        const {cardId, playerId, attributeHash, cardType} = card.returnValues;
+        
+        return {cardId, playerId, attributeHash, cardType};
     }
 
     function displayCards(cards) {
@@ -69,12 +56,12 @@ const UserCards = ( props ) => {
 
     function createCards(cards) {
         return cards.map((card, i) => {
-            const { playerId, cardType, attributeHash } = card;
+            const { cardId, playerId, cardType, attributeHash } = card;
             const team = getPlayerTeamById(playerId);
             const number = getPlayerNumberById(playerId);
             const playerType = getPlayerTypeById(playerId);
             return (
-                <div style={{cursor: 'pointer'}} onClick={() => setCardToView({team, number, playerId, cardType, attributeHash})}>
+                <div key={i} style={{cursor: 'pointer'}} onClick={() => setCardToView({cardId, team, number, playerId, cardType, attributeHash})}>
                     <PlayerCard key={i} attributes={attributeHash} flippable={false} width={isMobile ? '50vw' : '250px'} number={Number(number)} team={team} playerType={playerType} cardType={card.cardType} />
                 </div>
             )
@@ -84,7 +71,7 @@ const UserCards = ( props ) => {
     return (
         <div>
             {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : null}
-            {cardsLoading ? displayCards(cards) : null}
+            {!loading ? displayCards(cards) : null}
             {selectedCard.playerId ? <ViewCard/> : null}
         </div>
     )

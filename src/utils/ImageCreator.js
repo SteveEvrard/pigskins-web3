@@ -270,7 +270,7 @@ export const resolveRightNumber = (num) => {
 
 export const resolveCrown = (attrHash) => {
 
-    const crownHash = Number(attrHash.substring(0, 3));
+    const crownHash = Number(attrHash.substring(7, 10));
 
     if (crownHash % 100 === 0) {
         return crown;

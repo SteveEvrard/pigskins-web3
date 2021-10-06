@@ -1,5 +1,5 @@
-import React from 'react';
-import { Backdrop, Button, Divider, List } from '@mui/material';
+import React, { useState } from 'react';
+import { Backdrop, Button, CircularProgress, Dialog, DialogContent, DialogTitle, Divider, List, MenuItem, Select, TextField } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCardDetail } from '../store/card-detail/cardDetailSlice';
 import PlayerCard from './PlayerCard';
@@ -7,10 +7,19 @@ import { getTeamName, getPlayerNameById, getPlayerNumberById, getPlayerTeamById,
 import { ListItem } from '@mui/material';
 import { resolveCrown, resolveFootball, resolveWater } from '../utils/ImageCreator';
 import blank from '../images/blank.png';
+import NFTContract from '../ethereum/NFTContract';
+import web3 from '../ethereum/web3';
 
 const ViewCard = ( props ) => {
 
+    const [open, setOpen] = useState(false);
+    const [auctionSuccess, setAuctionSuccess] = useState(false);
+    const [auctionProcessing, setAuctionProcessing] = useState(false);
+    const [time, setTime] = useState(3600);
+    const [price, setPrice] = useState(0.1);
     const dispatch = useDispatch();
+    const isAuction = props.isAuction;
+    const account = useSelector((state) => state.account.value);
     const card = useSelector((state) => state.cardDetail.value);
     const isMobile = useSelector((state) => state.mobile.value);
     const cardTypes = {
@@ -28,6 +37,74 @@ const ViewCard = ( props ) => {
 
     const handleClose = () => {
         dispatch(setCardDetail({}));
+    };
+
+    const handleCancel = () => {
+        setOpen(false);
+        setPrice(0.1);
+        setTime(3600);
+    };
+
+    const handleSuccess = () => {
+        setOpen(false);
+        setAuctionSuccess(false);
+    }
+
+    const openDialog = () => {
+        if(isAuction) setPrice(web3.utils.fromWei(`${card.bid}`, 'ether'));
+        setOpen(true);
+    }
+
+    const setAuction = async () => {
+        setAuctionProcessing(true);
+
+        const cardId = Number(card.cardId);
+        try {
+            await NFTContract.methods.createCardAuction(cardId, web3.utils.toWei(price.toString(), 'ether'), time)
+                .send({from: account})
+                .then(data => {
+                    console.log('AUCTION INFO', data)
+                    if(data.status) setAuctionSuccess(true);
+                })
+        } catch(err) {
+            console.log(err);
+            setAuctionProcessing(false);
+        }
+
+    }
+
+    const placeBid = async () => {
+        setAuctionProcessing(true);
+
+        const cardId = Number(card.cardId);
+        try {
+            await NFTContract.methods.placeBid(cardId)
+                .send({from: account, value: web3.utils.toWei(price.toString(), 'ether')})
+                .then(data => {
+                    console.log('AUCTION INFO', data)
+                    if(data.status) setAuctionSuccess(true);
+                })
+        } catch(err) {
+            console.log(err);
+            setAuctionProcessing(false);
+        }
+
+    }
+
+    function getHelperMessage() {
+        if(isAuction) {
+            return price <= web3.utils.fromWei(`${card.bid}`, 'ether') ? 'Increase bid' : '';
+        }else {
+            return price <= 0 ? 'Price cannot be below 0' : '';
+        }
+    }
+
+    const handleTimeChange = (event) => {
+        setTime(event.target.value);
+    };
+
+    const handlePriceChange = (event) => {
+        setPrice(event.target.value);
     };
 
     const getItems = () => {
@@ -55,11 +132,73 @@ const ViewCard = ( props ) => {
                     <Divider />
                     <ListItem>Items: {getItems()}</ListItem>
                     <div style={{display: 'flex', justifyContent: 'space-evenly', marginTop: '6vw'}}>
-                        <Button style={{fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: '20vw'}} onClick={handleClose} size='large' variant='contained'>Sell</Button>
                         <Button color='secondary' style={{fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: '20vw'}} onClick={handleClose} size='large' variant='contained'>Close</Button>
+                        {isAuction ? 
+                            <Button style={{fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: '20vw'}} onClick={openDialog} size='large' variant='contained'>Bid</Button> 
+                            : 
+                            <Button style={{fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: '20vw'}} onClick={openDialog} size='large' variant='contained'>Sell</Button>
+                        }
                     </div>
                 </List>
             </div>
+            <Dialog PaperProps={{style: isMobile ? {} : {width: '30vw'}}} open={open}>
+                <DialogTitle sx={{backgroundColor: '#fff', color: 'black', textAlign: 'center'}}>Auction</DialogTitle>
+                <DialogContent sx={{backgroundColor: '#fff', paddingTop: '20px !important'}}>
+                    { !auctionProcessing ? <div >
+                        <TextField
+                            autoFocus
+                            inputProps={{step: 0.1}}
+                            error={isAuction ? price <= web3.utils.fromWei(`${card.bid}`, 'ether') : price <= 0}
+                            color='selected'
+                            margin='dense'
+                            helperText={getHelperMessage()}
+                            id='name'
+                            label='Price (ETH)'
+                            type='number'
+                            fullWidth
+                            variant='outlined'
+                            value={price}
+                            onChange={handlePriceChange}
+                        />
+                        {!isAuction ?
+                            <Select
+                                color='selected'
+                                sx={{marginTop: '1vw'}}
+                                variant='outlined' 
+                                fullWidth
+                                value={time}
+                                onChange={handleTimeChange}
+                            >
+                                <MenuItem value={3600}>1 Hour</MenuItem>
+                                <MenuItem value={7200}>2 Hours</MenuItem>
+                                <MenuItem value={10800}>3 Hours</MenuItem>
+                                <MenuItem value={21600}>6 Hours</MenuItem>
+                                <MenuItem value={43200}>12 Hours</MenuItem>
+                                <MenuItem value={86400}>1 Day</MenuItem>
+                                <MenuItem value={172800}>2 Days</MenuItem>
+                                <MenuItem value={259200}>3 Days</MenuItem>
+                                <MenuItem value={604800}>1 Week</MenuItem>
+                            </Select>
+                            :
+                            null
+                        }
+                        <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '3vw'}}>
+                            <Button style={{color: 'black', backgroundColor: 'lightgrey', fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: '20vw'}} onClick={handleCancel} size='large' variant='contained'>Cancel</Button>
+                            <Button disabled={price <= 0} style={{fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: '20vw'}} onClick={!isAuction ? setAuction : placeBid} size='large' variant='contained'>Post</Button>
+                        </div>
+                    </div> 
+                    : 
+                    <div style={{display: 'flex', justifyContent: 'center'}}>
+                        {auctionSuccess ? 
+                            <div>
+                                <h1 style={{color: '#31572c', marginTop: 0, marginBottom: isMobile ? '10vw' : '4vw'}}>Posted!</h1>
+                                <div style={{display: 'flex', justifyContent: 'center'}}><Button style={{fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: isMobile ? '30vw' : '10vw'}} onClick={handleSuccess} size='large' variant='contained'>Done</Button></div>
+                            </div> 
+                            : 
+                            <CircularProgress size={100} color='selected' />}
+                    </div>}
+                </DialogContent>
+            </Dialog>
         </Backdrop>
     )
 }

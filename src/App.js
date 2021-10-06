@@ -5,12 +5,12 @@ import Header from './components/Header';
 import { Route, Switch } from 'react-router-dom';
 import Home from './components/Home';
 import Purchase from './components/Purchase';
+import Auction from './components/Auction';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import UserCards from './components/UserCards';
 import { useDispatch } from 'react-redux';
 import { setAccount } from './store/account/accountSlice';
 import { useMediaQuery } from 'react-responsive';
-import ViewCard from './components/ViewCard';
 import { setMobile } from './store/device/deviceSlice';
 
 const theme = createTheme({
@@ -24,6 +24,9 @@ const theme = createTheme({
     },
     secondary: {
       main: '#fff'
+    },
+    selected: {
+      main: '#252422'
     },
     neutral: {
       main: '#64748B',
@@ -43,8 +46,6 @@ const App = () => {
 
   useEffect(() => {
 
-    if(!window.ethereum.selectedAddress) window.ethereum.enable()
-    
     dispatch(setMobile(isMobile));
     dispatch(setAccount(accounts[0]));
 
@@ -59,8 +60,8 @@ const App = () => {
           <Switch>
             <Route path='/' exact component={Home} />
             <Route path='/purchase' component={Purchase} />
-            <Route path='/cards' exact={true} component={UserCards} />
-            <Route path='/cards/:id' component={ViewCard} />
+            <Route path='/cards' component={UserCards} />
+            <Route path='/auction' component={Auction} />
           </Switch>
         </ThemeProvider>
     </div>
