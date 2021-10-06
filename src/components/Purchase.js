@@ -11,6 +11,7 @@ const Purchase = ( props ) => {
 
     const account = useSelector((state) => state.account.value);
     const isMobile = useSelector((state) => state.mobile.value);
+    const [error, setError] = useState('');
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(false);
     const [displayCardPack, setDisplayCardPack] = useState(false);
@@ -29,13 +30,20 @@ const Purchase = ( props ) => {
                 setDisplayCardPack(true);
              });
         } catch(err) {
-          console.log(err);
+            setError(err.toString());
         }
         setLoading(false);
     }
 
+    const Errors = () => {
+        return (
+            <div>{error}</div>
+        )
+    }
+
     return (
         <div>
+            {Errors('test')}
             <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
                 {!isMobile ? 
                 <div>
