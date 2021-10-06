@@ -1,7 +1,7 @@
 import { Typography, Button } from '@mui/material';
 import React, { useState } from 'react';
 import PlayerCard from './PlayerCard';
-import NFTContract from '../ethereum/NFTContract';
+import NFTContract, { contractAddress } from '../ethereum/NFTContract';
 import web3 from '../ethereum/web3';
 import CircularProgress from '@mui/material/CircularProgress';
 import CardPack from './CardPack';
@@ -11,7 +11,7 @@ const Purchase = ( props ) => {
 
     const account = useSelector((state) => state.account.value);
     const isMobile = useSelector((state) => state.mobile.value);
-    const [error, setError] = useState('');
+    const [errors, setErrors] = useState('');
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(false);
     const [displayCardPack, setDisplayCardPack] = useState(false);
@@ -30,51 +30,44 @@ const Purchase = ( props ) => {
                 setDisplayCardPack(true);
              });
         } catch(err) {
-            setError(err.toString());
+            console.log(err);
+            setErrors(err.message.toString());
         }
         setLoading(false);
     }
 
-    const buyCardPackMobile = async () => {
+    // const buyCardPackMobile = async () => {
         
-        setLoading(true);
-        setDisplayCardPack(false);
+    //     setLoading(true);
+    //     setDisplayCardPack(false);
 
-        const data = NFTContract.methods.purchaseCardPack().encodeABI();
+    //     const data = NFTContract.methods.purchaseCardPack().encodeABI();
 
-        const params = [{
-            from: account,
-            to: '0x9aBdD48a92FBA3e702902E6B29CB7D4345381205',
-            data: data,
-            value: web3.utils.toHex(web3.utils.toWei('0.005', 'ether'))
-        }]
+    //     const params = [{
+    //         from: account,
+    //         to: contractAddress,
+    //         data: data,
+    //         value: web3.utils.toHex(web3.utils.toWei('0.005', 'ether'))
+    //     }]
 
-        try {
-          await 
-            window.ethereum.request({
-                method: 'eth_sendTransaction',
-                params,
-            })
-            .then(data => { 
-                setEvents(data.events);
-                setLoading(false);
-                setDisplayCardPack(true);
-            });
-        } catch(err) {
-            setError(err.toString());
-        }
-        setLoading(false);
-    }
-
-    const Errors = () => {
-        return (
-            <div>{error}</div>
-        )
-    }
+    //     try {
+    //         await window.ethereum.request({
+    //             method: 'eth_sendTransaction',
+    //             params,
+    //         })
+    //         .then(data => { 
+    //             console.log('DATA Mobile', data)
+    //             NFTContract.events.CardPackPurchased()
+    //         });
+    //     } catch(err) {
+    //         console.log(err);
+    //     }
+    //     setLoading(false);
+    // }
 
     return (
         <div>
-            {Errors('test')}
+            <div>{errors}</div>
             <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
                 {!isMobile ? 
                 <div>
@@ -85,7 +78,7 @@ const Purchase = ( props ) => {
                     <Typography sx={{fontSize: isMobile ? '12vw' : '7vw', color: '#fff', fontFamily: "Work Sans, sans-serif", fontWeight: 600}} variant='h2'>Purchase Card Pack Now!</Typography>
                     <Typography sx={{fontSize: isMobile ? '7vw' : '3vw', color: '#fff', fontFamily: "Work Sans, sans-serif", fontWeight: 600}} variant='h4'>Each pack contains 10 unique player cards.</Typography>
                     <Typography sx={{fontSize: isMobile ? '7vw' : '3vw', color: '#fff', fontFamily: "Work Sans, sans-serif", fontWeight: 600}} variant='h4'>Cards can be used to compete, trade, and more!</Typography>
-                    <Button disabled={loading} sx={{fontSize: '30px', fontFamily: "Work Sans, sans-serif", height: '65px', width: '50%', marginTop: '30px'}} onClick={isMobile ? buyCardPackMobile : buyCardPack} size='large' variant='contained' color='primary'>{loading ? <CircularProgress color='secondary' /> : 'Buy'}</Button>
+                    <Button disabled={loading} sx={{fontSize: '30px', fontFamily: "Work Sans, sans-serif", height: '65px', width: '50%', marginTop: '30px'}} onClick={buyCardPack} size='large' variant='contained' color='primary'>{loading ? <CircularProgress color='secondary' /> : 'Buy'}</Button>
                     {isMobile ? 
                         <div style={{display: 'flex', justifyContent: 'space-evenly', marginTop: '5vw'}}>
                             <PlayerCard flippable={false} width='50vw' number={12} team={'19'} cardType={'2'} attributes={'193333305678900'} />
