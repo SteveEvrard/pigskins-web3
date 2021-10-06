@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import NFTContract from '../ethereum/NFTContract';
 import PlayerCard from './PlayerCard';
 import CircularProgress from '@mui/material/CircularProgress';
-import { Typography } from '@mui/material';
+import { Card, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCardDetail } from '../store/card-detail/cardDetailSlice';
 import { getPlayerNumberById, getPlayerTeamById, getPlayerTypeById } from '../utils/PlayerUtil';
 import ViewCard from './ViewCard';
 import Countdown from 'react-countdown';
+import web3 from '../ethereum/web3';
 
 let cards = [];
 let cardIdsForAuction = [];
@@ -72,16 +73,20 @@ const Auction = ( props ) => {
     }
 
     function createCards(cards) {
-        console.log('cards', cards);
         return cards.map((card, i) => {
             const { playerId, cardType, attributeHash, time, cardId, bid } = card;
             const team = getPlayerTeamById(playerId);
             const number = getPlayerNumberById(playerId);
             const playerType = getPlayerTypeById(playerId);
             return (
-                <div key={i} style={{cursor: 'pointer'}} onClick={() => setCardToView({team, number, playerId, cardType, attributeHash, cardId, bid})}>
+                <div key={i} style={{marginBottom: '3vw', cursor: 'pointer'}} onClick={() => setCardToView({team, number, playerId, cardType, attributeHash, cardId, bid})}>
                     <PlayerCard key={i} attributes={attributeHash} flippable={false} width={isMobile ? '50vw' : '250px'} number={Number(number)} team={team} playerType={playerType} cardType={card.cardType} />
-                    <Countdown zeroPadDays={0} date={time}></Countdown>
+                    <div style={{display: 'flex', justifyContent: 'center'}}>
+                        <Card sx={{width: isMobile ? '30vw' : '15vw'}}>
+                            <Countdown zeroPadDays={0} date={time}></Countdown>
+                            <div>{web3.utils.fromWei(`${bid}`, 'ether')} ETH</div>
+                        </Card>
+                    </div>
                 </div>
             )
         });

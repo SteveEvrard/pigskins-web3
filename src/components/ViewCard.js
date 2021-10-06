@@ -183,8 +183,8 @@ const ViewCard = ( props ) => {
                             null
                         }
                         <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '3vw'}}>
-                            <Button style={{color: 'black', backgroundColor: 'lightgrey', fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: '20vw'}} onClick={handleCancel} size='large' variant='contained'>Cancel</Button>
-                            <Button disabled={price <= 0} style={{fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: '20vw'}} onClick={!isAuction ? setAuction : placeBid} size='large' variant='contained'>Post</Button>
+                            <Button style={{color: 'black', backgroundColor: 'lightgrey', fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: isMobile ? '25vw' : '10vw'}} onClick={handleCancel} size='large' variant='contained'>Cancel</Button>
+                            <Button disabled={price <= 0} style={{fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: isMobile ? '25vw' : '10vw'}} onClick={!isAuction ? setAuction : placeBid} size='large' variant='contained'>Post</Button>
                         </div>
                     </div> 
                     : 

@@ -23,39 +23,39 @@ const PlayerCard = ( props ) => {
         props.flippable ? 
         <ReactCardFlip isFlipped={flipped}>
             <div key='front'>
-                <img style={{position: 'absolute', width: props.width, height: props.width}} alt='N/A' src={resolveTeam(props.team, props.playerType)}/>
+                <img style={{position: 'absolute', width: props.width, height: props.width}} alt='' src={resolveTeam(props.team, props.playerType)}/>
                 {props.number < 10 ? 
-                    <img style={{position: 'absolute', width: props.width, height: props.width}} alt='N/A' src={resolveSingleDigitNumber(props.number)}/>
+                    <img style={{position: 'absolute', width: props.width, height: props.width}} alt='' src={resolveSingleDigitNumber(props.number)}/>
                     :
                     <span>
-                        <img style={{position: 'absolute', width: props.width, height: props.width}} alt='N/A' src={resolveLeftNumber(props.number)}/>
-                        <img style={{position: 'absolute', width: props.width, height: props.width}} alt='N/A' src={resolveRightNumber(props.number)}/>
+                        <img style={{position: 'absolute', width: props.width, height: props.width}} alt='' src={resolveLeftNumber(props.number)}/>
+                        <img style={{position: 'absolute', width: props.width, height: props.width}} alt='' src={resolveRightNumber(props.number)}/>
                     </span> 
                 }
                 <img style={{position: 'absolute', width: props.width, height: props.width}} alt='' src={resolveWater(props.attributes)}/>
                 <img style={{position: 'absolute', width: props.width, height: props.width}} alt='' src={resolveFootball(props.attributes)}/>
                 <img style={{position: 'absolute', width: props.width, height: props.width}} alt='' src={resolveCrown(props.attributes)}/>
-                <img style={{width: props.width, height: props.width}} alt='N/A' src={resolveCardType(props.cardType)}/>
+                <img style={{width: props.width, height: props.width}} alt='' src={resolveCardType(props.cardType)}/>
             </div>
             <div key='back' onClick={toggle}>
-                <img style={{cursor: 'pointer', width: props.width, height: props.width}} alt='N/A' src={cardback}/>
+                <img style={{cursor: 'pointer', width: props.width, height: props.width}} alt='' src={cardback}/>
             </div>
         </ReactCardFlip>
         :
         <div>
-            <img style={{position: 'absolute', width: props.width, height: props.width}} alt='N/A' src={resolveTeam(props.team, props.playerType)}/>
+            <img style={{position: 'absolute', width: props.width, height: props.width}} alt='' src={resolveTeam(props.team, props.playerType)}/>
             {props.number < 10 ? 
-                <img style={{position: 'absolute', width: props.width, height: props.width}} alt='N/A' src={resolveSingleDigitNumber(props.number)}/>
+                <img style={{position: 'absolute', width: props.width, height: props.width}} alt='' src={resolveSingleDigitNumber(props.number)}/>
                 :
                 <span>
-                    <img style={{position: 'absolute', width: props.width, height: props.width}} alt='N/A' src={resolveLeftNumber(props.number)}/>
-                    <img style={{position: 'absolute', width: props.width, height: props.width}} alt='N/A' src={resolveRightNumber(props.number)}/>
+                    <img style={{position: 'absolute', width: props.width, height: props.width}} alt='' src={resolveLeftNumber(props.number)}/>
+                    <img style={{position: 'absolute', width: props.width, height: props.width}} alt='' src={resolveRightNumber(props.number)}/>
                 </span> 
             }
             <img style={{position: 'absolute', width: props.width, height: props.width}} alt='' src={resolveWater(props.attributes)}/>
             <img style={{position: 'absolute', width: props.width, height: props.width}} alt='' src={resolveFootball(props.attributes)}/>
             <img style={{position: 'absolute', width: props.width, height: props.width}} alt='' src={resolveCrown(props.attributes)}/>
-            <img style={{width: props.width, height: props.width}} alt='N/A' src={resolveCardType(props.cardType)}/>
+            <img style={{width: props.width, height: props.width}} alt='' src={resolveCardType(props.cardType)}/>
         </div>
     )
 
