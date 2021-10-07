@@ -9,6 +9,8 @@ import { resolveCrown, resolveFootball, resolveWater } from '../utils/ImageCreat
 import blank from '../images/blank.png';
 import NFTContract from '../ethereum/NFTContract';
 import web3 from '../ethereum/web3';
+import { Contract, ContractWithSigner } from '../ethereum/ethers';
+import { BigNumber, ethers } from "ethers";
 
 const ViewCard = ( props ) => {
 
@@ -47,6 +49,7 @@ const ViewCard = ( props ) => {
 
     const handleSuccess = () => {
         setOpen(false);
+        setAuctionProcessing(false);
         setAuctionSuccess(false);
     }
 
@@ -58,37 +61,33 @@ const ViewCard = ( props ) => {
     const setAuction = async () => {
         setAuctionProcessing(true);
 
-        const cardId = Number(card.cardId);
-        try {
-            await NFTContract.methods.createCardAuction(cardId, web3.utils.toWei(price.toString(), 'ether'), time)
-                .send({from: account})
-                .then(data => {
-                    console.log('AUCTION INFO', data)
-                    if(data.status) setAuctionSuccess(true);
-                })
-        } catch(err) {
-            console.log(err);
-            setAuctionProcessing(false);
-        }
+        const cardId = BigNumber.from(card.cardId).toNumber();
+        const startingBid = ethers.utils.parseUnits(price.toString());
 
+        ContractWithSigner.createCardAuction(cardId, startingBid, time, {from: account})
+        .then(() => {
+            Contract.once(Contract.filters.AuctionOpened(cardId), () => {
+                setAuctionSuccess(true);
+            })
+        })
+        .catch(err => console.log(err));
     }
 
     const placeBid = async () => {
         setAuctionProcessing(true);
 
-        const cardId = Number(card.cardId);
-        try {
-            await NFTContract.methods.placeBid(cardId)
-                .send({from: account, value: web3.utils.toWei(price.toString(), 'ether')})
-                .then(data => {
-                    console.log('AUCTION INFO', data)
-                    if(data.status) setAuctionSuccess(true);
-                })
-        } catch(err) {
-            console.log(err);
-            setAuctionProcessing(false);
-        }
+        const cardId = BigNumber.from(card.cardId).toNumber();
+        const bid = ethers.utils.parseUnits(price.toString());
 
+        ContractWithSigner.placeBid(cardId, {from: account, value: bid})
+        .then(() => {
+            Contract.once(Contract.filters.BidPlaced(cardId), () => {
+                setAuctionSuccess(true);
+            })
+        })
+        .catch(err => console.log(err));
+
+        setAuctionProcessing(false);
     }
 
     function getHelperMessage() {
@@ -144,7 +143,8 @@ const ViewCard = ( props ) => {
             <Dialog PaperProps={{style: isMobile ? {} : {width: '30vw'}}} open={open}>
                 <DialogTitle sx={{backgroundColor: '#fff', color: 'black', textAlign: 'center'}}>Auction</DialogTitle>
                 <DialogContent sx={{backgroundColor: '#fff', paddingTop: '20px !important'}}>
-                    { !auctionProcessing ? <div>
+                    { !auctionProcessing ? 
+                    <div>
                         <TextField
                             autoFocus
                             inputProps={{step: 0.1}}
@@ -196,7 +196,8 @@ const ViewCard = ( props ) => {
                             </div> 
                             : 
                             <CircularProgress size={100} color='selected' />}
-                    </div>}
+                    </div>
+                    }
                 </DialogContent>
             </Dialog>
         </Backdrop>

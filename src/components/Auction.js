@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import NFTContract from '../ethereum/NFTContract';
 import PlayerCard from './PlayerCard';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Card, Typography } from '@mui/material';
@@ -9,61 +8,69 @@ import { getPlayerNumberById, getPlayerTeamById, getPlayerTypeById } from '../ut
 import ViewCard from './ViewCard';
 import Countdown from 'react-countdown';
 import web3 from '../ethereum/web3';
+import { BigNumber } from "ethers";
+import { Contract, ContractWithSigner } from '../ethereum/ethers';
 
 let cards = [];
-let cardIdsForAuction = [];
 
 const Auction = ( props ) => {
 
     const dispatch = useDispatch();
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const isMobile = useSelector((state) => state.mobile.value);
-    const account = useSelector((state) => state.account.value);
     const selectedCard = useSelector((state) => state.cardDetail.value);
 
     useEffect(() => {
 
-        NFTContract.getPastEvents('AuctionOpened', {
-            fromBlock: 0,
-            toBlock: 'latest'
-        }).then(events => {
-            cards = [];
-            cardIdsForAuction = [];
-            for(let i = 0; i < events.length; i++) {
-                const { expireDate, cardId, startingBid } = events[i].returnValues;
-                if(Date.now() < Number(expireDate.toString() + '000')){ 
-                    cardIdsForAuction.push({ expireDate, cardId, startingBid });
+        setLoading(true);
+        ContractWithSigner.queryFilter(Contract.filters.AuctionOpened())
+            .then(data => {
+                cards = [];
+                for(let i = 0; i < data.length; i++) {
+                    const {cardId, expireDate} = mapAuctionData(data[i]);
+                    if(Date.now() < expireDate){ 
+                        Contract.cards(BigNumber.from(data[i].args.cardId)).then(data => {
+                            Contract.cardToCurrentBid(BigNumber.from(cardId)).then( bidInfo => {
+                                getCardDetails(data, expireDate, BigNumber.from(bidInfo).toString());
+                            })
+                        });
+                    }
                 }
-            }
-            getCardsForAuction();
-        });
+            })
+            .catch(err => {
+                console.log(err);
+                setLoading(false);
+            });
+        setLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const setCardToView = (card) => {
-        dispatch(setCardDetail(card));
+    function getCardDetails(card, expireDate, startingBid) {
+        setLoading(true);
+        cards.push({...mapCardData(card), bid: startingBid, time: expireDate})
+        console.log(cards)
+        setLoading(false);
     }
 
-    const getCardsForAuction = async () => {
+    function mapAuctionData(card) {
+        const cardId = BigNumber.from(card.args.cardId).toString();
+        const expireDate = Number(BigNumber.from(card.args.expireDate).toString() + '000');
+        const startingBid = BigNumber.from(card.args.startingBid).toString();
+        
+        return {cardId, expireDate, startingBid};
+    }
 
-        setLoading(true);
+    function mapCardData(card) {
+        const cardId = BigNumber.from(card.cardId).toString();
+        const playerId = BigNumber.from(card.playerId).toString();
+        const attributeHash = BigNumber.from(card.attributeHash).toString();
+        const cardType = BigNumber.from(card.cardType).toString();
+        
+        return {cardId, playerId, attributeHash, cardType};
+    }
 
-        try {
-
-            for(let i = 0; i < cardIdsForAuction.length; i++){
-                const {cardId, expireDate, startingBid} = cardIdsForAuction[i];
-                const time = Number(expireDate.toString() + '000');
-                const card = await NFTContract.methods.cards(cardId).call();
-                cards.push({...card, time: time, bid: startingBid}); 
-            }
-
-            setLoading(false);
-
-        } catch(err) {
-            console.log(err);
-        }
-
-        setLoading(false);
+    const setCardToView = (card) => {
+        dispatch(setCardDetail(card));
     }
 
     function displayCards(cards) {
@@ -100,7 +107,6 @@ const Auction = ( props ) => {
             {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : null}
             {!loading ? displayCards(cards) : null}
             {selectedCard.playerId ? <ViewCard isAuction={true}/> : null}
-
         </div>
     )
 }

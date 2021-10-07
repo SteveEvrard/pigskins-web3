@@ -1,79 +1,36 @@
 import { Typography, Button } from '@mui/material';
 import React, { useState } from 'react';
 import PlayerCard from './PlayerCard';
-import NFTContract, { contractAddress } from '../ethereum/NFTContract';
-import web3 from '../ethereum/web3';
 import CircularProgress from '@mui/material/CircularProgress';
 import CardPack from './CardPack';
 import { useSelector } from 'react-redux';
-import { ContractWithSigner } from '../ethereum/ethers';
+import { Contract, ContractWithSigner } from '../ethereum/ethers';
 import { ethers } from "ethers";
 
 const Purchase = ( props ) => {
 
     const account = useSelector((state) => state.account.value);
     const isMobile = useSelector((state) => state.mobile.value);
-    const [errors, setErrors] = useState('');
-    const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(false);
     const [displayCardPack, setDisplayCardPack] = useState(false);
 
     const buyCardPack = async () => {
         
-        setLoading(true);
-        setDisplayCardPack(false);
-
-        // try {
-        //   await NFTContract.methods.purchaseCardPack()
-        //     .send({from: account, value: web3.utils.toWei('0.005', 'ether')})
-        //     .then(data => { 
-        //         setEvents(data.events);
-        //         setLoading(false);
-        //         setDisplayCardPack(true);
-        //      });
-        // } catch(err) {
-        //     console.log(err);
-        //     setErrors(err.message.toString() + '/' + account);
-        // }
         ContractWithSigner.purchaseCardPack({from: account, value: ethers.utils.parseEther("0.005")})
-            .then(data => console.log(data))
+            .then(data => {
+                setLoading(true);
+                setDisplayCardPack(false);
+                Contract.once(Contract.filters.CardPackPurchased(account), () => {
+                    setLoading(false);
+                    setDisplayCardPack(true);
+                })
+            })
             .catch(err => console.log(err));
-            
         setLoading(false);
     }
 
-    // const buyCardPackMobile = async () => {
-        
-    //     setLoading(true);
-    //     setDisplayCardPack(false);
-
-    //     const data = NFTContract.methods.purchaseCardPack().encodeABI();
-
-    //     const params = [{
-    //         from: account,
-    //         to: contractAddress,
-    //         data: data,
-    //         value: web3.utils.toHex(web3.utils.toWei('0.005', 'ether'))
-    //     }]
-
-    //     try {
-    //         await window.ethereum.request({
-    //             method: 'eth_sendTransaction',
-    //             params,
-    //         })
-    //         .then(data => { 
-    //             console.log('DATA Mobile', data)
-    //             NFTContract.events.CardPackPurchased()
-    //         });
-    //     } catch(err) {
-    //         console.log(err);
-    //     }
-    //     setLoading(false);
-    // }
-
     return (
         <div>
-            <div>{errors}</div>
             <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
                 {!isMobile ? 
                 <div>
@@ -98,7 +55,7 @@ const Purchase = ( props ) => {
                     <PlayerCard flippable={false} width='350px' number={4} team={'11'} cardType={'1'} attributes={'100999000000'} />
                 </div> : null}
             </div>
-            {displayCardPack ? <CardPack data={events}/> : null}
+            {displayCardPack ? <CardPack/> : null}
         </div>
     )
 }

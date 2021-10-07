@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import NFTContract from '../ethereum/NFTContract';
 import PlayerCard from './PlayerCard';
 import CircularProgress from '@mui/material/CircularProgress';
 import { getPlayerNumberById, getPlayerTeamById, getPlayerTypeById } from '../utils/PlayerUtil';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCardDetail } from '../store/card-detail/cardDetailSlice';
 import ViewCard from './ViewCard';
-import { Contract, ContractWithSigner, contractAddress, provider, signer } from '../ethereum/ethers';
-import { ethers, BigNumber } from "ethers";
+import { Contract, ContractWithSigner } from '../ethereum/ethers';
+import { BigNumber } from "ethers";
 
 let cards = [];
 
@@ -22,20 +21,21 @@ const UserCards = ( props ) => {
     useEffect(() => {
 
         dispatch(setCardDetail({}));
-        setLoading(true);
-        // NFTContract.getPastEvents('CardCreated', {
-        //     filter: {owner: account},
-        //     fromBlock: 0,
-        //     toBlock: 'latest'
-        // }).then(events => {
-        //     cards = [];
-        //     for(let i = 0; i < events.length; i++) {
-        //         console.log(events[i])
-        //         cards.push(mapCardData(events[i]));
-        //     }
-        //     setLoading(false);
-        // });
 
+        return () => {
+            dispatch(setCardDetail({}));
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        if(account) getCards();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [account])
+
+    const getCards = async () => {
+        setLoading(true);
+        console.log(account);
         ContractWithSigner.queryFilter(Contract.filters.CardCreated(null, null, null, null, account))
         .then(data => {
             cards = [];
@@ -45,12 +45,7 @@ const UserCards = ( props ) => {
             }
             setLoading(false);
         });
-
-        return () => {
-            dispatch(setCardDetail({}));
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }
 
     function mapCardData(card) {
         const cardId = BigNumber.from(card.args.cardId).toString();

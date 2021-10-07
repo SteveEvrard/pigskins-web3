@@ -3,8 +3,9 @@ import { Backdrop, Button } from '@mui/material';
 import PlayerCard from './PlayerCard';
 import { getPlayerNumberById, getPlayerTeamById, getPlayerTypeById } from '../utils/PlayerUtil';
 import { useSelector } from 'react-redux';
-import NFTContract from '../ethereum/NFTContract';
 import CircularProgress from '@mui/material/CircularProgress';
+import { Contract, ContractWithSigner } from '../ethereum/ethers';
+import { BigNumber } from "ethers";
 
 let cards = [];
 
@@ -25,17 +26,15 @@ const CardPack = ( props ) => {
 
         setLoading(true);
 
-        NFTContract.getPastEvents('CardCreated', {
-            filter: {owner: account},
-            fromBlock: 0,
-            toBlock: 'latest'
-        }).then(events => {
-            console.log('events', events)
+        ContractWithSigner.queryFilter(Contract.filters.CardCreated(null, null, null, null, account))
+        .then(data => {
             cards = [];
-            for(let i = events.length - 1; i >= events.length - 10; i--) {
-                cards.push(mapCardData(events[i]));
+            console.log('cards', data);
+            
+            for(let i = data.length - 1; i >= data.length - 10; i--) {
+                cards.push(mapCardData(data[i]));
             }
-            console.log('cards', cards)
+
             setLoading(false);
         });
 
@@ -43,7 +42,10 @@ const CardPack = ( props ) => {
     }, []);
 
     function mapCardData(card) {
-        const {cardId, playerId, attributeHash, cardType} = card.returnValues;
+        const cardId = BigNumber.from(card.args.cardId).toString();
+        const playerId = BigNumber.from(card.args.playerId).toString();
+        const attributeHash = BigNumber.from(card.args.attributeHash).toString();
+        const cardType = BigNumber.from(card.args.cardType).toString();
         
         return {cardId, playerId, attributeHash, cardType};
     }
