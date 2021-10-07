@@ -58,7 +58,7 @@ const UserCards = ( props ) => {
 
     function displayCards(cards) {
         return (
-            <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'space-evenly'}}>{createCards(cards)}</div>
+            <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'space-evenly', position: selectedCard.playerId ? 'fixed' : 'inherit' }}>{createCards(cards)}</div>
         )
     }
 

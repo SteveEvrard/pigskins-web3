@@ -18,7 +18,7 @@ const ViewCard = ( props ) => {
     const [auctionSuccess, setAuctionSuccess] = useState(false);
     const [auctionProcessing, setAuctionProcessing] = useState(false);
     const [time, setTime] = useState(3600);
-    const [price, setPrice] = useState(0.1);
+    const [price, setPrice] = useState(0.01);
     const dispatch = useDispatch();
     const isAuction = props.isAuction;
     const account = useSelector((state) => state.account.value);
@@ -32,7 +32,7 @@ const ViewCard = ( props ) => {
     }
 
     const mobileStyle = {display: 'block', color: 'white', marginTop: '20vw'};
-    const mobileListStyle = {margin: 'auto', fontFamily: "Work Sans, sans-serif", backgroundColor: '#31572c', fontSize: '5vw', width: '90vw'};
+    const mobileListStyle = {margin: 'auto', fontFamily: "Work Sans, sans-serif", backgroundColor: '#31572c', fontSize: '5vw', width: '90vw', marginBottom: '5vw'};
 
     const desktopStyle = {display: 'flex', color: 'white', marginTop: '7vw'};
     const desktopListStyle = {fontFamily: "Work Sans, sans-serif", backgroundColor: '#31572c', fontSize: '3.5vw', width: '50vw'};
@@ -43,7 +43,7 @@ const ViewCard = ( props ) => {
 
     const handleCancel = () => {
         setOpen(false);
-        setPrice(0.1);
+        setPrice(0.01);
         setTime(3600);
     };
 
@@ -71,6 +71,8 @@ const ViewCard = ( props ) => {
             })
         })
         .catch(err => console.log(err));
+
+        setAuctionProcessing(false);
     }
 
     const placeBid = async () => {
@@ -117,7 +119,7 @@ const ViewCard = ( props ) => {
     }
 
     return (
-        <Backdrop style={{display: 'block', backgroundColor: 'rgba(0, 0, 0, 0.86)'}} open={true} sx={{zIndex: 1}}>
+        <Backdrop style={{display: 'block', backgroundColor: 'rgba(0, 0, 0, 0.86)', overflowY: 'scroll'}} open={true} sx={{zIndex: 1}}>
             <div style={isMobile ? mobileStyle : desktopStyle}>
                 <PlayerCard attributes={card.attributeHash} flippable={false} width={isMobile ? '80vw' : '40vw'} number={getPlayerNumberById(card.playerId)} team={getPlayerTeamById(card.playerId)} playerType={getPlayerTypeById(card.playerId)} cardType={card.cardType} />
                 <List sx={isMobile ? mobileListStyle : desktopListStyle}>
@@ -147,7 +149,7 @@ const ViewCard = ( props ) => {
                     <div>
                         <TextField
                             autoFocus
-                            inputProps={{step: 0.1}}
+                            inputProps={{step: 0.01}}
                             error={isAuction ? price <= web3.utils.fromWei(`${card.bid}`, 'ether') : price <= 0}
                             color='selected'
                             margin='dense'
