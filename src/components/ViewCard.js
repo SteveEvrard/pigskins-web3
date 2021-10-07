@@ -7,7 +7,6 @@ import { getTeamName, getPlayerNameById, getPlayerNumberById, getPlayerTeamById,
 import { ListItem } from '@mui/material';
 import { resolveCrown, resolveFootball, resolveWater } from '../utils/ImageCreator';
 import blank from '../images/blank.png';
-import NFTContract from '../ethereum/NFTContract';
 import web3 from '../ethereum/web3';
 import { Contract, ContractWithSigner } from '../ethereum/ethers';
 import { BigNumber, ethers } from "ethers";
@@ -15,6 +14,7 @@ import { BigNumber, ethers } from "ethers";
 const ViewCard = ( props ) => {
 
     const [open, setOpen] = useState(false);
+    const [error, setError] = useState('');
     const [auctionSuccess, setAuctionSuccess] = useState(false);
     const [auctionProcessing, setAuctionProcessing] = useState(false);
     const [time, setTime] = useState(3600);
@@ -51,10 +51,12 @@ const ViewCard = ( props ) => {
         setOpen(false);
         setAuctionProcessing(false);
         setAuctionSuccess(false);
+        setError('');
+        dispatch(setCardDetail({}));
     }
 
     const openDialog = () => {
-        if(isAuction) setPrice(web3.utils.fromWei(`${card.bid}`, 'ether'));
+        if(isAuction) setPrice(ethers.utils.formatEther(`${card.bid}`, 'ether'));
         setOpen(true);
     }
 
@@ -70,9 +72,12 @@ const ViewCard = ( props ) => {
                 setAuctionSuccess(true);
             })
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+            if(err.error) setAuctionSuccess(true);
+            if(!err.error) setAuctionProcessing(false);
+            setError(err.error ? err.error.message : '');
+        });
 
-        setAuctionProcessing(false);
     }
 
     const placeBid = async () => {
@@ -87,14 +92,17 @@ const ViewCard = ( props ) => {
                 setAuctionSuccess(true);
             })
         })
-        .catch(err => console.log(err));
-
-        setAuctionProcessing(false);
+        .catch(err => {
+            console.log(err.error.message)
+            if(err.error) setAuctionSuccess(true);
+            if(!err.error) setAuctionProcessing(false);
+            setError(err.error ? err.error.message : '');
+        });
     }
 
     function getHelperMessage() {
         if(isAuction) {
-            return price <= web3.utils.fromWei(`${card.bid}`, 'ether') ? 'Increase bid' : '';
+            return price <= ethers.utils.formatEther(`${card.bid}`) ? 'Increase bid' : '';
         }else {
             return price <= 0 ? 'Price cannot be below 0' : '';
         }
@@ -193,7 +201,7 @@ const ViewCard = ( props ) => {
                     <div style={{display: 'flex', justifyContent: 'center'}}>
                         {auctionSuccess ? 
                             <div>
-                                <h1 style={{color: '#31572c', marginTop: 0, marginBottom: isMobile ? '10vw' : '4vw'}}>Posted!</h1>
+                                { !error ? <h1 style={{color: '#31572c', marginTop: 0, marginBottom: isMobile ? '10vw' : '4vw'}}>Posted!</h1> : <div style={{textAlign: 'center', color: 'red', marginBottom: '3vw'}}>{error}</div> }
                                 <div style={{display: 'flex', justifyContent: 'center'}}><Button style={{fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: isMobile ? '30vw' : '10vw'}} onClick={handleSuccess} size='large' variant='contained'>Done</Button></div>
                             </div> 
                             : 
