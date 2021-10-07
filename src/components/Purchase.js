@@ -6,6 +6,8 @@ import web3 from '../ethereum/web3';
 import CircularProgress from '@mui/material/CircularProgress';
 import CardPack from './CardPack';
 import { useSelector } from 'react-redux';
+import { ContractWithSigner } from '../ethereum/ethers';
+import { ethers } from "ethers";
 
 const Purchase = ( props ) => {
 
@@ -21,18 +23,22 @@ const Purchase = ( props ) => {
         setLoading(true);
         setDisplayCardPack(false);
 
-        try {
-          await NFTContract.methods.purchaseCardPack()
-            .send({from: account, value: web3.utils.toWei('0.005', 'ether')})
-            .then(data => { 
-                setEvents(data.events);
-                setLoading(false);
-                setDisplayCardPack(true);
-             });
-        } catch(err) {
-            console.log(err);
-            setErrors(err.message.toString() + '/' + account);
-        }
+        // try {
+        //   await NFTContract.methods.purchaseCardPack()
+        //     .send({from: account, value: web3.utils.toWei('0.005', 'ether')})
+        //     .then(data => { 
+        //         setEvents(data.events);
+        //         setLoading(false);
+        //         setDisplayCardPack(true);
+        //      });
+        // } catch(err) {
+        //     console.log(err);
+        //     setErrors(err.message.toString() + '/' + account);
+        // }
+        ContractWithSigner.purchaseCardPack({from: account, value: ethers.utils.parseEther("0.005")})
+            .then(data => console.log(data))
+            .catch(err => console.log(err));
+            
         setLoading(false);
     }
 

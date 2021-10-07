@@ -11,6 +11,8 @@ import { useDispatch } from 'react-redux';
 import { setAccount } from './store/account/accountSlice';
 import { useMediaQuery } from 'react-responsive';
 import { setMobile } from './store/device/deviceSlice';
+import detectEthereumProvider from '@metamask/detect-provider';
+import { signer } from './ethereum/ethers';
 
 const theme = createTheme({
   status: {
@@ -41,15 +43,17 @@ const App = () => {
   });
   const dispatch = useDispatch();
 
-  async function getAccount() {
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const account = accounts[0];
-    dispatch(setAccount(account));
-  }
+  // const getAccount = async () =>  {
+  //   const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+  //   const account = accounts[0];
+  //   dispatch(setAccount(account));
+  // }
 
   useEffect(() => {
 
-    getAccount();
+    signer.getAddress().then(account => {
+      dispatch(setAccount(account));
+    })
     dispatch(setMobile(isMobile));
     // dispatch(setAccount(accounts[0]));
 

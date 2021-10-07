@@ -6,6 +6,8 @@ import { getPlayerNumberById, getPlayerTeamById, getPlayerTypeById } from '../ut
 import { useDispatch, useSelector } from 'react-redux';
 import { setCardDetail } from '../store/card-detail/cardDetailSlice';
 import ViewCard from './ViewCard';
+import { Contract, ContractWithSigner, contractAddress, provider, signer } from '../ethereum/ethers';
+import { ethers, BigNumber } from "ethers";
 
 let cards = [];
 
@@ -21,15 +23,25 @@ const UserCards = ( props ) => {
 
         dispatch(setCardDetail({}));
         setLoading(true);
-        NFTContract.getPastEvents('CardCreated', {
-            filter: {owner: account},
-            fromBlock: 0,
-            toBlock: 'latest'
-        }).then(events => {
-            console.log('events', events)
+        // NFTContract.getPastEvents('CardCreated', {
+        //     filter: {owner: account},
+        //     fromBlock: 0,
+        //     toBlock: 'latest'
+        // }).then(events => {
+        //     cards = [];
+        //     for(let i = 0; i < events.length; i++) {
+        //         console.log(events[i])
+        //         cards.push(mapCardData(events[i]));
+        //     }
+        //     setLoading(false);
+        // });
+
+        ContractWithSigner.queryFilter(Contract.filters.CardCreated(null, null, null, null, account))
+        .then(data => {
             cards = [];
-            for(let i = 0; i < events.length; i++) {
-                cards.push(mapCardData(events[i]));
+            
+            for(let i = 0; i < data.length; i++) {
+                cards.push(mapCardData(data[i]));
             }
             setLoading(false);
         });
@@ -41,7 +53,10 @@ const UserCards = ( props ) => {
     }, []);
 
     function mapCardData(card) {
-        const {cardId, playerId, attributeHash, cardType} = card.returnValues;
+        const cardId = BigNumber.from(card.args.cardId).toString();
+        const playerId = BigNumber.from(card.args.playerId).toString();
+        const attributeHash = BigNumber.from(card.args.attributeHash).toString();
+        const cardType = BigNumber.from(card.args.cardType).toString();
         
         return {cardId, playerId, attributeHash, cardType};
     }

@@ -5,6 +5,7 @@
   "dependencies": {
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
+    "@metamask/detect-provider": "^1.2.0",
     "@mui/icons-material": "^5.0.1",
     "@mui/material": "^5.0.1",
     "@openzeppelin/network": "^0.4.3",
@@ -12,6 +13,7 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "ethers": "^5.4.7",
     "moralis": "^0.0.56",
     "react": "^17.0.2",
     "react-card-flip": "^1.1.3",
