@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AppBar, Toolbar, Typography, Button, MenuItem, Menu } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, MenuItem, Menu, Badge } from '@mui/material';
 import { Link as RouterLink, useHistory } from 'react-router-dom';
 import SportsFootballIcon from '@mui/icons-material/SportsFootball';
 import { useSelector } from 'react-redux';
@@ -8,6 +8,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 const headerOptions = [
     {label: 'Purchase', href: '/purchase'},
     {label: 'Auction', href: '/auction'},
+    {label: 'Claim', href: '/claim'},
     {label: 'My Cards', href: '/cards'}
 ]
 
@@ -16,7 +17,9 @@ const Header = ( props ) => {
     const history = useHistory();
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
-    const isMobile = useSelector((state) => state.mobile.value)
+    const isMobile = useSelector((state) => state.mobile.value);
+    const notification = useSelector((state) => state.notification.value);
+    console.log('notification', notification)
 
     function home() {
         history.push('/')
@@ -60,9 +63,10 @@ const Header = ( props ) => {
                         key: label,
                         color: "inherit"
                     }}
+                    key={label}
                     onClick={handleClose}
                 >
-                    {label}
+                    <Badge anchorOrigin={{vertical: 'top', horizontal: 'right'}} invisible={!(label === 'Claim' && notification)} variant='dot' color='primary'>{label}</Badge>
                 </MenuItem>
             )
         }) 
@@ -87,7 +91,9 @@ const Header = ( props ) => {
                     <SportsFootballIcon sx={{marginTop: '3px'}} fontSize='large'/>
                     {logo}
                 </div>
-                <MenuIcon onClick={handleClick} fontSize='large'/>
+                <Badge style={{marginTop: '3px'}} color='primary' invisible={!notification}>
+                    <MenuIcon onClick={handleClick} fontSize='large'/>
+                </Badge>
                 <Menu onClick={handleClose} anchorEl={anchorEl} open={open}>
                     {getMobileMenuButtons()}
                 </Menu>

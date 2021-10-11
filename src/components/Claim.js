@@ -4,15 +4,15 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { Card, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCardDetail } from '../store/card-detail/cardDetailSlice';
+import {setNotification} from '../store/notification/notificationSlice';
 import { getPlayerNumberById, getPlayerTeamById, getPlayerTypeById } from '../utils/PlayerUtil';
 import ViewCard from './ViewCard';
-import Countdown from 'react-countdown';
 import { BigNumber, ethers } from "ethers";
-import { Contract, ContractWithSigner } from '../ethereum/ethers';
+import { signer, Contract, ContractWithSigner } from '../ethereum/ethers';
 
 let cards = [];
 
-const Auction = ( props ) => {
+const Claim = ( props ) => {
 
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
@@ -20,34 +20,58 @@ const Auction = ( props ) => {
     const selectedCard = useSelector((state) => state.cardDetail.value);
 
     useEffect(() => {
-
+        dispatch(setNotification(false));
         setLoading(true);
-        ContractWithSigner.queryFilter(Contract.filters.AuctionOpened())
-            .then(data => {
-                cards = [];
-                for(let i = 0; i < data.length; i++) {
-                    const {cardId, expireDate} = mapAuctionData(data[i]);
-                    console.log(Date.now() - expireDate)
-                    if(Date.now() < expireDate){ 
-                        Contract.cards(BigNumber.from(data[i].args.cardId)).then(data => {
-                            Contract.cardToCurrentBid(BigNumber.from(cardId)).then( bidInfo => {
-                                getCardDetails(data, expireDate, BigNumber.from(bidInfo).toString());
-                            })
-                        });
-                    }
-                }
-            })
-            .catch(err => {
-                console.log(err);
-                setLoading(false);
-            });
-        setLoading(false);
+
+        getClaims()
+
+        return () => {
+            cards = [];
+        }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    function getCardDetails(card, expireDate, startingBid) {
+    const getClaims = async () => {
+        signer.getAddress().then(acct => {
+            ContractWithSigner.queryFilter(Contract.filters.AuctionOpened(null, null, null, null, acct))
+            .then(data => {
+                const final = data.filter(auction => {
+                    console.log(data)
+                    return Date.now() > Number(BigNumber.from(auction.args.expireDate).toString() + '000')
+                });
+                console.log('end auct', final);
+                for(let i = 0; i < final.length; i++) {
+                    filterClosedAuctions(final[i]);
+
+                }
+                setLoading(false);
+            })
+            .catch(err => console.log(err))
+        })
+    }
+
+    const filterClosedAuctions = async (auct) => {
+
+        await ContractWithSigner.queryFilter(Contract.filters.AuctionClosed(BigNumber.from(auct.args.auctionId).toNumber(), null, null, null, null))
+            .then(data => {
+                console.log('closed', data)
+                console.log(auct);
+                if(data.length === 0) {
+                    const {cardId, expireDate} = mapAuctionData(auct);
+                    Contract.cards(BigNumber.from(auct.args.cardId)).then(data => {
+                        Contract.cardToCurrentBid(BigNumber.from(cardId)).then( bidInfo => {
+                            const cardSold = BigNumber.from(bidInfo).gt(BigNumber.from(auct.args.startingBid));
+                            getCardDetails(data, expireDate, BigNumber.from(bidInfo).toString(), cardSold);
+                        });
+                    });
+                }
+        })
+    
+      }
+
+    function getCardDetails(card, expireDate, startingBid, sold) {
         setLoading(true);
-        cards.push({...mapCardData(card), time: expireDate, bid: startingBid})
+        cards.push({...mapCardData(card), time: expireDate, bid: startingBid, sold: sold})
         console.log(cards)
         setLoading(false);
     }
@@ -56,6 +80,7 @@ const Auction = ( props ) => {
         const cardId = BigNumber.from(card.args.cardId).toString();
         const expireDate = Number(BigNumber.from(card.args.expireDate).toString() + '000');
         const startingBid = BigNumber.from(card.args.startingBid).toString();
+        console.log('card id',cardId);
         
         return {cardId, expireDate, startingBid};
     }
@@ -81,7 +106,7 @@ const Auction = ( props ) => {
 
     function createCards(cards) {
         return cards.map((card, i) => {
-            const { playerId, cardType, attributeHash, time, cardId, bid } = card;
+            const { playerId, cardType, attributeHash, cardId, bid } = card;
             const team = getPlayerTeamById(playerId);
             const number = getPlayerNumberById(playerId);
             const playerType = getPlayerTypeById(playerId);
@@ -90,8 +115,7 @@ const Auction = ( props ) => {
                     <PlayerCard key={i} attributes={attributeHash} flippable={false} width={isMobile ? '50vw' : '250px'} number={Number(number)} team={team} playerType={playerType} cardType={card.cardType} />
                     <div style={{display: 'flex', justifyContent: 'center'}}>
                         <Card sx={{width: isMobile ? '30vw' : '15vw'}}>
-                            <Countdown zeroPadDays={0} date={time}></Countdown>
-                            <div>{ethers.utils.formatEther(`${bid}`, 'ether')} ETH</div>
+                            <div>{card.sold ? `SOLD ${ethers.utils.formatEther(`${bid}`, 'ether')} ETH` : 'UNSOLD'}</div>
                         </Card>
                     </div>
                 </div>
@@ -102,13 +126,13 @@ const Auction = ( props ) => {
     return (
         <div>
             <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: '8vw', color: '#fff'}}>
-                Card Auction
+                Claim
             </Typography>
             {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : null}
             {!loading ? displayCards(cards) : null}
-            {selectedCard.playerId ? <ViewCard isAuction={true}/> : null}
+            {selectedCard.playerId ? <ViewCard isClaim={true} isAuction={false}/> : null}
         </div>
     )
 }
 
-export default Auction;
+export default Claim;

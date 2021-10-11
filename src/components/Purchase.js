@@ -25,7 +25,9 @@ const Purchase = ( props ) => {
                     setDisplayCardPack(true);
                 })
             })
-            .catch(err => console.log(err));
+            .catch(err => {
+                console.log(err);
+            });
         setLoading(false);
     }
 

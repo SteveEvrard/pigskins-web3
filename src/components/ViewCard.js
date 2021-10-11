@@ -7,7 +7,6 @@ import { getTeamName, getPlayerNameById, getPlayerNumberById, getPlayerTeamById,
 import { ListItem } from '@mui/material';
 import { resolveCrown, resolveFootball, resolveWater } from '../utils/ImageCreator';
 import blank from '../images/blank.png';
-import web3 from '../ethereum/web3';
 import { Contract, ContractWithSigner } from '../ethereum/ethers';
 import { BigNumber, ethers } from "ethers";
 
@@ -16,11 +15,13 @@ const ViewCard = ( props ) => {
     const [open, setOpen] = useState(false);
     const [error, setError] = useState('');
     const [auctionSuccess, setAuctionSuccess] = useState(false);
-    const [auctionProcessing, setAuctionProcessing] = useState(false);
-    const [time, setTime] = useState(3600);
+    const [processing, setProcessing] = useState(false);
+    const [auctionEnded, setAuctionEnded] = useState(false);
+    const [time, setTime] = useState(300);
     const [price, setPrice] = useState(0.01);
     const dispatch = useDispatch();
     const isAuction = props.isAuction;
+    const isClaim = props.isClaim;
     const account = useSelector((state) => state.account.value);
     const card = useSelector((state) => state.cardDetail.value);
     const isMobile = useSelector((state) => state.mobile.value);
@@ -39,17 +40,18 @@ const ViewCard = ( props ) => {
 
     const handleClose = () => {
         dispatch(setCardDetail({}));
+        setAuctionEnded(false);
     };
 
     const handleCancel = () => {
         setOpen(false);
         setPrice(0.01);
-        setTime(3600);
+        setTime(300);
     };
 
     const handleSuccess = () => {
         setOpen(false);
-        setAuctionProcessing(false);
+        setProcessing(false);
         setAuctionSuccess(false);
         setError('');
         dispatch(setCardDetail({}));
@@ -61,41 +63,62 @@ const ViewCard = ( props ) => {
     }
 
     const setAuction = async () => {
-        setAuctionProcessing(true);
+        setProcessing(true);
 
         const cardId = BigNumber.from(card.cardId).toNumber();
         const startingBid = ethers.utils.parseUnits(price.toString());
 
         ContractWithSigner.createCardAuction(cardId, startingBid, time, {from: account})
         .then(() => {
-            Contract.once(Contract.filters.AuctionOpened(cardId), () => {
+            Contract.once(Contract.filters.AuctionOpened(null, cardId), () => {
                 setAuctionSuccess(true);
             })
         })
         .catch(err => {
             if(err.error) setAuctionSuccess(true);
-            if(!err.error) setAuctionProcessing(false);
+            if(!err.error) setProcessing(false);
             setError(err.error ? err.error.message : '');
         });
 
     }
 
     const placeBid = async () => {
-        setAuctionProcessing(true);
+        setProcessing(true);
 
         const cardId = BigNumber.from(card.cardId).toNumber();
         const bid = ethers.utils.parseUnits(price.toString());
 
         ContractWithSigner.placeBid(cardId, {from: account, value: bid})
         .then(() => {
-            Contract.once(Contract.filters.BidPlaced(cardId), () => {
+            Contract.once(Contract.filters.BidPlaced(null, cardId), () => {
                 setAuctionSuccess(true);
             })
         })
         .catch(err => {
             console.log(err.error.message)
             if(err.error) setAuctionSuccess(true);
-            if(!err.error) setAuctionProcessing(false);
+            if(!err.error) setProcessing(false);
+            setError(err.error ? err.error.message : '');
+        });
+    }
+
+    const closeAuction = async () => {
+        setProcessing(true)
+        setAuctionEnded(false);
+        const cardId = BigNumber.from(card.cardId).toNumber();
+
+        ContractWithSigner.endAuction(cardId, {from: account})
+        .then(() => {
+            Contract.once(Contract.filters.AuctionClosed(null, cardId), () => {
+                setAuctionSuccess(true);
+                setProcessing(false);
+                setAuctionEnded(true);
+            })
+        })
+        .catch(err => {
+            console.log(err.error.message)
+            if(err.error) setAuctionSuccess(true);
+            if(!err.error) setProcessing(false);
             setError(err.error ? err.error.message : '');
         });
     }
@@ -140,6 +163,14 @@ const ViewCard = ( props ) => {
                     <ListItem>Card Type: {cardTypes[card.cardType]}</ListItem>
                     <Divider />
                     <ListItem>Items: {getItems()}</ListItem>
+                    {isClaim ?
+
+                    !processing ? 
+                        <div style={{display: 'flex', justifyContent: 'space-evenly', marginTop: '6vw'}}>
+                            {auctionEnded ? null : <Button color='secondary' style={{fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: '20vw'}} onClick={handleClose} size='large' variant='contained'>Close</Button>}
+                            <Button style={{fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: auctionEnded ? '40vw' : '20vw'}} onClick={auctionEnded ? handleClose : closeAuction} size='large' variant='contained'>{auctionEnded ? 'Done' : 'Claim'}</Button>
+                        </div> : <CircularProgress size={100} color='secondary' />
+                    :
                     <div style={{display: 'flex', justifyContent: 'space-evenly', marginTop: '6vw'}}>
                         <Button color='secondary' style={{fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: '20vw'}} onClick={handleClose} size='large' variant='contained'>Close</Button>
                         {isAuction ? 
@@ -148,17 +179,18 @@ const ViewCard = ( props ) => {
                             <Button style={{fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: '20vw'}} onClick={openDialog} size='large' variant='contained'>Sell</Button>
                         }
                     </div>
+                    }
                 </List>
             </div>
             <Dialog PaperProps={{style: isMobile ? {} : {width: '30vw'}}} open={open}>
                 <DialogTitle sx={{backgroundColor: '#fff', color: 'black', textAlign: 'center'}}>Auction</DialogTitle>
                 <DialogContent sx={{backgroundColor: '#fff', paddingTop: '20px !important'}}>
-                    { !auctionProcessing ? 
+                    { !processing ? 
                     <div>
                         <TextField
                             autoFocus
                             inputProps={{step: 0.01}}
-                            error={isAuction ? price <= web3.utils.fromWei(`${card.bid}`, 'ether') : price <= 0}
+                            error={isAuction ? price <= ethers.utils.formatEther(`${card.bid}`, 'ether') : price <= 0}
                             color='selected'
                             margin='dense'
                             helperText={getHelperMessage()}
@@ -179,7 +211,7 @@ const ViewCard = ( props ) => {
                                 value={time}
                                 onChange={handleTimeChange}
                             >
-                                <MenuItem value={3600}>1 Hour</MenuItem>
+                                <MenuItem value={300}>1 Hour</MenuItem>
                                 <MenuItem value={7200}>2 Hours</MenuItem>
                                 <MenuItem value={10800}>3 Hours</MenuItem>
                                 <MenuItem value={21600}>6 Hours</MenuItem>
@@ -201,7 +233,7 @@ const ViewCard = ( props ) => {
                     <div style={{display: 'flex', justifyContent: 'center'}}>
                         {auctionSuccess ? 
                             <div>
-                                { !error ? <h1 style={{color: '#31572c', marginTop: 0, marginBottom: isMobile ? '10vw' : '4vw'}}>Posted!</h1> : <div style={{textAlign: 'center', color: 'red', marginBottom: '3vw'}}>{error}</div> }
+                                { !error ? <h1 style={{textAlign: 'center', color: '#31572c', marginTop: 0, marginBottom: isMobile ? '10vw' : '4vw'}}>{isAuction ? 'Bid Placed!' : 'Card Posted!'}</h1> : <div style={{textAlign: 'center', color: 'red', marginBottom: '3vw'}}>{error}</div> }
                                 <div style={{display: 'flex', justifyContent: 'center'}}><Button style={{fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: isMobile ? '30vw' : '10vw'}} onClick={handleSuccess} size='large' variant='contained'>Done</Button></div>
                             </div> 
                             : 
