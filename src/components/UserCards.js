@@ -35,8 +35,12 @@ const UserCards = ( props ) => {
         ContractWithSigner.getUserOwnedCards(account)
             .then(data => {
                 cards = [];
-
+                console.log(data);
                 for(let i = 0; i < data.length; i++) {
+                    if(BigNumber.from(data[i]).toString() === '999999999999999'){
+                        console.log('equals', BigNumber.from(data[i]).toString());
+                        continue;
+                    }
                     getCard(data[i])
                 }
                 setLoading(false);

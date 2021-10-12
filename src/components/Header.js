@@ -28,6 +28,13 @@ const StyledDot = styled(Badge)(({ theme }) => ({
     },
 }));
 
+const StyledDotDesktop = styled(Badge)(({ theme }) => ({
+    '& .MuiBadge-badge': {
+      right: -3,
+      top: 4
+    },
+}));
+
 const Header = ( props ) => {
 
     const dispatch = useDispatch();
@@ -63,7 +70,7 @@ const Header = ( props ) => {
                         color: "inherit"
                     }}
                 >
-                    <Badge anchorOrigin={{vertical: 'top', horizontal: 'right'}} invisible={!(label === 'Claim' && notification)} variant='dot' color='primary'>{label}</Badge>
+                    <StyledDotDesktop invisible={!(label === 'Claim' && notification)} variant='dot' color='primary'>{label}</StyledDotDesktop>
                 </Button>
             );
         });

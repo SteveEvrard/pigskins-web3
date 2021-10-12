@@ -3,12 +3,14 @@ import React, { useState } from 'react';
 import PlayerCard from './PlayerCard';
 import CircularProgress from '@mui/material/CircularProgress';
 import CardPack from './CardPack';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Contract, ContractWithSigner } from '../ethereum/ethers';
 import { ethers } from "ethers";
+import { setCardDetail } from '../store/card-detail/cardDetailSlice';
 
 const Purchase = ( props ) => {
 
+    const dispatch = useDispatch();
     const account = useSelector((state) => state.account.value);
     const isMobile = useSelector((state) => state.mobile.value);
     const [loading, setLoading] = useState(false);
@@ -16,6 +18,8 @@ const Purchase = ( props ) => {
 
     const buyCardPack = async () => {
         
+        dispatch(setCardDetail({}));
+
         ContractWithSigner.purchaseCardPack({from: account, value: ethers.utils.parseEther("0.005")})
             .then(data => {
                 setLoading(true);

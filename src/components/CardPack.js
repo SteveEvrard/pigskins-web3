@@ -29,7 +29,6 @@ const CardPack = ( props ) => {
         ContractWithSigner.queryFilter(Contract.filters.CardCreated(null, null, null, null, account))
         .then(data => {
             cards = [];
-            console.log('cards', data);
             
             for(let i = data.length - 1; i >= data.length - 10; i--) {
                 cards.push(mapCardData(data[i]));

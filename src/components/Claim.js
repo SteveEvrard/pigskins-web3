@@ -9,6 +9,7 @@ import ViewCard from './ViewCard';
 import { BigNumber, ethers } from "ethers";
 import { signer, Contract, ContractWithSigner } from '../ethereum/ethers';
 import { setNotification } from '../store/notification/notificationSlice';
+const getRevertReason = require('eth-revert-reason')
 
 let cards = [];
 
@@ -111,7 +112,7 @@ const Claim = ( props ) => {
                     <PlayerCard key={i} attributes={attributeHash} flippable={false} width={isMobile ? '50vw' : '250px'} number={Number(number)} team={team} playerType={playerType} cardType={card.cardType} />
                     <div style={{display: 'flex', justifyContent: 'center'}}>
                         <Card sx={{width: isMobile ? '30vw' : '15vw'}}>
-                            <div>{card.sold ? `SOLD ${ethers.utils.formatEther(`${bid}`, 'ether')} ETH` : 'UNSOLD'}</div>
+                            <div>{card.sold ? <div><div>SOLD</div><div>{`${ethers.utils.formatEther(`${bid}`, 'ether')} ETH`}</div></div> : 'UNSOLD'}</div>
                         </Card>
                     </div>
                 </div>

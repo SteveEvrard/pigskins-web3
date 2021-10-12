@@ -76,9 +76,12 @@ const ViewCard = ( props ) => {
             })
         })
         .catch(err => {
-            if(err.error) setAuctionSuccess(true);
-            if(!err.error) setProcessing(false);
-            setError(err.error ? err.error.message : '');
+            if(!err.error) setAuctionSuccess(true);
+            if(err.error) {
+                setProcessing(false);
+                setError(err.error.message);
+            }
+            setProcessing(false);
         });
 
     }
@@ -96,10 +99,12 @@ const ViewCard = ( props ) => {
             })
         })
         .catch(err => {
-            console.log(err.error.message)
-            if(err.error) setAuctionSuccess(true);
-            if(!err.error) setProcessing(false);
-            setError(err.error ? err.error.message : '');
+            if(!err.error) setAuctionSuccess(true);
+            if(err.error) {
+                setProcessing(false);
+                setError(err.error.message);
+            }
+            setProcessing(false);
         });
     }
 

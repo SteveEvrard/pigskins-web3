@@ -25,9 +25,8 @@ const Auction = ( props ) => {
         setLoading(true);
         getCardsForAuction();
 
-        setLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [selectedCard]);
 
     const getCardsForAuction = async () => {
         ContractWithSigner.queryFilter(Contract.filters.AuctionOpened())
@@ -43,6 +42,7 @@ const Auction = ( props ) => {
                     });
                 }
             }
+            setLoading(false);
         })
         .catch(err => {
             console.log(err);
