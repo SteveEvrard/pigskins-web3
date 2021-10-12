@@ -48,6 +48,7 @@ const ViewCard = ( props ) => {
         setOpen(false);
         setPrice(0.01);
         setTime(300);
+        setError('');
     };
 
     const handleSuccess = () => {
@@ -191,9 +192,10 @@ const ViewCard = ( props ) => {
                     }
                 </List>
             </div>
-            <Dialog PaperProps={{style: isMobile ? {} : {width: '30vw'}}} open={open}>
+            <Dialog PaperProps={{style: isMobile ? {minWidth: '80vw'} : {width: '30vw'}}} open={open}>
                 <DialogTitle sx={{backgroundColor: '#fff', color: 'black', textAlign: 'center'}}>Auction</DialogTitle>
                 <DialogContent sx={{backgroundColor: '#fff', paddingTop: '20px !important'}}>
+                    { error ? <div style={{textAlign: 'center', color: 'red', marginBottom: '3vw'}}>{error}</div> : null}
                     { !processing ? 
                     <div>
                         <TextField
