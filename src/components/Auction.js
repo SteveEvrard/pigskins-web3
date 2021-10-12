@@ -21,34 +21,38 @@ const Auction = ( props ) => {
 
     useEffect(() => {
 
+        setCardDetail({});
         setLoading(true);
-        ContractWithSigner.queryFilter(Contract.filters.AuctionOpened())
-            .then(data => {
-                cards = [];
-                for(let i = 0; i < data.length; i++) {
-                    const {cardId, expireDate} = mapAuctionData(data[i]);
-                    console.log(Date.now() - expireDate)
-                    if(Date.now() < expireDate){ 
-                        Contract.cards(BigNumber.from(data[i].args.cardId)).then(data => {
-                            Contract.cardToCurrentBid(BigNumber.from(cardId)).then( bidInfo => {
-                                getCardDetails(data, expireDate, BigNumber.from(bidInfo).toString());
-                            })
-                        });
-                    }
-                }
-            })
-            .catch(err => {
-                console.log(err);
-                setLoading(false);
-            });
+        getCardsForAuction();
+
         setLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const getCardsForAuction = async () => {
+        ContractWithSigner.queryFilter(Contract.filters.AuctionOpened())
+        .then(data => {
+            cards = [];
+            for(let i = 0; i < data.length; i++) {
+                const {cardId, expireDate} = mapAuctionData(data[i]);
+                if(Date.now() < expireDate){ 
+                    Contract.cards(BigNumber.from(data[i].args.cardId)).then(data => {
+                        Contract.cardToCurrentBid(BigNumber.from(cardId)).then( bidInfo => {
+                            getCardDetails(data, expireDate, BigNumber.from(bidInfo).toString());
+                        })
+                    });
+                }
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            setLoading(false);
+        });
+    }
+
     function getCardDetails(card, expireDate, startingBid) {
         setLoading(true);
         cards.push({...mapCardData(card), time: expireDate, bid: startingBid})
-        console.log(cards)
         setLoading(false);
     }
 

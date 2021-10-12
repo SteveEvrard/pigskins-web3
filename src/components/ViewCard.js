@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Backdrop, Button, CircularProgress, Dialog, DialogContent, DialogTitle, Divider, List, MenuItem, Select, TextField } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCardDetail } from '../store/card-detail/cardDetailSlice';
+import { setNotification } from '../store/notification/notificationSlice';
 import PlayerCard from './PlayerCard';
 import { getTeamName, getPlayerNameById, getPlayerNumberById, getPlayerTeamById, getPlayerTypeById, getPlayerPositionById } from '../utils/PlayerUtil';
 import { ListItem } from '@mui/material';
@@ -113,13 +114,16 @@ const ViewCard = ( props ) => {
                 setAuctionSuccess(true);
                 setProcessing(false);
                 setAuctionEnded(true);
+                dispatch(setNotification(false));
             })
         })
         .catch(err => {
-            console.log(err.error.message)
-            if(err.error) setAuctionSuccess(true);
-            if(!err.error) setProcessing(false);
-            setError(err.error ? err.error.message : '');
+            if(!err.error) setAuctionSuccess(true);
+            if(err.error) {
+                setProcessing(false);
+                setError(err.error.message);
+            }
+            setProcessing(false);
         });
     }
 
@@ -211,7 +215,8 @@ const ViewCard = ( props ) => {
                                 value={time}
                                 onChange={handleTimeChange}
                             >
-                                <MenuItem value={300}>1 Hour</MenuItem>
+                                <MenuItem value={300}>5 Minutes *Test Only*</MenuItem>
+                                <MenuItem value={3600}>1 Hour</MenuItem>
                                 <MenuItem value={7200}>2 Hours</MenuItem>
                                 <MenuItem value={10800}>3 Hours</MenuItem>
                                 <MenuItem value={21600}>6 Hours</MenuItem>

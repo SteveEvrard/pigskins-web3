@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, MenuItem, Menu, Badge } from '@mui/material';
 import { Link as RouterLink, useHistory } from 'react-router-dom';
 import SportsFootballIcon from '@mui/icons-material/SportsFootball';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import MenuIcon from '@mui/icons-material/Menu';
+import { setCardDetail } from '../store/card-detail/cardDetailSlice';
 
 const headerOptions = [
     {label: 'Purchase', href: '/purchase'},
@@ -14,15 +15,16 @@ const headerOptions = [
 
 const Header = ( props ) => {
 
+    const dispatch = useDispatch();
     const history = useHistory();
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const isMobile = useSelector((state) => state.mobile.value);
     const notification = useSelector((state) => state.notification.value);
-    console.log('notification', notification)
 
     function home() {
         history.push('/')
+        dispatch(setCardDetail({}));
     }
 
     const handleClick = (event) => {

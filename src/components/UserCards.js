@@ -21,37 +21,47 @@ const UserCards = ( props ) => {
     useEffect(() => {
 
         dispatch(setCardDetail({}));
-
-        return () => {
-            dispatch(setCardDetail({}));
-        }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
+        // if(account) getCards();
         if(account) getCards();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [account])
 
     const getCards = async () => {
         setLoading(true);
-        console.log(account);
-        ContractWithSigner.queryFilter(Contract.filters.CardCreated(null, null, null, null, account))
-        .then(data => {
-            cards = [];
-            
-            for(let i = 0; i < data.length; i++) {
-                cards.push(mapCardData(data[i]));
-            }
+        ContractWithSigner.getUserOwnedCards(account)
+            .then(data => {
+                cards = [];
+
+                for(let i = 0; i < data.length; i++) {
+                    console.log(data[i])
+                    getCard(data[i])
+                }
+                setLoading(false);
+            })
+            .catch(err => {
+                console.log(err)
+                setLoading(false);
+            });
+    }
+
+    function getCard(cardId) {
+        Contract.cards(BigNumber.from(cardId)).then(card => {
+            console.log(card);
+            setLoading(true);
+            cards.push(mapCardData(card));
             setLoading(false);
-        });
+        })
     }
 
     function mapCardData(card) {
-        const cardId = BigNumber.from(card.args.cardId).toString();
-        const playerId = BigNumber.from(card.args.playerId).toString();
-        const attributeHash = BigNumber.from(card.args.attributeHash).toString();
-        const cardType = BigNumber.from(card.args.cardType).toString();
+        const cardId = BigNumber.from(card.cardId).toString();
+        const playerId = BigNumber.from(card.playerId).toString();
+        const attributeHash = BigNumber.from(card.attributeHash).toString();
+        const cardType = BigNumber.from(card.cardType).toString();
         
         return {cardId, playerId, attributeHash, cardType};
     }

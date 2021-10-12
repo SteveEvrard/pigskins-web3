@@ -60,7 +60,6 @@ const App = () => {
         const final = data.filter(auction => {
           return Date.now() > Number(BigNumber.from(auction.args.expireDate).toString() + '000')
         });
-        console.log('expired auct length', final.length)
 
         for(let i = 0; i < final.length; i++) {
           filterClosedAuctions(final[i]);
@@ -76,8 +75,6 @@ const App = () => {
 
     await ContractWithSigner.queryFilter(Contract.filters.AuctionClosed(BigNumber.from(auct.args.auctionId).toNumber(), null, null, null, null))
       .then(data => {
-        console.log('closed', data)
-        console.log(auct);
         if(data.length === 0) {
           auction.push(auct);
         }

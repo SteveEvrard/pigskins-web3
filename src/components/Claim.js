@@ -4,11 +4,11 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { Card, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCardDetail } from '../store/card-detail/cardDetailSlice';
-import {setNotification} from '../store/notification/notificationSlice';
 import { getPlayerNumberById, getPlayerTeamById, getPlayerTypeById } from '../utils/PlayerUtil';
 import ViewCard from './ViewCard';
 import { BigNumber, ethers } from "ethers";
 import { signer, Contract, ContractWithSigner } from '../ethereum/ethers';
+import { setNotification } from '../store/notification/notificationSlice';
 
 let cards = [];
 
@@ -20,33 +20,33 @@ const Claim = ( props ) => {
     const selectedCard = useSelector((state) => state.cardDetail.value);
 
     useEffect(() => {
-        dispatch(setNotification(false));
         setLoading(true);
-
-        getClaims()
+        setCardDetail({});
+        getClaims();
+        setNotification(false);
 
         return () => {
             cards = [];
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [selectedCard]);
 
     const getClaims = async () => {
         signer.getAddress().then(acct => {
             ContractWithSigner.queryFilter(Contract.filters.AuctionOpened(null, null, null, null, acct))
             .then(data => {
                 const final = data.filter(auction => {
-                    console.log(data)
                     return Date.now() > Number(BigNumber.from(auction.args.expireDate).toString() + '000')
                 });
-                console.log('end auct', final);
                 for(let i = 0; i < final.length; i++) {
                     filterClosedAuctions(final[i]);
-
                 }
                 setLoading(false);
             })
-            .catch(err => console.log(err))
+            .catch(err => {
+                console.log(err)
+                setLoading(false)
+            })
         })
     }
 
@@ -54,8 +54,6 @@ const Claim = ( props ) => {
 
         await ContractWithSigner.queryFilter(Contract.filters.AuctionClosed(BigNumber.from(auct.args.auctionId).toNumber(), null, null, null, null))
             .then(data => {
-                console.log('closed', data)
-                console.log(auct);
                 if(data.length === 0) {
                     const {cardId, expireDate} = mapAuctionData(auct);
                     Contract.cards(BigNumber.from(auct.args.cardId)).then(data => {
@@ -65,14 +63,13 @@ const Claim = ( props ) => {
                         });
                     });
                 }
-        })
+        }).catch(err => console.log(err));
     
       }
 
     function getCardDetails(card, expireDate, startingBid, sold) {
         setLoading(true);
         cards.push({...mapCardData(card), time: expireDate, bid: startingBid, sold: sold})
-        console.log(cards)
         setLoading(false);
     }
 
@@ -80,7 +77,6 @@ const Claim = ( props ) => {
         const cardId = BigNumber.from(card.args.cardId).toString();
         const expireDate = Number(BigNumber.from(card.args.expireDate).toString() + '000');
         const startingBid = BigNumber.from(card.args.startingBid).toString();
-        console.log('card id',cardId);
         
         return {cardId, expireDate, startingBid};
     }
