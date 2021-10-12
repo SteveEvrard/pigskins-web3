@@ -5,6 +5,7 @@ import SportsFootballIcon from '@mui/icons-material/SportsFootball';
 import { useDispatch, useSelector } from 'react-redux';
 import MenuIcon from '@mui/icons-material/Menu';
 import { setCardDetail } from '../store/card-detail/cardDetailSlice';
+import { styled } from '@mui/material/styles';
 
 const headerOptions = [
     {label: 'Purchase', href: '/purchase'},
@@ -12,6 +13,20 @@ const headerOptions = [
     {label: 'Claim', href: '/claim'},
     {label: 'My Cards', href: '/cards'}
 ]
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+    '& .MuiBadge-badge': {
+      right: 0,
+      top: 3
+    },
+}));
+
+const StyledDot = styled(Badge)(({ theme }) => ({
+    '& .MuiBadge-badge': {
+      right: -5,
+      top: 5
+    },
+}));
 
 const Header = ( props ) => {
 
@@ -48,7 +63,7 @@ const Header = ( props ) => {
                         color: "inherit"
                     }}
                 >
-                    {label}
+                    <Badge anchorOrigin={{vertical: 'top', horizontal: 'right'}} invisible={!(label === 'Claim' && notification)} variant='dot' color='primary'>{label}</Badge>
                 </Button>
             );
         });
@@ -68,7 +83,7 @@ const Header = ( props ) => {
                     key={label}
                     onClick={handleClose}
                 >
-                    <Badge anchorOrigin={{vertical: 'top', horizontal: 'right'}} invisible={!(label === 'Claim' && notification)} variant='dot' color='primary'>{label}</Badge>
+                    <StyledDot anchorOrigin={{vertical: 'top', horizontal: 'right'}} invisible={!(label === 'Claim' && notification)} variant='dot' color='primary'>{label}</StyledDot>
                 </MenuItem>
             )
         }) 
@@ -93,9 +108,9 @@ const Header = ( props ) => {
                     <SportsFootballIcon sx={{marginTop: '3px'}} fontSize='large'/>
                     {logo}
                 </div>
-                <Badge style={{marginTop: '3px'}} color='primary' invisible={!notification}>
+                <StyledBadge color='primary' invisible={!notification}>
                     <MenuIcon onClick={handleClick} fontSize='large'/>
-                </Badge>
+                </StyledBadge>
                 <Menu onClick={handleClose} anchorEl={anchorEl} open={open}>
                     {getMobileMenuButtons()}
                 </Menu>

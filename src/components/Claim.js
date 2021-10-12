@@ -23,7 +23,7 @@ const Claim = ( props ) => {
         setLoading(true);
         setCardDetail({});
         getClaims();
-        setNotification(false);
+        dispatch(setNotification(false));
 
         return () => {
             cards = [];

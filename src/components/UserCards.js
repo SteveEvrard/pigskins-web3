@@ -37,7 +37,6 @@ const UserCards = ( props ) => {
                 cards = [];
 
                 for(let i = 0; i < data.length; i++) {
-                    console.log(data[i])
                     getCard(data[i])
                 }
                 setLoading(false);
@@ -50,7 +49,6 @@ const UserCards = ( props ) => {
 
     function getCard(cardId) {
         Contract.cards(BigNumber.from(cardId)).then(card => {
-            console.log(card);
             setLoading(true);
             cards.push(mapCardData(card));
             setLoading(false);
