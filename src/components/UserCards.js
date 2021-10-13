@@ -15,7 +15,6 @@ const UserCards = ( props ) => {
 
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
-    const [displayMessage, setDisplayMessage] = useState(false);
     const account = useSelector((state) => state.account.value);
     const selectedCard = useSelector((state) => state.cardDetail.value);
     const isMobile = useSelector((state) => state.mobile.value);
@@ -40,10 +39,8 @@ const UserCards = ( props ) => {
             .then(data => {
                 cards = [];
                 console.log(data);
-                if(data.length === 0) setDisplayMessage(true);
                 for(let i = 0; i < data.length; i++) {
                     if(BigNumber.from(data[i]).toString() === '999999999999999'){
-                        console.log('equals', BigNumber.from(data[i]).toString());
                         continue;
                     }
                     getCard(data[i])
@@ -53,7 +50,6 @@ const UserCards = ( props ) => {
             .catch(err => {
                 console.log(err)
                 setLoading(false);
-                setDisplayMessage(true);
             });
     }
 
@@ -100,7 +96,6 @@ const UserCards = ( props ) => {
 
     return (
         <div>
-            {cards.length === 0 && displayMessage && !loading ? <PageContext header={headerMessage} body={message} /> : null}
             {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : null}
             {!loading ? displayCards(cards) : null}
             {selectedCard.playerId ? <ViewCard/> : null}

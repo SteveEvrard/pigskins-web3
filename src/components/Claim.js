@@ -11,13 +11,14 @@ import { signer, Contract, ContractWithSigner } from '../ethereum/ethers';
 import { setNotification } from '../store/notification/notificationSlice';
 import PageContext from './PageContext';
 
-let cards = [];
+// let cards = [];
 
 const Claim = ( props ) => {
 
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
     const [displayMessage, setDisplayMessage] = useState(false);
+    const [cards, setCards] = useState([]);
     const isMobile = useSelector((state) => state.mobile.value);
     const selectedCard = useSelector((state) => state.cardDetail.value);
     const headerMessage = 'No Completed Auctions';
@@ -28,12 +29,16 @@ const Claim = ( props ) => {
         setCardDetail({});
         getClaims();
         dispatch(setNotification(false));
-
+        setCards([]);
         return () => {
-            cards = [];
+            setCards([]);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedCard]);
+
+    useEffect(() => {
+        setCards([]);
+    }, [])
 
     const getClaims = async () => {
         await signer.getAddress().then(acct => {
@@ -45,11 +50,7 @@ const Claim = ( props ) => {
                 });
 
                 for(let i = 0; i < expiredAuctions.length; i++) {
-                    if(i === expiredAuctions.length - 1){
-                        filterClosedAuctions(expiredAuctions[i], true);
-                    } else {
-                        filterClosedAuctions(expiredAuctions[i]);
-                    }
+                    filterClosedAuctions(expiredAuctions[i]);
                 }
                 setLoading(false);
             })
@@ -60,11 +61,10 @@ const Claim = ( props ) => {
         })
     }
 
-    const filterClosedAuctions = async (auct, isLast) => {
+    const filterClosedAuctions = async (auct) => {
 
         await ContractWithSigner.queryFilter(Contract.filters.AuctionClosed(BigNumber.from(auct.args.auctionId).toNumber(), null, null, null, null))
             .then(data => {
-                if(data.length !== 0 && isLast) setDisplayMessage(true);
                 if(data.length === 0) {
                     const {cardId, expireDate} = mapAuctionData(auct);
                     Contract.cards(BigNumber.from(auct.args.cardId)).then(data => {
@@ -80,9 +80,7 @@ const Claim = ( props ) => {
       }
 
     function getCardDetails(card, expireDate, startingBid, sold) {
-        setLoading(true);
-        cards.push({...mapCardData(card), time: expireDate, bid: startingBid, sold: sold})
-        setLoading(false);
+        setCards(cards => [...cards, {...mapCardData(card), time: expireDate, bid: startingBid, sold: sold}]);
     }
 
     function mapAuctionData(card) {
@@ -136,9 +134,7 @@ const Claim = ( props ) => {
             <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: '8vw', color: '#fff'}}>
                 Completed Auctions
             </Typography>
-            {cards.length === 0 && displayMessage && !loading ? <PageContext header={headerMessage} body={message} /> : null}
-            {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : null}
-            {!loading ? displayCards(cards) : null}
+            {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : displayCards(cards)}
             {selectedCard.playerId ? <ViewCard isClaim={true} isAuction={false}/> : null}
         </div>
     )

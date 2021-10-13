@@ -17,7 +17,6 @@ const Auction = ( props ) => {
 
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
-    const [displayMessage, setDisplayMessage] = useState(false);
     const isMobile = useSelector((state) => state.mobile.value);
     const selectedCard = useSelector((state) => state.cardDetail.value);
 
@@ -38,7 +37,6 @@ const Auction = ( props ) => {
         .then(data => {
             cards = [];
             for(let i = 0; i < data.length; i++) {
-                if(data.length === 0) setDisplayMessage(true);
                 const {cardId, expireDate} = mapAuctionData(data[i]);
                 if(Date.now() < expireDate){ 
                     Contract.cards(BigNumber.from(data[i].args.cardId)).then(data => {
@@ -53,7 +51,6 @@ const Auction = ( props ) => {
         .catch(err => {
             console.log(err);
             setLoading(false);
-            setDisplayMessage(true);
         });
     }
 
@@ -115,7 +112,6 @@ const Auction = ( props ) => {
             <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: '8vw', color: '#fff'}}>
                 Card Auction
             </Typography>
-            {cards.length === 0 && displayMessage && !loading ? <PageContext header={headerMessage} body={message} /> : null}
             {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : null}
             {!loading ? displayCards(cards) : null}
             {selectedCard.playerId ? <ViewCard isAuction={true}/> : null}
