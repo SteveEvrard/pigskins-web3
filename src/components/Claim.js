@@ -9,7 +9,7 @@ import ViewCard from './ViewCard';
 import { BigNumber, ethers } from "ethers";
 import { signer, Contract, ContractWithSigner } from '../ethereum/ethers';
 import { setNotification } from '../store/notification/notificationSlice';
-const getRevertReason = require('eth-revert-reason')
+import PageContext from './PageContext';
 
 let cards = [];
 
@@ -17,8 +17,11 @@ const Claim = ( props ) => {
 
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
+    const [displayMessage, setDisplayMessage] = useState(false);
     const isMobile = useSelector((state) => state.mobile.value);
     const selectedCard = useSelector((state) => state.cardDetail.value);
+    const headerMessage = 'No Completed Auctions';
+    const message = 'Check back once any auctions you posted have expired'
 
     useEffect(() => {
         setLoading(true);
@@ -33,14 +36,20 @@ const Claim = ( props ) => {
     }, [selectedCard]);
 
     const getClaims = async () => {
-        signer.getAddress().then(acct => {
+        await signer.getAddress().then(acct => {
             ContractWithSigner.queryFilter(Contract.filters.AuctionOpened(null, null, null, null, acct))
             .then(data => {
-                const final = data.filter(auction => {
+
+                const expiredAuctions = data.filter(auction => {
                     return Date.now() > Number(BigNumber.from(auction.args.expireDate).toString() + '000')
                 });
-                for(let i = 0; i < final.length; i++) {
-                    filterClosedAuctions(final[i]);
+
+                for(let i = 0; i < expiredAuctions.length; i++) {
+                    if(i === expiredAuctions.length - 1){
+                        filterClosedAuctions(expiredAuctions[i], true);
+                    } else {
+                        filterClosedAuctions(expiredAuctions[i]);
+                    }
                 }
                 setLoading(false);
             })
@@ -51,10 +60,11 @@ const Claim = ( props ) => {
         })
     }
 
-    const filterClosedAuctions = async (auct) => {
+    const filterClosedAuctions = async (auct, isLast) => {
 
         await ContractWithSigner.queryFilter(Contract.filters.AuctionClosed(BigNumber.from(auct.args.auctionId).toNumber(), null, null, null, null))
             .then(data => {
+                if(data.length !== 0 && isLast) setDisplayMessage(true);
                 if(data.length === 0) {
                     const {cardId, expireDate} = mapAuctionData(auct);
                     Contract.cards(BigNumber.from(auct.args.cardId)).then(data => {
@@ -64,7 +74,8 @@ const Claim = ( props ) => {
                         });
                     });
                 }
-        }).catch(err => console.log(err));
+        })
+        .catch(err => console.log(err));
     
       }
 
@@ -123,8 +134,9 @@ const Claim = ( props ) => {
     return (
         <div>
             <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: '8vw', color: '#fff'}}>
-                Claim
+                Completed Auctions
             </Typography>
+            {cards.length === 0 && displayMessage && !loading ? <PageContext header={headerMessage} body={message} /> : null}
             {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : null}
             {!loading ? displayCards(cards) : null}
             {selectedCard.playerId ? <ViewCard isClaim={true} isAuction={false}/> : null}

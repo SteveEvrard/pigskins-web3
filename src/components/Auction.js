@@ -9,6 +9,7 @@ import ViewCard from './ViewCard';
 import Countdown from 'react-countdown';
 import { BigNumber, ethers } from "ethers";
 import { Contract, ContractWithSigner } from '../ethereum/ethers';
+import PageContext from './PageContext';
 
 let cards = [];
 
@@ -16,8 +17,12 @@ const Auction = ( props ) => {
 
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
+    const [displayMessage, setDisplayMessage] = useState(false);
     const isMobile = useSelector((state) => state.mobile.value);
     const selectedCard = useSelector((state) => state.cardDetail.value);
+
+    const headerMessage = 'No Cards for Sale';
+    const message = 'No cards are open for auction at this time. Please check back later.';
 
     useEffect(() => {
 
@@ -33,6 +38,7 @@ const Auction = ( props ) => {
         .then(data => {
             cards = [];
             for(let i = 0; i < data.length; i++) {
+                if(data.length === 0) setDisplayMessage(true);
                 const {cardId, expireDate} = mapAuctionData(data[i]);
                 if(Date.now() < expireDate){ 
                     Contract.cards(BigNumber.from(data[i].args.cardId)).then(data => {
@@ -47,12 +53,13 @@ const Auction = ( props ) => {
         .catch(err => {
             console.log(err);
             setLoading(false);
+            setDisplayMessage(true);
         });
     }
 
-    function getCardDetails(card, expireDate, startingBid) {
+    function getCardDetails(card, expireDate, currentBid) {
         setLoading(true);
-        cards.push({...mapCardData(card), time: expireDate, bid: startingBid})
+        cards.push({...mapCardData(card), time: expireDate, bid: currentBid})
         setLoading(false);
     }
 
@@ -108,6 +115,7 @@ const Auction = ( props ) => {
             <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: '8vw', color: '#fff'}}>
                 Card Auction
             </Typography>
+            {cards.length === 0 && displayMessage && !loading ? <PageContext header={headerMessage} body={message} /> : null}
             {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : null}
             {!loading ? displayCards(cards) : null}
             {selectedCard.playerId ? <ViewCard isAuction={true}/> : null}

@@ -10,7 +10,7 @@ import { styled } from '@mui/material/styles';
 const headerOptions = [
     {label: 'Purchase', href: '/purchase'},
     {label: 'Auction', href: '/auction'},
-    {label: 'Claim', href: '/claim'},
+    {label: 'Completed', href: '/claim'},
     {label: 'My Cards', href: '/cards'}
 ]
 
@@ -70,7 +70,7 @@ const Header = ( props ) => {
                         color: "inherit"
                     }}
                 >
-                    <StyledDotDesktop invisible={!(label === 'Claim' && notification)} variant='dot' color='primary'>{label}</StyledDotDesktop>
+                    <StyledDotDesktop invisible={!(label === 'Completed' && notification)} variant='dot' color='primary'>{label}</StyledDotDesktop>
                 </Button>
             );
         });
@@ -90,7 +90,7 @@ const Header = ( props ) => {
                     key={label}
                     onClick={handleClose}
                 >
-                    <StyledDot anchorOrigin={{vertical: 'top', horizontal: 'right'}} invisible={!(label === 'Claim' && notification)} variant='dot' color='primary'>{label}</StyledDot>
+                    <StyledDot anchorOrigin={{vertical: 'top', horizontal: 'right'}} invisible={!(label === 'Completed' && notification)} variant='dot' color='primary'>{label}</StyledDot>
                 </MenuItem>
             )
         }) 
