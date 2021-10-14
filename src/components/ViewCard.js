@@ -60,7 +60,7 @@ const ViewCard = ( props ) => {
     }
 
     const openDialog = () => {
-        if(isAuction) setPrice(ethers.utils.formatEther(`${card.bid}`, 'ether'));
+        if(isAuction) setPrice(ethers.utils.formatEther(`${card.currentBid}`, 'ether'));
         setOpen(true);
     }
 
@@ -135,7 +135,7 @@ const ViewCard = ( props ) => {
 
     function getHelperMessage() {
         if(isAuction) {
-            return price <= ethers.utils.formatEther(`${card.bid}`) ? 'Increase bid' : '';
+            return price <= ethers.utils.formatEther(`${card.currentBid}`) ? 'Increase bid' : '';
         }else {
             return price <= 0 ? 'Price cannot be below 0' : '';
         }
@@ -201,7 +201,7 @@ const ViewCard = ( props ) => {
                         <TextField
                             autoFocus
                             inputProps={{step: 0.01}}
-                            error={isAuction ? price <= ethers.utils.formatEther(`${card.bid}`, 'ether') : price <= 0}
+                            error={isAuction ? price <= ethers.utils.formatEther(`${card.currentBid}`, 'ether') : price <= 0}
                             color='selected'
                             margin='dense'
                             helperText={getHelperMessage()}

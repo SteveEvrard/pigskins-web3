@@ -11,8 +11,6 @@ import { signer, Contract, ContractWithSigner } from '../ethereum/ethers';
 import { setNotification } from '../store/notification/notificationSlice';
 import PageContext from './PageContext';
 
-// let cards = [];
-
 const Claim = ( props ) => {
 
     const dispatch = useDispatch();
@@ -23,11 +21,12 @@ const Claim = ( props ) => {
     const selectedCard = useSelector((state) => state.cardDetail.value);
     const headerMessage = 'No Completed Auctions';
     const message = 'Check back once any auctions you posted have expired'
+    const getAccount = async () => signer.getAddress();
 
     useEffect(() => {
         setLoading(true);
         setCardDetail({});
-        getClaims();
+        getCompletedAuctions();
         dispatch(setNotification(false));
         setCards([]);
         return () => {
@@ -38,66 +37,111 @@ const Claim = ( props ) => {
 
     useEffect(() => {
         setCards([]);
+        getCompletedAuctions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    const getClaims = async () => {
-        await signer.getAddress().then(acct => {
-            ContractWithSigner.queryFilter(Contract.filters.AuctionOpened(null, null, null, null, acct))
-            .then(data => {
+    const getCompletedAuctions = async () => {
+        const account = await getAccount(); 
+        const openedAuctions = await getOpenedAuctionsByAccount(account);
+        const expiredAuctions = filterExpiredAuctions(openedAuctions);
+        const expiredAuctionIds = mapExpiredAuctionIds(expiredAuctions);
+        const closedAuctions = await filterClosedAuctions(expiredAuctions);
+        const closedAuctionIds = mapClosedAuctionIds(closedAuctions);
+        const unclosedAuctionIds = findUnclosedAuctions(expiredAuctionIds, closedAuctionIds);
+        const auctionDetails = await getUnclosedAuctionDetails(unclosedAuctionIds);
+        const cardsWithProps = await getCardDetailsByAuctionId(auctionDetails);
+        const mappedCards = mapAllCardAuctionInfo(auctionDetails, cardsWithProps);
+        const cardsMappedToString = mappedCards.map(card => {
+            return mapBigNumberToData(card);
+        });
+        setCards(cardsMappedToString);
+        setLoading(false);
+        if(mappedCards.length === 0) setDisplayMessage(true);
+    }
 
-                const expiredAuctions = data.filter(auction => {
-                    return Date.now() > Number(BigNumber.from(auction.args.expireDate).toString() + '000')
-                });
+    const getOpenedAuctionsByAccount = async (acct) => {
+        return await ContractWithSigner.queryFilter(Contract.filters.AuctionOpened(null, null, null, null, acct));
+    }
 
-                for(let i = 0; i < expiredAuctions.length; i++) {
-                    filterClosedAuctions(expiredAuctions[i]);
-                }
-                setLoading(false);
-            })
-            .catch(err => {
-                console.log(err)
-                setLoading(false)
-            })
+    const filterExpiredAuctions = (auctions) => {
+        return auctions.filter(auction => {
+            return Date.now() > Number(BigNumber.from(auction.args.expireDate).toString() + '000')
+        });
+    }
+
+    const filterClosedAuctions = async (auctions) => {
+        let promises = [];
+
+        for(let i = 0; i < auctions.length; i++) {
+            promises.push(
+                ContractWithSigner.queryFilter(Contract.filters.AuctionClosed(BigNumber.from(auctions[i].args.auctionId).toNumber(), null, null, null, null))
+            );
+        }
+
+        return Promise.all(promises);
+    }
+
+    const mapExpiredAuctionIds = (auctions) => {
+        return auctions.map(auction => {
+            return BigNumber.from(auction.args.auctionId).toString();
         })
     }
 
-    const filterClosedAuctions = async (auct) => {
-
-        await ContractWithSigner.queryFilter(Contract.filters.AuctionClosed(BigNumber.from(auct.args.auctionId).toNumber(), null, null, null, null))
-            .then(data => {
-                if(data.length === 0) {
-                    const {cardId, expireDate} = mapAuctionData(auct);
-                    Contract.cards(BigNumber.from(auct.args.cardId)).then(data => {
-                        Contract.cardToCurrentBid(BigNumber.from(cardId)).then( bidInfo => {
-                            const cardSold = BigNumber.from(bidInfo).gt(BigNumber.from(auct.args.startingBid));
-                            getCardDetails(data, expireDate, BigNumber.from(bidInfo).toString(), cardSold);
-                        });
-                    });
-                }
+    const mapClosedAuctionIds = (auctions) => {
+        return auctions.map(auction => {
+            return auction.length > 0 ? BigNumber.from(auction[0].args.auctionId).toString() : '';
         })
-        .catch(err => console.log(err));
-    
-      }
-
-    function getCardDetails(card, expireDate, startingBid, sold) {
-        setCards(cards => [...cards, {...mapCardData(card), time: expireDate, bid: startingBid, sold: sold}]);
     }
 
-    function mapAuctionData(card) {
-        const cardId = BigNumber.from(card.args.cardId).toString();
-        const expireDate = Number(BigNumber.from(card.args.expireDate).toString() + '000');
-        const startingBid = BigNumber.from(card.args.startingBid).toString();
-        
-        return {cardId, expireDate, startingBid};
+    const findUnclosedAuctions = (expiredAuctions, closedAuctions) => {
+        return expiredAuctions.filter(id => !closedAuctions.includes(id));
     }
 
-    function mapCardData(card) {
-        const cardId = BigNumber.from(card.cardId).toString();
-        const playerId = BigNumber.from(card.playerId).toString();
+    const getCardDetailsByAuctionId = async (auctions) => {
+        let promises = [];
+
+        for(let i = 0; i < auctions.length; i++) {
+            promises.push(
+                ContractWithSigner.cards(BigNumber.from(auctions[i].cardId)),
+            )
+        }
+
+        return Promise.all(promises);
+    }
+
+    const getUnclosedAuctionDetails = async (auctionIds) => {
+        let promises = []
+
+        for(let i = 0; i < auctionIds.length; i++) {
+            promises.push(
+                ContractWithSigner.auctionIdToAuction(BigNumber.from(auctionIds[i]))
+            )
+        }
+
+        return Promise.all(promises);
+    }
+
+    const mapAllCardAuctionInfo = (auctionDetails, cardInfo) => {
+        const mappedData = auctionDetails.map(auction => {
+            const cardDetails = cardInfo.find(card => BigNumber.from(card.cardId).eq(BigNumber.from(auction.cardId)))
+            return {...cardDetails, ...auction}
+        })
+
+        return mappedData;
+    }
+
+    const mapBigNumberToData = (card) => {
         const attributeHash = BigNumber.from(card.attributeHash).toString();
+        const auctionId = BigNumber.from(card.auctionId).toString();
+        const bidCount = BigNumber.from(card.bidCount).toString();
+        const cardId = BigNumber.from(card.cardId).toString();
         const cardType = BigNumber.from(card.cardType).toString();
-        
-        return {cardId, playerId, attributeHash, cardType};
+        const currentBid = BigNumber.from(card.currentBid).toString();
+        const expireDate = BigNumber.from(card.expireDate).toString() + '100';
+        const playerId = BigNumber.from(card.playerId).toString();
+
+        return {attributeHash, auctionId, bidCount, cardId, cardType, currentBid, expireDate, playerId}
     }
 
     const setCardToView = (card) => {
@@ -112,16 +156,16 @@ const Claim = ( props ) => {
 
     function createCards(cards) {
         return cards.map((card, i) => {
-            const { playerId, cardType, attributeHash, cardId, bid } = card;
+            const {attributeHash, auctionId, bidCount, cardId, cardType, currentBid, expireDate, playerId} = card;
             const team = getPlayerTeamById(playerId);
             const number = getPlayerNumberById(playerId);
             const playerType = getPlayerTypeById(playerId);
             return (
-                <div key={i} style={{marginBottom: '3vw', cursor: 'pointer'}} onClick={() => setCardToView({team, number, playerId, cardType, attributeHash, cardId, bid})}>
+                <div key={i} style={{marginBottom: '3vw', cursor: 'pointer'}} onClick={() => setCardToView({attributeHash, auctionId, bidCount, cardId, cardType, currentBid, expireDate, playerId})}>
                     <PlayerCard key={i} attributes={attributeHash} flippable={false} width={isMobile ? '50vw' : '250px'} number={Number(number)} team={team} playerType={playerType} cardType={card.cardType} />
                     <div style={{display: 'flex', justifyContent: 'center'}}>
                         <Card sx={{width: isMobile ? '30vw' : '15vw'}}>
-                            <div>{card.sold ? <div><div>SOLD</div><div>{`${ethers.utils.formatEther(`${bid}`, 'ether')} ETH`}</div></div> : 'UNSOLD'}</div>
+                            <div>{bidCount > 0 ? <div><div>SOLD</div><div>{`${ethers.utils.formatEther(`${currentBid}`, 'ether')} ETH`}</div></div> : 'UNSOLD'}</div>
                         </Card>
                     </div>
                 </div>
@@ -134,6 +178,7 @@ const Claim = ( props ) => {
             <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: '8vw', color: '#fff'}}>
                 Completed Auctions
             </Typography>
+            {displayMessage ? <PageContext header={headerMessage} body={message} /> : null}
             {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : displayCards(cards)}
             {selectedCard.playerId ? <ViewCard isClaim={true} isAuction={false}/> : null}
         </div>

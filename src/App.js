@@ -51,25 +51,31 @@ const App = () => {
 
     dispatch(setMobile(isMobile));
     provider.getBalance(contractAddress).then(data => console.log('balance', ethers.utils.formatEther(BigNumber.from(data).toString()).toString()));
-    signer.getAddress().then(acct => {
+    // signer.getAddress().then(acct => {
 
-      dispatch(setAccount(acct));
+    //   dispatch(setAccount(acct));
 
-      ContractWithSigner.queryFilter(Contract.filters.AuctionOpened(null, null, null, null, acct))
-      .then(data => {
-        const final = data.filter(auction => {
-          return Date.now() > Number(BigNumber.from(auction.args.expireDate).toString() + '000')
-        });
+    //   ContractWithSigner.queryFilter(Contract.filters.AuctionOpened(null, null, null, null, acct))
+    //   .then(data => {
+    //     const final = data.filter(auction => {
+    //       return Date.now() > Number(BigNumber.from(auction.args.expireDate).toString() + '000')
+    //     });
 
-        for(let i = 0; i < final.length; i++) {
-          filterClosedAuctions(final[i]);
-        }
-      });
+    //     for(let i = 0; i < final.length; i++) {
+    //       filterClosedAuctions(final[i]);
+    //     }
+    //   });
 
-    });
+    // });
+
+    getAccount();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[]);
+
+  const getAccount = async () => {
+    await signer.getAddress().then(acct => dispatch(setAccount(acct)));
+  }
 
   const filterClosedAuctions = async (auct) => {
 

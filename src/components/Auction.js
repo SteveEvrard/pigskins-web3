@@ -11,12 +11,12 @@ import { BigNumber, ethers } from "ethers";
 import { Contract, ContractWithSigner } from '../ethereum/ethers';
 import PageContext from './PageContext';
 
-let cards = [];
-
 const Auction = ( props ) => {
 
     const dispatch = useDispatch();
+    const [cards, setCards] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [displayMessage, setDisplayMessage] = useState(false);
     const isMobile = useSelector((state) => state.mobile.value);
     const selectedCard = useSelector((state) => state.cardDetail.value);
 
@@ -27,54 +27,87 @@ const Auction = ( props ) => {
 
         setCardDetail({});
         setLoading(true);
-        getCardsForAuction();
+        // getCardsForAuction();
+        getOpenAuctions();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedCard]);
 
-    const getCardsForAuction = async () => {
-        ContractWithSigner.queryFilter(Contract.filters.AuctionOpened())
-        .then(data => {
-            cards = [];
-            for(let i = 0; i < data.length; i++) {
-                const {cardId, expireDate} = mapAuctionData(data[i]);
-                if(Date.now() < expireDate){ 
-                    Contract.cards(BigNumber.from(data[i].args.cardId)).then(data => {
-                        Contract.cardToCurrentBid(BigNumber.from(cardId)).then( bidInfo => {
-                            getCardDetails(data, expireDate, BigNumber.from(bidInfo).toString());
-                        })
-                    });
-                }
-            }
-            setLoading(false);
-        })
-        .catch(err => {
-            console.log(err);
-            setLoading(false);
+    const getOpenAuctions = async () => {
+        const allAuctions = await getAllAuctions();
+        console.log('all', allAuctions);
+        const openAuctions = filterExpiredAuctions(allAuctions);
+        console.log('open', openAuctions);
+        const auctionDetails = await getOpenAuctionDetails(openAuctions);
+        console.log('details', auctionDetails);
+        const cardDetails = await getCardDetailsByAuctionId(openAuctions);
+        console.log('card det', cardDetails);
+        const mappedCards = mapAllCardAuctionInfo(auctionDetails, cardDetails);
+        console.log('mapped', mappedCards);
+        const cardsMappedToString = mappedCards.map(card => {
+            return mapBigNumberToData(card);
+        });
+        console.log('cards mapped', cardsMappedToString);
+        setCards(cardsMappedToString);
+        setLoading(false);
+        if(mappedCards.length === 0) setDisplayMessage(true);
+    }
+
+    const getAllAuctions = async () => {
+        return ContractWithSigner.queryFilter(Contract.filters.AuctionOpened());
+    }
+
+    const filterExpiredAuctions = (auctions) => {
+        return auctions.filter(auction => {
+            return Date.now() < Number(BigNumber.from(auction.args.expireDate).toString() + '000')
         });
     }
 
-    function getCardDetails(card, expireDate, currentBid) {
-        setLoading(true);
-        cards.push({...mapCardData(card), time: expireDate, bid: currentBid})
-        setLoading(false);
+    const getOpenAuctionDetails = async (auctions) => {
+        let promises = []
+        console.log('info', auctions);
+
+        for(let i = 0; i < auctions.length; i++) {
+            promises.push(
+                ContractWithSigner.auctionIdToAuction(BigNumber.from(auctions[i].args.auctionId))
+            )
+        }
+
+        return Promise.all(promises);
     }
 
-    function mapAuctionData(card) {
-        const cardId = BigNumber.from(card.args.cardId).toString();
-        const expireDate = Number(BigNumber.from(card.args.expireDate).toString() + '000');
-        const startingBid = BigNumber.from(card.args.startingBid).toString();
-        
-        return {cardId, expireDate, startingBid};
+    const getCardDetailsByAuctionId = async (auctions) => {
+        let promises = [];
+
+        for(let i = 0; i < auctions.length; i++) {
+            promises.push(
+                ContractWithSigner.cards(BigNumber.from(auctions[i].args.cardId)),
+            )
+        }
+
+        return Promise.all(promises);
     }
 
-    function mapCardData(card) {
-        const cardId = BigNumber.from(card.cardId).toString();
-        const playerId = BigNumber.from(card.playerId).toString();
+    const mapAllCardAuctionInfo = (auctionDetails, cardInfo) => {
+        const mappedData = auctionDetails.map(auction => {
+            const cardDetails = cardInfo.find(card => BigNumber.from(card.cardId).eq(BigNumber.from(auction.cardId)))
+            return {...cardDetails, ...auction}
+        })
+
+        return mappedData;
+    }
+
+    const mapBigNumberToData = (card) => {
         const attributeHash = BigNumber.from(card.attributeHash).toString();
+        const auctionId = BigNumber.from(card.auctionId).toString();
+        const bidCount = BigNumber.from(card.bidCount).toString();
+        const cardId = BigNumber.from(card.cardId).toString();
         const cardType = BigNumber.from(card.cardType).toString();
-        
-        return {cardId, playerId, attributeHash, cardType};
+        const currentBid = BigNumber.from(card.currentBid).toString();
+        const expireDate = BigNumber.from(card.expireDate).toString() + '100';
+        const playerId = BigNumber.from(card.playerId).toString();
+
+        return {attributeHash, auctionId, bidCount, cardId, cardType, currentBid, expireDate, playerId}
     }
 
     const setCardToView = (card) => {
@@ -89,17 +122,19 @@ const Auction = ( props ) => {
 
     function createCards(cards) {
         return cards.map((card, i) => {
-            const { playerId, cardType, attributeHash, time, cardId, bid } = card;
+            console.log('card', card)
+            const {attributeHash, auctionId, bidCount, cardId, cardType, currentBid, expireDate, playerId} = card;
             const team = getPlayerTeamById(playerId);
             const number = getPlayerNumberById(playerId);
             const playerType = getPlayerTypeById(playerId);
             return (
-                <div key={i} style={{marginBottom: '3vw', cursor: 'pointer'}} onClick={() => setCardToView({team, number, playerId, cardType, attributeHash, cardId, bid})}>
-                    <PlayerCard key={i} attributes={attributeHash} flippable={false} width={isMobile ? '50vw' : '250px'} number={Number(number)} team={team} playerType={playerType} cardType={card.cardType} />
+                <div key={i} style={{marginBottom: '3vw', cursor: 'pointer'}} onClick={() => setCardToView({attributeHash, auctionId, bidCount, cardId, cardType, currentBid, expireDate, playerId})}>
+                    <PlayerCard key={i} attributes={attributeHash} flippable={false} width={isMobile ? '50vw' : '250px'} number={Number(number)} team={team} playerType={playerType} cardType={cardType} />
                     <div style={{display: 'flex', justifyContent: 'center'}}>
                         <Card sx={{width: isMobile ? '30vw' : '15vw'}}>
-                            <Countdown zeroPadDays={0} date={time}></Countdown>
-                            <div>{ethers.utils.formatEther(`${bid}`, 'ether')} ETH</div>
+                            <Countdown zeroPadDays={0} date={Number(expireDate)}></Countdown>
+                            <div>{ethers.utils.formatEther(`${currentBid}`, 'ether')} ETH</div>
+                            <div>BIDS: {bidCount}</div>
                         </Card>
                     </div>
                 </div>
@@ -112,8 +147,8 @@ const Auction = ( props ) => {
             <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: '8vw', color: '#fff'}}>
                 Card Auction
             </Typography>
-            {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : null}
-            {!loading ? displayCards(cards) : null}
+            {displayMessage ? <PageContext header={headerMessage} body={message} /> : null}
+            {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : displayCards(cards)}
             {selectedCard.playerId ? <ViewCard isAuction={true}/> : null}
         </div>
     )
