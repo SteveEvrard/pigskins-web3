@@ -5,7 +5,7 @@ import { getPlayerNumberById, getPlayerTeamById, getPlayerTypeById } from '../ut
 import { useDispatch, useSelector } from 'react-redux';
 import { setCardDetail } from '../store/card-detail/cardDetailSlice';
 import ViewCard from './ViewCard';
-import { Contract, ContractWithSigner } from '../ethereum/ethers';
+import { signer, Contract, ContractWithSigner } from '../ethereum/ethers';
 import { BigNumber } from "ethers";
 import PageContext from './PageContext';
 
@@ -14,8 +14,10 @@ let cards = [];
 const UserCards = ( props ) => {
 
     const dispatch = useDispatch();
+    const [cards, setCards] = useState([]);
     const [loading, setLoading] = useState(false);
-    const account = useSelector((state) => state.account.value);
+    const [displayMessage, setDisplayMessage] = useState(false);
+    const getAccount = async () => signer.getAddress();
     const selectedCard = useSelector((state) => state.cardDetail.value);
     const isMobile = useSelector((state) => state.mobile.value);
     const headerMessage = 'No Cards Owned';
@@ -23,35 +25,67 @@ const UserCards = ( props ) => {
 
     useEffect(() => {
 
+        getCards();
         dispatch(setCardDetail({}));
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    useEffect(() => {
-        // if(account) getCards();
-        if(account) getCards();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [account])
-
     const getCards = async () => {
-        setLoading(true);
-        ContractWithSigner.getUserOwnedCards(account)
-            .then(data => {
-                cards = [];
-                console.log(data);
-                for(let i = 0; i < data.length; i++) {
-                    if(BigNumber.from(data[i]).toString() === '999999999999999'){
-                        continue;
-                    }
-                    getCard(data[i])
-                }
-                setLoading(false);
-            })
-            .catch(err => {
-                console.log(err)
-                setLoading(false);
-            });
+        const account = await getAccount();
+        const allCardIds = await getAllCardIds(account);
+        console.log('ids', allCardIds);
+        const ownedCards = filterCurrentlyOwnedCards(allCardIds);
+        console.log('owned', ownedCards)
+        const cardsWithDetails = await getCardDetailsById(ownedCards);
+        console.log('details', cardsWithDetails);
+        const mappedCards = cardsWithDetails.map(card => {
+            return mapCardData(card)
+        });
+        setLoading(false);
+        setCards(mappedCards);
+        if(mappedCards.length === 0) setDisplayMessage(true);
     }
+
+    const getAllCardIds = async (acct) => {
+        return ContractWithSigner.getUserOwnedCards(acct);
+    }
+
+    const filterCurrentlyOwnedCards = (cardIds) => {
+        return cardIds.filter(cardId => {
+            return BigNumber.from(cardId).toString() !== '999999999999999'
+        })
+    }
+
+    const getCardDetailsById = async (cardIds) => {
+        let promises = [];
+
+        for(let i = 0; i < cardIds.length; i++) {
+            promises.push(
+                ContractWithSigner.cards(BigNumber.from(cardIds[i]).toNumber())
+            )
+        }
+
+        return Promise.all(promises);
+    }
+    // const getCards = async () => {
+    //     setLoading(true);
+    //     ContractWithSigner.getUserOwnedCards(account)
+    //         .then(data => {
+    //             cards = [];
+    //             console.log(data);
+    //             for(let i = 0; i < data.length; i++) {
+    //                 if(BigNumber.from(data[i]).toString() === '999999999999999'){
+    //                     continue;
+    //                 }
+    //                 getCard(data[i])
+    //             }
+    //             setLoading(false);
+    //         })
+    //         .catch(err => {
+    //             console.log(err)
+    //             setLoading(false);
+    //         });
+    // }
 
     function getCard(cardId) {
         Contract.cards(BigNumber.from(cardId)).then(card => {
@@ -96,8 +130,8 @@ const UserCards = ( props ) => {
 
     return (
         <div>
-            {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : null}
-            {!loading ? displayCards(cards) : null}
+            {displayMessage ? <PageContext header={headerMessage} body={message} /> : null}
+            {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : displayCards(cards)}
             {selectedCard.playerId ? <ViewCard/> : null}
         </div>
     )

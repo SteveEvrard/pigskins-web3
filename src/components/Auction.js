@@ -35,19 +35,13 @@ const Auction = ( props ) => {
 
     const getOpenAuctions = async () => {
         const allAuctions = await getAllAuctions();
-        console.log('all', allAuctions);
         const openAuctions = filterExpiredAuctions(allAuctions);
-        console.log('open', openAuctions);
         const auctionDetails = await getOpenAuctionDetails(openAuctions);
-        console.log('details', auctionDetails);
         const cardDetails = await getCardDetailsByAuctionId(openAuctions);
-        console.log('card det', cardDetails);
         const mappedCards = mapAllCardAuctionInfo(auctionDetails, cardDetails);
-        console.log('mapped', mappedCards);
         const cardsMappedToString = mappedCards.map(card => {
             return mapBigNumberToData(card);
         });
-        console.log('cards mapped', cardsMappedToString);
         setCards(cardsMappedToString);
         setLoading(false);
         if(mappedCards.length === 0) setDisplayMessage(true);
@@ -65,7 +59,6 @@ const Auction = ( props ) => {
 
     const getOpenAuctionDetails = async (auctions) => {
         let promises = []
-        console.log('info', auctions);
 
         for(let i = 0; i < auctions.length; i++) {
             promises.push(
@@ -121,8 +114,9 @@ const Auction = ( props ) => {
     }
 
     function createCards(cards) {
+        
         return cards.map((card, i) => {
-            console.log('card', card)
+
             const {attributeHash, auctionId, bidCount, cardId, cardType, currentBid, expireDate, playerId} = card;
             const team = getPlayerTeamById(playerId);
             const number = getPlayerNumberById(playerId);
@@ -132,7 +126,7 @@ const Auction = ( props ) => {
                     <PlayerCard key={i} attributes={attributeHash} flippable={false} width={isMobile ? '50vw' : '250px'} number={Number(number)} team={team} playerType={playerType} cardType={cardType} />
                     <div style={{display: 'flex', justifyContent: 'center'}}>
                         <Card sx={{width: isMobile ? '30vw' : '15vw'}}>
-                            <Countdown zeroPadDays={0} date={Number(expireDate)}></Countdown>
+                            <Countdown onComplete={getOpenAuctions} zeroPadDays={0} date={Number(expireDate)}></Countdown>
                             <div>{ethers.utils.formatEther(`${currentBid}`, 'ether')} ETH</div>
                             <div>BIDS: {bidCount}</div>
                         </Card>
