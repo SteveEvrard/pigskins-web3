@@ -11,9 +11,8 @@ import { useDispatch } from 'react-redux';
 import { setAccount } from './store/account/accountSlice';
 import { useMediaQuery } from 'react-responsive';
 import { setMobile } from './store/device/deviceSlice';
-import { signer, provider, contractAddress, ContractWithSigner, Contract } from './ethereum/ethers';
+import { signer, provider, contractAddress } from './ethereum/ethers';
 import { BigNumber, ethers } from "ethers";
-import { setNotification } from './store/notification/notificationSlice';
 import Claim from './components/Claim';
 
 const theme = createTheme({
@@ -44,29 +43,12 @@ const App = () => {
     query: '(max-width: 428px)'
   });
   const dispatch = useDispatch();
-  let auction = []
 
 
   useEffect(() => {
 
     dispatch(setMobile(isMobile));
     provider.getBalance(contractAddress).then(data => console.log('balance', ethers.utils.formatEther(BigNumber.from(data).toString()).toString()));
-    // signer.getAddress().then(acct => {
-
-    //   dispatch(setAccount(acct));
-
-    //   ContractWithSigner.queryFilter(Contract.filters.AuctionOpened(null, null, null, null, acct))
-    //   .then(data => {
-    //     const final = data.filter(auction => {
-    //       return Date.now() > Number(BigNumber.from(auction.args.expireDate).toString() + '000')
-    //     });
-
-    //     for(let i = 0; i < final.length; i++) {
-    //       filterClosedAuctions(final[i]);
-    //     }
-    //   });
-
-    // });
 
     getAccount();
 
@@ -75,20 +57,6 @@ const App = () => {
 
   const getAccount = async () => {
     await signer.getAddress().then(acct => dispatch(setAccount(acct)));
-  }
-
-  const filterClosedAuctions = async (auct) => {
-
-    await ContractWithSigner.queryFilter(Contract.filters.AuctionClosed(BigNumber.from(auct.args.auctionId).toNumber(), null, null, null, null))
-      .then(data => {
-        if(data.length === 0) {
-          auction.push(auct);
-        }
-        if(auction.length > 0){
-          dispatch(setNotification(true));
-        } 
-    })
-
   }
 
   return (

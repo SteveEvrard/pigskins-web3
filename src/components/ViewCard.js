@@ -1,30 +1,35 @@
-import React, { useState } from 'react';
-import { Backdrop, Button, CircularProgress, Dialog, DialogContent, DialogTitle, Divider, List, MenuItem, Select, TextField } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Backdrop, Box, Button, CircularProgress, Dialog, DialogContent, DialogTitle, Divider, List, MenuItem, Select, Tab, Tabs, TextField } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCardDetail } from '../store/card-detail/cardDetailSlice';
+import { setCardDetail, setDisplayCard } from '../store/card-detail/cardDetailSlice';
+import { setDisplayDialog, setPrice, setAuctionTime } from '../store/view-card/viewCardSlice';
 import { setNotification } from '../store/notification/notificationSlice';
 import PlayerCard from './PlayerCard';
 import { getTeamName, getPlayerNameById, getPlayerNumberById, getPlayerTeamById, getPlayerTypeById, getPlayerPositionById } from '../utils/PlayerUtil';
 import { ListItem } from '@mui/material';
 import { resolveCrown, resolveFootball, resolveWater } from '../utils/ImageCreator';
 import blank from '../images/blank.png';
-import { Contract, ContractWithSigner } from '../ethereum/ethers';
+import { Contract, ContractWithSigner, signer } from '../ethereum/ethers';
 import { BigNumber, ethers } from "ethers";
+import CreateAuctionDialog from './dialogs/CreateAuctionDialog';
+import { TabContext, TabList, TabPanel } from '@mui/lab';
+import Countdown from 'react-countdown';
+import PlaceBidDialog from './dialogs/PlaceBidDialog';
+import ClaimDialog from './dialogs/ClaimDialog';
 
 const ViewCard = ( props ) => {
 
-    const [open, setOpen] = useState(false);
+    const displayDialog = useSelector((state) => state.viewCard.value.displayDialog);
     const [error, setError] = useState('');
     const [auctionSuccess, setAuctionSuccess] = useState(false);
     const [processing, setProcessing] = useState(false);
     const [auctionEnded, setAuctionEnded] = useState(false);
-    const [time, setTime] = useState(300);
-    const [price, setPrice] = useState(0.01);
+    const getAccount = async () => signer.getAddress();
     const dispatch = useDispatch();
     const isAuction = props.isAuction;
     const isClaim = props.isClaim;
-    const account = useSelector((state) => state.account.value);
-    const card = useSelector((state) => state.cardDetail.value);
+    const view = props.view;
+    const card = useSelector((state) => state.cardDetail.value.card);
     const isMobile = useSelector((state) => state.mobile.value);
     const cardTypes = {
         0: 'Common',
@@ -32,27 +37,39 @@ const ViewCard = ( props ) => {
         2: 'Exotic',
         3: 'Legendary'
     }
+    const price = 0;
 
     const mobileStyle = {display: 'block', color: 'white', marginTop: '20vw'};
     const mobileListStyle = {margin: 'auto', fontFamily: "Work Sans, sans-serif", backgroundColor: '#31572c', fontSize: '5vw', width: '90vw', marginBottom: '5vw'};
 
     const desktopStyle = {display: 'flex', color: 'white', marginTop: '7vw'};
-    const desktopListStyle = {fontFamily: "Work Sans, sans-serif", backgroundColor: '#31572c', fontSize: '3.5vw', width: '50vw'};
+    const desktopListStyle = {marginTop: '2vw', fontFamily: "Work Sans, sans-serif", backgroundColor: '#31572c', fontSize: '3.5vw', width: '50vw'};
+
+    useEffect(() => {
+        return () => {
+            dispatch(setCardDetail({}));
+            dispatch(setDisplayCard(false));
+            dispatch(setDisplayDialog(false));
+            dispatch(setPrice(0.01));
+            dispatch(setAuctionTime(3600));
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleClose = () => {
+        dispatch(setDisplayCard(false))
         dispatch(setCardDetail({}));
         setAuctionEnded(false);
     };
 
     const handleCancel = () => {
-        setOpen(false);
-        setPrice(0.01);
-        setTime(300);
+        dispatch(setDisplayDialog(false));
+        dispatch(setPrice(0.01));
         setError('');
     };
 
     const handleSuccess = () => {
-        setOpen(false);
+        // setOpen(false);
         setProcessing(false);
         setAuctionSuccess(false);
         setError('');
@@ -60,53 +77,7 @@ const ViewCard = ( props ) => {
     }
 
     const openDialog = () => {
-        if(isAuction) setPrice(ethers.utils.formatEther(`${card.currentBid}`, 'ether'));
-        setOpen(true);
-    }
-
-    const setAuction = async () => {
-        setProcessing(true);
-
-        const cardId = BigNumber.from(card.cardId).toNumber();
-        const startingBid = ethers.utils.parseUnits(price.toString());
-
-        ContractWithSigner.createCardAuction(cardId, startingBid, time, {from: account})
-        .then(() => {
-            Contract.once(Contract.filters.AuctionOpened(null, cardId), () => {
-                setAuctionSuccess(true);
-            })
-        })
-        .catch(err => {
-            if(!err.error) setAuctionSuccess(true);
-            if(err.error) {
-                setProcessing(false);
-                setError(err.error.message);
-            }
-            setProcessing(false);
-        });
-
-    }
-
-    const placeBid = async () => {
-        setProcessing(true);
-
-        const cardId = BigNumber.from(card.cardId).toNumber();
-        const bid = ethers.utils.parseUnits(price.toString());
-
-        ContractWithSigner.placeBid(cardId, {from: account, value: bid})
-        .then(() => {
-            Contract.once(Contract.filters.BidPlaced(null, cardId), () => {
-                setAuctionSuccess(true);
-            })
-        })
-        .catch(err => {
-            if(!err.error) setAuctionSuccess(true);
-            if(err.error) {
-                setProcessing(false);
-                setError(err.error.message);
-            }
-            setProcessing(false);
-        });
+        dispatch(setDisplayDialog(true));
     }
 
     const closeAuction = async () => {
@@ -114,7 +85,7 @@ const ViewCard = ( props ) => {
         setAuctionEnded(false);
         const cardId = BigNumber.from(card.cardId).toNumber();
 
-        ContractWithSigner.endAuction(cardId, {from: account})
+        ContractWithSigner.endAuction(cardId, {from: ''})
         .then(() => {
             Contract.once(Contract.filters.AuctionClosed(null, cardId), () => {
                 setAuctionSuccess(true);
@@ -141,14 +112,6 @@ const ViewCard = ( props ) => {
         }
     }
 
-    const handleTimeChange = (event) => {
-        setTime(event.target.value);
-    };
-
-    const handlePriceChange = (event) => {
-        setPrice(event.target.value);
-    };
-
     const getItems = () => {
         let items = [];
         if(blank.toString() !== resolveFootball(card.attributeHash).toString()) items.push('Football');
@@ -159,40 +122,180 @@ const ViewCard = ( props ) => {
         return items.join(', ');
     }
 
+    const PlayerInfo = ( {card, mobile} ) => {
+        return (
+            <List sx={mobile ? mobileListStyle : desktopListStyle}>
+                <ListItem>Name: {getPlayerNameById(card.playerId)}</ListItem>
+                <Divider />
+                <ListItem>Position: {getPlayerPositionById(card.playerId)}</ListItem>
+                <Divider />
+                <ListItem>Team: {getTeamName(card.playerId)}</ListItem>
+                <Divider />
+                <ListItem>Card Type: {cardTypes[card.cardType]}</ListItem>
+                <Divider />
+                <ListItem>Items: {getItems()}</ListItem>
+            </List>
+        )
+    }
+
+    const BidInfo = ( {card, mobile} ) => {
+        return (
+            <List sx={mobile ? mobileListStyle : desktopListStyle}>
+                <ListItem>Current Price: {ethers.utils.formatEther(card.currentBid)} ETH</ListItem>
+                <Divider />
+                <ListItem>Bids Placed: {card.bidCount}</ListItem>
+                <Divider />
+                <ListItem>Time Remaining:<span style={{marginRight: '3vw'}}></span><Countdown className='' zeroPadDays={0} date={Number(card.expireDate)}></Countdown></ListItem>
+            </List>
+        )
+    }
+
+    const CompletedAuctionInfo = ( {card, mobile} ) => {
+        return (
+            <List sx={mobile ? mobileListStyle : desktopListStyle}>
+                {
+                Number(card.bidCount) > 0 ? 
+                    <ListItem>Sale Price: {ethers.utils.formatEther(card.currentBid)} ETH</ListItem> 
+                    : 
+                    <ListItem>Auction Expired Without Bids</ListItem>
+                }
+                {Number(card.bidCount) > 0 ? <Divider /> : null}
+                {Number(card.bidCount) > 0 ? <ListItem>Bids Placed: {card.bidCount}</ListItem> : null}
+            </List>
+        )
+    }
+
+    const AuctionInfo = ( {card, mobile} ) => {
+        const [value, setValue] = React.useState('1');
+        const handleChange = (event, newValue) => {
+            setValue(newValue);
+        };
+
+        return (
+            <div style={{display: 'flex', justifyContent: 'center'}}>
+                <Box sx={{ backgroundColor: '#31572c', width: mobile ? '90vw' : '50vw', typography: 'body1' }}>
+                    <TabContext value={value}>
+                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                            <TabList textColor='#fff' onChange={handleChange} aria-label="lab API tabs example">
+                                <Tab label="Auction" value="1" />
+                                <Tab label="Player" value="2" />
+                            </TabList>
+                        </Box>
+                        <TabPanel sx={{padding: 0}} value="1"><BidInfo card={card} mobile={mobile}/></TabPanel>
+                        <TabPanel sx={{padding: 0}} value="2"><PlayerInfo card={card} mobile={mobile}/></TabPanel>
+                    </TabContext>
+                </Box>
+            </div>
+        )
+    }
+
+    const ClaimInfo = ( {card, mobile} ) => {
+        const [value, setValue] = React.useState('1');
+        const handleChange = (event, newValue) => {
+            setValue(newValue);
+        };
+
+        return (
+            <div style={{display: 'flex', justifyContent: 'center'}}>
+                <Box sx={{ backgroundColor: '#31572c', width: mobile ? '90vw' : '50vw', typography: 'body1' }}>
+                    <TabContext value={value}>
+                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                            <TabList textColor='#fff' onChange={handleChange} aria-label="lab API tabs example">
+                                <Tab label="Results" value="1" />
+                                <Tab label="Player" value="2" />
+                            </TabList>
+                        </Box>
+                        <TabPanel sx={{padding: 0}} value="1"><CompletedAuctionInfo card={card} mobile={mobile}/></TabPanel>
+                        <TabPanel sx={{padding: 0}} value="2"><PlayerInfo card={card} mobile={mobile}/></TabPanel>
+                    </TabContext>
+                </Box>
+            </div>
+        )
+    }
+
+    const SellCardButtons = ( { mobile } ) => {
+        const mobileStyle = {display: 'block', justifyContent: 'space-evenly', marginTop: '6vw'};
+        const desktopStyle = {display: 'flex', justifyContent: 'space-between', marginTop: '3vw', width: '50vw'};
+        return(
+            <div style={mobile ? mobileStyle : desktopStyle}>
+                <div style={{marginBottom: '6vw'}}><Button style={{fontWeight: 600, fontSize: mobile ? '4vw' : '1.3vw', width: mobile ? '90vw' : '22vw'}} onClick={openDialog} size='large' variant='contained'>Sell</Button></div>
+                <div style={{marginBottom: '6vw'}}><Button color='secondary' style={{fontWeight: 600, fontSize: mobile ? '4vw' : '1.3vw', width: mobile ? '90vw' : '22vw'}} onClick={handleClose} size='large' variant='contained'>Close</Button></div>
+            </div>
+        )
+    }
+
+    const BidCardButtons = ( { mobile }) => {
+        const mobileStyle = {display: 'block', justifyContent: 'space-evenly', marginTop: '6vw'};
+        const desktopStyle = {display: 'flex', justifyContent: 'space-between', marginTop: '3vw', width: '50vw'};
+        return(
+            <div style={mobile ? mobileStyle : desktopStyle}>
+                <div style={{marginBottom: '6vw'}}><Button style={{fontWeight: 600, fontSize: mobile ? '4vw' : '1.3vw', width: mobile ? '90vw' : '22vw'}} onClick={openDialog} size='large' variant='contained'>Bid</Button></div>
+                <div style={{marginBottom: '6vw'}}><Button color='secondary' style={{fontWeight: 600, fontSize: mobile ? '4vw' : '1.3vw', width: mobile ? '90vw' : '22vw'}} onClick={handleClose} size='large' variant='contained'>Close</Button></div>
+            </div>
+        )   
+    }
+
+    const ClaimButtons = ( { mobile }) => {
+        const mobileStyle = {display: 'block', justifyContent: 'space-evenly', marginTop: '6vw'};
+        const desktopStyle = {display: 'flex', justifyContent: 'space-between', marginTop: '3vw', width: '50vw'};
+        return(
+            <div style={mobile ? mobileStyle : desktopStyle}>
+                <div style={{marginBottom: '6vw'}}><Button style={{fontWeight: 600, fontSize: mobile ? '4vw' : '1.3vw', width: mobile ? '90vw' : '22vw'}} onClick={openDialog} size='large' variant='contained'>Claim</Button></div>
+                <div style={{marginBottom: '6vw'}}><Button color='secondary' style={{fontWeight: 600, fontSize: mobile ? '4vw' : '1.3vw', width: mobile ? '90vw' : '22vw'}} onClick={handleClose} size='large' variant='contained'>Close</Button></div>
+            </div>
+        )   
+    }
+
+    const displayCardInfoType = (view) => {
+        switch(view) {
+            case 'auction':
+                return <AuctionInfo card={card} mobile={isMobile} />
+            case 'userCards':
+                return <PlayerInfo card={card} mobile={isMobile} />
+            case 'claim':
+                return <ClaimInfo card={card} mobile={isMobile} />
+            default:
+                return <PlayerInfo card={card} mobile={isMobile} />
+        }
+    }
+
+    const displayDialogType = (view) => {
+        switch(view) {
+            case 'auction':
+                return <PlaceBidDialog card={card} mobile={isMobile} />
+            case 'userCards':
+                return <CreateAuctionDialog mobile={isMobile} />
+            case 'claim':
+                return <ClaimDialog mobile={isMobile} />
+            default:
+                return <PlayerInfo card={card} mobile={isMobile} />
+        }
+    }
+
+    const getButtonType = (view) => {
+        switch(view) {
+            case 'auction':
+                return <BidCardButtons mobile={isMobile} />
+            case 'userCards':
+                return <SellCardButtons mobile={isMobile} />
+            case 'claim':
+                return <ClaimButtons mobile={isMobile} />
+            default:
+                return <PlayerInfo card={card} mobile={isMobile} />
+        }
+    }
+
     return (
         <Backdrop style={{display: 'block', backgroundColor: 'rgba(0, 0, 0, 0.86)', overflowY: 'scroll'}} open={true} sx={{zIndex: 1}}>
             <div style={isMobile ? mobileStyle : desktopStyle}>
                 <PlayerCard attributes={card.attributeHash} flippable={false} width={isMobile ? '80vw' : '40vw'} number={getPlayerNumberById(card.playerId)} team={getPlayerTeamById(card.playerId)} playerType={getPlayerTypeById(card.playerId)} cardType={card.cardType} />
-                <List sx={isMobile ? mobileListStyle : desktopListStyle}>
-                    <ListItem>Name: {getPlayerNameById(card.playerId)}</ListItem>
-                    <Divider />
-                    <ListItem>Position: {getPlayerPositionById(card.playerId)}</ListItem>
-                    <Divider />
-                    <ListItem>Team: {getTeamName(card.playerId)}</ListItem>
-                    <Divider />
-                    <ListItem>Card Type: {cardTypes[card.cardType]}</ListItem>
-                    <Divider />
-                    <ListItem>Items: {getItems()}</ListItem>
-                    {isClaim ?
-
-                    !processing ? 
-                        <div style={{display: 'flex', justifyContent: 'space-evenly', marginTop: '6vw'}}>
-                            {auctionEnded ? null : <Button color='secondary' style={{fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: '20vw'}} onClick={handleClose} size='large' variant='contained'>Close</Button>}
-                            <Button style={{fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: auctionEnded ? '40vw' : '20vw'}} onClick={auctionEnded ? handleClose : closeAuction} size='large' variant='contained'>{auctionEnded ? 'Done' : 'Claim'}</Button>
-                        </div> : <CircularProgress size={100} color='secondary' />
-                    :
-                    <div style={{display: 'flex', justifyContent: 'space-evenly', marginTop: '6vw'}}>
-                        <Button color='secondary' style={{fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: '20vw'}} onClick={handleClose} size='large' variant='contained'>Close</Button>
-                        {isAuction ? 
-                            <Button style={{fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: '20vw'}} onClick={openDialog} size='large' variant='contained'>Bid</Button> 
-                            : 
-                            <Button style={{fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: '20vw'}} onClick={openDialog} size='large' variant='contained'>Sell</Button>
-                        }
-                    </div>
-                    }
-                </List>
+                <div>
+                    {displayCardInfoType(view)}
+                    {getButtonType(view)}
+                    {displayDialog ? displayDialogType(view) : null}
+                </div>
             </div>
-            <Dialog PaperProps={{style: isMobile ? {minWidth: '80vw'} : {width: '30vw'}}} open={open}>
+            <Dialog PaperProps={{style: isMobile ? {minWidth: '80vw'} : {width: '30vw'}}} open={false}>
                 <DialogTitle sx={{backgroundColor: '#fff', color: 'black', textAlign: 'center'}}>Auction</DialogTitle>
                 <DialogContent sx={{backgroundColor: '#fff', paddingTop: '20px !important'}}>
                     { error ? <div style={{textAlign: 'center', color: 'red', marginBottom: '3vw'}}>{error}</div> : null}
@@ -211,34 +314,9 @@ const ViewCard = ( props ) => {
                             fullWidth
                             variant='outlined'
                             value={price}
-                            onChange={handlePriceChange}
                         />
-                        {!isAuction ?
-                            <Select
-                                color='selected'
-                                sx={{marginTop: '1vw'}}
-                                variant='outlined' 
-                                fullWidth
-                                value={time}
-                                onChange={handleTimeChange}
-                            >
-                                <MenuItem value={300}>5 Minutes *Test Only*</MenuItem>
-                                <MenuItem value={3600}>1 Hour</MenuItem>
-                                <MenuItem value={7200}>2 Hours</MenuItem>
-                                <MenuItem value={10800}>3 Hours</MenuItem>
-                                <MenuItem value={21600}>6 Hours</MenuItem>
-                                <MenuItem value={43200}>12 Hours</MenuItem>
-                                <MenuItem value={86400}>1 Day</MenuItem>
-                                <MenuItem value={172800}>2 Days</MenuItem>
-                                <MenuItem value={259200}>3 Days</MenuItem>
-                                <MenuItem value={604800}>1 Week</MenuItem>
-                            </Select>
-                            :
-                            null
-                        }
                         <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '3vw'}}>
                             <Button style={{color: 'black', backgroundColor: 'lightgrey', fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: isMobile ? '22vw' : '10vw'}} onClick={handleCancel} size='large' variant='contained'>Cancel</Button>
-                            <Button disabled={price <= 0} style={{fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: isMobile ? '22vw' : '10vw'}} onClick={!isAuction ? setAuction : placeBid} size='large' variant='contained'>Post</Button>
                         </div>
                     </div> 
                     : 

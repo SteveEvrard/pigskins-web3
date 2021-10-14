@@ -3,7 +3,7 @@ import PlayerCard from './PlayerCard';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Card, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCardDetail } from '../store/card-detail/cardDetailSlice';
+import { setCardDetail, setDisplayCard } from '../store/card-detail/cardDetailSlice';
 import { getPlayerNumberById, getPlayerTeamById, getPlayerTypeById } from '../utils/PlayerUtil';
 import ViewCard from './ViewCard';
 import { BigNumber, ethers } from "ethers";
@@ -18,7 +18,8 @@ const Claim = ( props ) => {
     const [displayMessage, setDisplayMessage] = useState(false);
     const [cards, setCards] = useState([]);
     const isMobile = useSelector((state) => state.mobile.value);
-    const selectedCard = useSelector((state) => state.cardDetail.value);
+    const selectedCard = useSelector((state) => state.cardDetail.value.card);
+    const displayCard = useSelector((state) => state.cardDetail.value.displayCard);
     const headerMessage = 'No Completed Auctions';
     const message = 'Check back once any auctions you posted have expired'
     const getAccount = async () => signer.getAddress();
@@ -144,7 +145,8 @@ const Claim = ( props ) => {
         return {attributeHash, auctionId, bidCount, cardId, cardType, currentBid, expireDate, playerId}
     }
 
-    const setCardToView = (card) => {
+    const handleCardDisplay = (card) => {
+        dispatch(setDisplayCard(true));
         dispatch(setCardDetail(card));
     }
 
@@ -160,8 +162,10 @@ const Claim = ( props ) => {
             const team = getPlayerTeamById(playerId);
             const number = getPlayerNumberById(playerId);
             const playerType = getPlayerTypeById(playerId);
+            const cardToView = {attributeHash, auctionId, bidCount, cardId, cardType, currentBid, expireDate, playerId, team, number, playerType};
+
             return (
-                <div key={i} style={{marginBottom: '3vw', cursor: 'pointer'}} onClick={() => setCardToView({attributeHash, auctionId, bidCount, cardId, cardType, currentBid, expireDate, playerId})}>
+                <div key={i} style={{marginBottom: '3vw', cursor: 'pointer'}} onClick={() => handleCardDisplay(cardToView)}>
                     <PlayerCard key={i} attributes={attributeHash} flippable={false} width={isMobile ? '50vw' : '250px'} number={Number(number)} team={team} playerType={playerType} cardType={card.cardType} />
                     <div style={{display: 'flex', justifyContent: 'center'}}>
                         <Card sx={{width: isMobile ? '30vw' : '15vw'}}>
@@ -180,7 +184,7 @@ const Claim = ( props ) => {
             </Typography>
             {displayMessage ? <PageContext header={headerMessage} body={message} /> : null}
             {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : displayCards(cards)}
-            {selectedCard.playerId ? <ViewCard isClaim={true} isAuction={false}/> : null}
+            {displayCard ? <ViewCard view={'claim'}/> : null}
         </div>
     )
 }

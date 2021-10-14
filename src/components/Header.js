@@ -4,7 +4,7 @@ import { Link as RouterLink, useHistory } from 'react-router-dom';
 import SportsFootballIcon from '@mui/icons-material/SportsFootball';
 import { useDispatch, useSelector } from 'react-redux';
 import MenuIcon from '@mui/icons-material/Menu';
-import { setCardDetail } from '../store/card-detail/cardDetailSlice';
+import { setCardDetail, setDisplayCard } from '../store/card-detail/cardDetailSlice';
 import { styled } from '@mui/material/styles';
 
 const headerOptions = [
@@ -45,8 +45,9 @@ const Header = ( props ) => {
     const notification = useSelector((state) => state.notification.value);
 
     function home() {
-        history.push('/')
         dispatch(setCardDetail({}));
+        dispatch(setDisplayCard(false));
+        history.push('/')
     }
 
     const handleClick = (event) => {
