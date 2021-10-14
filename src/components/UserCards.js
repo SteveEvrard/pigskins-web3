@@ -5,11 +5,9 @@ import { getPlayerNumberById, getPlayerTeamById, getPlayerTypeById } from '../ut
 import { useDispatch, useSelector } from 'react-redux';
 import { setCardDetail } from '../store/card-detail/cardDetailSlice';
 import ViewCard from './ViewCard';
-import { signer, Contract, ContractWithSigner } from '../ethereum/ethers';
+import { signer, ContractWithSigner } from '../ethereum/ethers';
 import { BigNumber } from "ethers";
 import PageContext from './PageContext';
-
-let cards = [];
 
 const UserCards = ( props ) => {
 
@@ -33,11 +31,8 @@ const UserCards = ( props ) => {
     const getCards = async () => {
         const account = await getAccount();
         const allCardIds = await getAllCardIds(account);
-        console.log('ids', allCardIds);
         const ownedCards = filterCurrentlyOwnedCards(allCardIds);
-        console.log('owned', ownedCards)
         const cardsWithDetails = await getCardDetailsById(ownedCards);
-        console.log('details', cardsWithDetails);
         const mappedCards = cardsWithDetails.map(card => {
             return mapCardData(card)
         });
@@ -66,33 +61,6 @@ const UserCards = ( props ) => {
         }
 
         return Promise.all(promises);
-    }
-    // const getCards = async () => {
-    //     setLoading(true);
-    //     ContractWithSigner.getUserOwnedCards(account)
-    //         .then(data => {
-    //             cards = [];
-    //             console.log(data);
-    //             for(let i = 0; i < data.length; i++) {
-    //                 if(BigNumber.from(data[i]).toString() === '999999999999999'){
-    //                     continue;
-    //                 }
-    //                 getCard(data[i])
-    //             }
-    //             setLoading(false);
-    //         })
-    //         .catch(err => {
-    //             console.log(err)
-    //             setLoading(false);
-    //         });
-    // }
-
-    function getCard(cardId) {
-        Contract.cards(BigNumber.from(cardId)).then(card => {
-            setLoading(true);
-            cards.push(mapCardData(card));
-            setLoading(false);
-        })
     }
 
     function mapCardData(card) {
