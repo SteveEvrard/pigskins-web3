@@ -1,16 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { Backdrop, Box, Button, CircularProgress, Dialog, DialogContent, DialogTitle, Divider, List, MenuItem, Select, Tab, Tabs, TextField } from '@mui/material';
+import React, { useEffect } from 'react';
+import { Backdrop, Box, Button, Divider, List, Tab} from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCardDetail, setDisplayCard } from '../store/card-detail/cardDetailSlice';
 import { setDisplayDialog, setPrice, setAuctionTime } from '../store/view-card/viewCardSlice';
-import { setNotification } from '../store/notification/notificationSlice';
 import PlayerCard from './PlayerCard';
 import { getTeamName, getPlayerNameById, getPlayerNumberById, getPlayerTeamById, getPlayerTypeById, getPlayerPositionById } from '../utils/PlayerUtil';
 import { ListItem } from '@mui/material';
 import { resolveCrown, resolveFootball, resolveWater } from '../utils/ImageCreator';
 import blank from '../images/blank.png';
-import { Contract, ContractWithSigner, signer } from '../ethereum/ethers';
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 import CreateAuctionDialog from './dialogs/CreateAuctionDialog';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import Countdown from 'react-countdown';
@@ -20,14 +18,7 @@ import ClaimDialog from './dialogs/ClaimDialog';
 const ViewCard = ( props ) => {
 
     const displayDialog = useSelector((state) => state.viewCard.value.displayDialog);
-    const [error, setError] = useState('');
-    const [auctionSuccess, setAuctionSuccess] = useState(false);
-    const [processing, setProcessing] = useState(false);
-    const [auctionEnded, setAuctionEnded] = useState(false);
-    const getAccount = async () => signer.getAddress();
     const dispatch = useDispatch();
-    const isAuction = props.isAuction;
-    const isClaim = props.isClaim;
     const view = props.view;
     const card = useSelector((state) => state.cardDetail.value.card);
     const isMobile = useSelector((state) => state.mobile.value);
@@ -37,7 +28,6 @@ const ViewCard = ( props ) => {
         2: 'Exotic',
         3: 'Legendary'
     }
-    const price = 0;
 
     const mobileStyle = {display: 'block', color: 'white', marginTop: '20vw'};
     const mobileListStyle = {margin: 'auto', fontFamily: "Work Sans, sans-serif", backgroundColor: '#31572c', fontSize: '5vw', width: '90vw', marginBottom: '5vw'};
@@ -59,57 +49,10 @@ const ViewCard = ( props ) => {
     const handleClose = () => {
         dispatch(setDisplayCard(false))
         dispatch(setCardDetail({}));
-        setAuctionEnded(false);
     };
-
-    const handleCancel = () => {
-        dispatch(setDisplayDialog(false));
-        dispatch(setPrice(0.01));
-        setError('');
-    };
-
-    const handleSuccess = () => {
-        // setOpen(false);
-        setProcessing(false);
-        setAuctionSuccess(false);
-        setError('');
-        dispatch(setCardDetail({}));
-    }
 
     const openDialog = () => {
         dispatch(setDisplayDialog(true));
-    }
-
-    const closeAuction = async () => {
-        setProcessing(true)
-        setAuctionEnded(false);
-        const cardId = BigNumber.from(card.cardId).toNumber();
-
-        ContractWithSigner.endAuction(cardId, {from: ''})
-        .then(() => {
-            Contract.once(Contract.filters.AuctionClosed(null, cardId), () => {
-                setAuctionSuccess(true);
-                setProcessing(false);
-                setAuctionEnded(true);
-                dispatch(setNotification(false));
-            })
-        })
-        .catch(err => {
-            if(!err.error) setAuctionSuccess(true);
-            if(err.error) {
-                setProcessing(false);
-                setError(err.error.message);
-            }
-            setProcessing(false);
-        });
-    }
-
-    function getHelperMessage() {
-        if(isAuction) {
-            return price <= ethers.utils.formatEther(`${card.currentBid}`) ? 'Increase bid' : '';
-        }else {
-            return price <= 0 ? 'Price cannot be below 0' : '';
-        }
     }
 
     const getItems = () => {
@@ -297,43 +240,6 @@ const ViewCard = ( props ) => {
                     {displayDialog ? displayDialogType(view) : null}
                 </div>
             </div>
-            <Dialog PaperProps={{style: isMobile ? {minWidth: '80vw'} : {width: '30vw'}}} open={false}>
-                <DialogTitle sx={{backgroundColor: '#fff', color: 'black', textAlign: 'center'}}>Auction</DialogTitle>
-                <DialogContent sx={{backgroundColor: '#fff', paddingTop: '20px !important'}}>
-                    { error ? <div style={{textAlign: 'center', color: 'red', marginBottom: '3vw'}}>{error}</div> : null}
-                    { !processing ? 
-                    <div>
-                        <TextField
-                            autoFocus
-                            inputProps={{step: 0.01}}
-                            error={isAuction ? price <= ethers.utils.formatEther(`${card.currentBid}`, 'ether') : price <= 0}
-                            color='selected'
-                            margin='dense'
-                            helperText={getHelperMessage()}
-                            id='name'
-                            label='Price (ETH)'
-                            type='number'
-                            fullWidth
-                            variant='outlined'
-                            value={price}
-                        />
-                        <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '3vw'}}>
-                            <Button style={{color: 'black', backgroundColor: 'lightgrey', fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: isMobile ? '22vw' : '10vw'}} onClick={handleCancel} size='large' variant='contained'>Cancel</Button>
-                        </div>
-                    </div> 
-                    : 
-                    <div style={{display: 'flex', justifyContent: 'center'}}>
-                        {auctionSuccess ? 
-                            <div>
-                                { !error ? <h1 style={{textAlign: 'center', color: '#31572c', marginTop: 0, marginBottom: isMobile ? '10vw' : '4vw'}}>{isAuction ? 'Bid Placed!' : 'Card Posted!'}</h1> : <div style={{textAlign: 'center', color: 'red', marginBottom: '3vw'}}>{error}</div> }
-                                <div style={{display: 'flex', justifyContent: 'center'}}><Button style={{fontWeight: 600, fontSize: isMobile ? '4vw' : '1.3vw', width: isMobile ? '30vw' : '10vw'}} onClick={handleSuccess} size='large' variant='contained'>Done</Button></div>
-                            </div> 
-                            : 
-                            <CircularProgress size={100} color='selected' />}
-                    </div>
-                    }
-                </DialogContent>
-            </Dialog>
         </Backdrop>
     )
 }
