@@ -28,6 +28,7 @@ const Purchase = ( props ) => {
                 setDisplayCardPack(false);
                 Contract.once(Contract.filters.CardPackPurchased(account), () => {
                     setProcessing(false);
+                    setComplete(true);
                     setDisplayCardPack(true);
                 })
             })
