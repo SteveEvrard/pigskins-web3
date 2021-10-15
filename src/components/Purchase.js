@@ -1,39 +1,44 @@
-import { Typography, Button } from '@mui/material';
+import { Typography, Button, Card } from '@mui/material';
 import React, { useState } from 'react';
 import PlayerCard from './PlayerCard';
 import CircularProgress from '@mui/material/CircularProgress';
 import CardPack from './CardPack';
 import { useDispatch, useSelector } from 'react-redux';
-import { Contract, ContractWithSigner } from '../ethereum/ethers';
+import { Contract, ContractWithSigner, signer } from '../ethereum/ethers';
 import { ethers } from "ethers";
 import { setCardDetail } from '../store/card-detail/cardDetailSlice';
 
 const Purchase = ( props ) => {
 
     const dispatch = useDispatch();
-    const account = useSelector((state) => state.account.value);
     const isMobile = useSelector((state) => state.mobile.value);
-    const [loading, setLoading] = useState(false);
+    const [processing, setProcessing] = useState(false);
+    const [complete, setComplete] = useState(false);
+    const getAccount = async () => signer.getAddress();
     const [displayCardPack, setDisplayCardPack] = useState(false);
+    const [error, setError] = useState('');
 
     const buyCardPack = async () => {
-        
+        setProcessing(true);
+
+        const account = await getAccount();
         dispatch(setCardDetail({}));
 
         ContractWithSigner.purchaseCardPack({from: account, value: ethers.utils.parseEther("0.005")})
-            .then(data => {
-                setLoading(true);
+            .then(() => {
                 setDisplayCardPack(false);
                 Contract.once(Contract.filters.CardPackPurchased(account), () => {
-                    setLoading(false);
+                    setProcessing(false);
                     setDisplayCardPack(true);
                 })
             })
             .catch(err => {
                 console.log(err);
-                setLoading(false);
+                setProcessing(false);
+                setComplete(true);
+                setError('Error! Please try again.');
+                if(err.error) setError(err.error.message);
             });
-        setLoading(false);
     }
 
     return (
@@ -48,7 +53,8 @@ const Purchase = ( props ) => {
                     <Typography sx={{fontSize: isMobile ? '12vw' : '7vw', color: '#fff', fontFamily: "Work Sans, sans-serif", fontWeight: 600}} variant='h2'>Purchase Card Pack Now!</Typography>
                     <Typography sx={{fontSize: isMobile ? '7vw' : '3vw', color: '#fff', fontFamily: "Work Sans, sans-serif", fontWeight: 600}} variant='h4'>Each pack contains 10 unique player cards.</Typography>
                     <Typography sx={{fontSize: isMobile ? '7vw' : '3vw', color: '#fff', fontFamily: "Work Sans, sans-serif", fontWeight: 600}} variant='h4'>Cards can be used to compete, trade, and more!</Typography>
-                    <Button disabled={loading} sx={{fontSize: '30px', fontFamily: "Work Sans, sans-serif", height: '65px', width: '50%', marginTop: '30px'}} onClick={buyCardPack} size='large' variant='contained' color='primary'>{loading ? <CircularProgress color='secondary' /> : 'Buy'}</Button>
+                    <Button disabled={processing} sx={{fontSize: '30px', fontFamily: "Work Sans, sans-serif", height: '65px', width: '50%', marginTop: '30px'}} onClick={buyCardPack} size='large' variant='contained' color='primary'>{processing ? <CircularProgress color='secondary' /> : 'Buy'}</Button>
+                    {processing ? <Card sx={{marginTop: '2vw', backgroundColor: '#d8572a', fontSize: isMobile ? '4vw' : '2vw', color: '#fff', fontFamily: "Work Sans, sans-serif", fontWeight: 600}} variant='h4'>Retrieving Your Cards From the Blockchain Now! This May Take Up to a Couple Minutes.</Card> : null}
                     {isMobile ? 
                         <div style={{display: 'flex', justifyContent: 'space-evenly', marginTop: '5vw'}}>
                             <PlayerCard flippable={false} width='50vw' number={12} team={'19'} cardType={'2'} attributes={'193333305678900'} />
@@ -62,7 +68,7 @@ const Purchase = ( props ) => {
                     <PlayerCard flippable={false} width='350px' number={4} team={'11'} cardType={'1'} attributes={'100999000000'} />
                 </div> : null}
             </div>
-            {displayCardPack ? <CardPack/> : null}
+            {complete && displayCardPack ? <CardPack/> : null}
         </div>
     )
 }
