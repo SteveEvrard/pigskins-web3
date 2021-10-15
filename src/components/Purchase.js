@@ -54,7 +54,7 @@ const Purchase = ( props ) => {
                     <Typography sx={{fontSize: isMobile ? '7vw' : '3vw', color: '#fff', fontFamily: "Work Sans, sans-serif", fontWeight: 600}} variant='h4'>Each pack contains 10 unique player cards.</Typography>
                     <Typography sx={{fontSize: isMobile ? '7vw' : '3vw', color: '#fff', fontFamily: "Work Sans, sans-serif", fontWeight: 600}} variant='h4'>Cards can be used to compete, trade, and more!</Typography>
                     <Button disabled={processing} sx={{fontSize: '30px', fontFamily: "Work Sans, sans-serif", height: '65px', width: '50%', marginTop: '30px'}} onClick={buyCardPack} size='large' variant='contained' color='primary'>{processing ? <CircularProgress color='secondary' /> : 'Buy'}</Button>
-                    {processing ? <Card sx={{marginTop: '2vw', backgroundColor: '#d8572a', fontSize: isMobile ? '4vw' : '2vw', color: '#fff', fontFamily: "Work Sans, sans-serif", fontWeight: 600}} variant='h4'>Retrieving Your Cards From the Blockchain Now! This May Take Up to a Couple Minutes.</Card> : null}
+                    {processing ? <Card sx={{marginTop: '2vw', backgroundColor: '#d8572a', fontSize: isMobile ? '4vw' : '2vw', color: '#fff', fontFamily: "Work Sans, sans-serif", fontWeight: 600}} variant='h4'>Please Stay on Page, Retrieving Your Cards From the Blockchain Now! This Could Take Up to a Minute.</Card> : null}
                     {isMobile ? 
                         <div style={{display: 'flex', justifyContent: 'space-evenly', marginTop: '5vw'}}>
                             <PlayerCard flippable={false} width='50vw' number={12} team={'19'} cardType={'2'} attributes={'193333305678900'} />
