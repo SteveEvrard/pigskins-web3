@@ -16,7 +16,6 @@ const Purchase = ( props ) => {
     const [complete, setComplete] = useState(false);
     const getAccount = async () => signer.getAddress();
     const [displayCardPack, setDisplayCardPack] = useState(false);
-    const [error, setError] = useState('');
 
     const buyCardPack = async () => {
         setProcessing(true);
@@ -36,8 +35,6 @@ const Purchase = ( props ) => {
                 console.log(err);
                 setProcessing(false);
                 setComplete(true);
-                setError('Error! Please try again.');
-                if(err.error) setError(err.error.message);
             });
     }
 

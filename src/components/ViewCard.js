@@ -134,6 +134,8 @@ const ViewCard = ( props ) => {
                 <ListItem>Card Type: {cardTypes[card.cardType]}</ListItem>
                 <Divider />
                 <ListItem>Items: {getItems()}</ListItem>
+                <Divider />
+                <ListItem>Card ID: {card.cardId}</ListItem>
             </List>
         )
     }
