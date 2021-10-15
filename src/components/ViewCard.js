@@ -33,7 +33,7 @@ const ViewCard = ( props ) => {
     const mobileListStyle = {margin: 'auto', fontFamily: "Work Sans, sans-serif", backgroundColor: '#31572c', fontSize: '5vw', width: '90vw', marginBottom: '5vw'};
 
     const desktopStyle = {display: 'flex', color: 'white', marginTop: '7vw'};
-    const desktopListStyle = {marginTop: '2vw', fontFamily: "Work Sans, sans-serif", backgroundColor: '#31572c', fontSize: '3.5vw', width: '50vw'};
+    const desktopListStyle = {marginTop: '2vw', fontFamily: "Work Sans, sans-serif", backgroundColor: '#31572c', fontSize: '3vw', width: '50vw'};
 
     useEffect(() => {
         return () => {

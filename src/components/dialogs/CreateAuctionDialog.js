@@ -30,6 +30,7 @@ const CreateAuctionDialog = ( { mobile } ) => {
         dispatch(setDisplayDialog(false));
         dispatch(setCardDetail(card));
         dispatch(setPrice(0.01));
+        dispatch(setAuctionTime(3600));
         setError('');
     };
     function getHelperMessage() {

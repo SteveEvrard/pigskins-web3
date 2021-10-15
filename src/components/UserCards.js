@@ -37,7 +37,6 @@ const UserCards = ( props ) => {
         const allCardIds = await getAllCardIds(account);
         const ownedCards = filterCurrentlyOwnedCards(allCardIds);
         const cardsWithDetails = await getCardDetailsById(ownedCards);
-        console.log(cardsWithDetails)
         const mappedCards = cardsWithDetails.map(card => {
             return mapCardData(card)
         });
@@ -91,7 +90,6 @@ const UserCards = ( props ) => {
     function createCards(cards) {
         return cards.map((card, i) => {
             const { cardId, playerId, cardType, attributeHash } = card;
-            console.log(cardType);
             const team = getPlayerTeamById(playerId);
             const number = getPlayerNumberById(playerId);
             const playerType = getPlayerTypeById(playerId);

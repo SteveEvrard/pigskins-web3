@@ -30,9 +30,6 @@ const Claim = ( props ) => {
         getCompletedAuctions();
         dispatch(setNotification(false));
         setCards([]);
-        return () => {
-            setCards([]);
-        }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedCard]);
 
