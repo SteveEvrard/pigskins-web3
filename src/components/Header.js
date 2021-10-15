@@ -11,7 +11,8 @@ const headerOptions = [
     {label: 'Purchase', href: '/purchase'},
     {label: 'Auction', href: '/auction'},
     {label: 'Completed', href: '/claim'},
-    {label: 'My Cards', href: '/cards'}
+    {label: 'My Cards', href: '/cards'},
+    {label: 'Info', href: '/info'}
 ]
 
 const StyledBadge = styled(Badge)(({ theme }) => ({

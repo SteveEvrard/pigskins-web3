@@ -14,6 +14,7 @@ import { setMobile } from './store/device/deviceSlice';
 import { signer, provider, contractAddress } from './ethereum/ethers';
 import { BigNumber, ethers } from "ethers";
 import Claim from './components/Claim';
+import Info from './components/Info';
 
 const theme = createTheme({
   status: {
@@ -71,6 +72,7 @@ const App = () => {
             <Route path='/cards' component={UserCards} />
             <Route path='/auction' component={Auction} />
             <Route path='/claim' component={Claim} />
+            <Route path='/info' component={Info} />
           </Switch>
         </ThemeProvider>
     </div>
