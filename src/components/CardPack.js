@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Backdrop, Button } from '@mui/material';
+import { Backdrop, Button, Typography } from '@mui/material';
 import PlayerCard from './PlayerCard';
 import { getPlayerNumberById, getPlayerTeamById, getPlayerTypeById } from '../utils/PlayerUtil';
 import { useSelector } from 'react-redux';
@@ -11,7 +11,6 @@ let cards = [];
 
 const CardPack = ( props ) => {
 
-    // let data = props.data.CardCreated;
     const [open, setOpen] = useState(true);
     const [loading, setLoading] = useState(false);
     const isMobile = useSelector((state) => state.mobile.value);
@@ -58,6 +57,7 @@ const CardPack = ( props ) => {
             return (
                 <div key={i}>
                     <PlayerCard key={i} attributes={attributeHash} flippable={true} width={isMobile ? '50vw' : '250px'} number={Number(number)} team={team} playerType={playerType} cardType={cardType} />
+                    <Typography sx={{color: 'white', fontFamily: "Open Sans, sans-serif"}}>Card: {cardId}</Typography>
                 </div>
             )
         })
