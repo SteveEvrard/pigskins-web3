@@ -101,7 +101,7 @@ const Claim = ( props ) => {
 
         for(let i = 0; i < auctions.length; i++) {
             promises.push(
-                ContractWithSigner.cards(BigNumber.from(auctions[i].cardId)),
+                ContractWithSigner.cardIdToCard(BigNumber.from(auctions[i].cardId)),
             )
         }
 
@@ -175,7 +175,7 @@ const Claim = ( props ) => {
     }
 
     return (
-        <div>
+        <div style={{marginTop: '2vw'}}>
             <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: '8vw', color: '#fff'}}>
                 Completed Auctions
             </Typography>

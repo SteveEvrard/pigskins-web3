@@ -15,6 +15,9 @@ import { signer, provider, contractAddress } from './ethereum/ethers';
 import { BigNumber, ethers } from "ethers";
 import Claim from './components/Claim';
 import Info from './components/Info';
+import Games from './components/Games';
+import Admin from './components/Admin';
+import JoinGame from './components/JoinGame';
 
 const theme = createTheme({
   status: {
@@ -30,6 +33,9 @@ const theme = createTheme({
     },
     selected: {
       main: '#252422'
+    },
+    third: {
+      main: '#7ebc89'
     },
     neutral: {
       main: '#64748B',
@@ -69,10 +75,13 @@ const App = () => {
           <Switch>
             <Route path='/' exact component={Home} />
             <Route path='/purchase' component={Purchase} />
+            <Route path='/games' exact={true} component={Games} />
+            <Route path='/games/:id' component={JoinGame} />
             <Route path='/cards' component={UserCards} />
             <Route path='/auction' component={Auction} />
             <Route path='/claim' component={Claim} />
             <Route path='/info' component={Info} />
+            <Route path='/admin' component={Admin} />
           </Switch>
         </ThemeProvider>
     </div>

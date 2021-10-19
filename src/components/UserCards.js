@@ -8,6 +8,7 @@ import ViewCard from './ViewCard';
 import { signer, ContractWithSigner } from '../ethereum/ethers';
 import { BigNumber } from "ethers";
 import PageContext from './PageContext';
+import { Typography } from '@mui/material';
 
 const UserCards = ( props ) => {
 
@@ -60,7 +61,7 @@ const UserCards = ( props ) => {
 
         for(let i = 0; i < cardIds.length; i++) {
             promises.push(
-                ContractWithSigner.cards(BigNumber.from(cardIds[i]).toNumber())
+                ContractWithSigner.cardIdToCard(BigNumber.from(cardIds[i]).toNumber())
             )
         }
 
@@ -72,8 +73,9 @@ const UserCards = ( props ) => {
         const playerId = BigNumber.from(card.playerId).toString();
         const attributeHash = BigNumber.from(card.attributeHash).toString();
         const cardType = BigNumber.from(card.cardType).toString();
+        const inUse = card.inUse;
         
-        return {cardId, playerId, attributeHash, cardType};
+        return {cardId, playerId, attributeHash, cardType, inUse};
     }
 
     const handleCardDisplay = (card) => {
@@ -89,11 +91,11 @@ const UserCards = ( props ) => {
 
     function createCards(cards) {
         return cards.map((card, i) => {
-            const { cardId, playerId, cardType, attributeHash } = card;
+            const { cardId, playerId, cardType, attributeHash, inUse } = card;
             const team = getPlayerTeamById(playerId);
             const number = getPlayerNumberById(playerId);
             const playerType = getPlayerTypeById(playerId);
-            const cardToView = { cardId, playerId, cardType, attributeHash, team, number, playerType };
+            const cardToView = { cardId, playerId, cardType, attributeHash, team, number, playerType, inUse };
             return (
                 <div key={i} style={{cursor: 'pointer'}} onClick={() => handleCardDisplay(cardToView)}>
                     <PlayerCard key={i} attributes={attributeHash} flippable={false} width={isMobile ? '50vw' : '250px'} number={Number(number)} team={team} playerType={playerType} cardType={cardType} />
@@ -103,7 +105,10 @@ const UserCards = ( props ) => {
     }
 
     return (
-        <div style={displayCard ? {position: 'fixed'} : {}}>
+        <div style={displayCard ? {position: 'fixed', marginTop: '2vw'} : {marginTop: '2vw'}}>
+            <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: '8vw', color: '#fff'}}>
+                Cards
+            </Typography>
             {displayMessage ? <PageContext header={headerMessage} body={message} /> : null}
             {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : displayCards(cards)}
             {displayCard ? <ViewCard view={'userCards'}/> : null}

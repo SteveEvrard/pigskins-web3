@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import CardAuction from './abi/abi.json';
 
 export const provider = new ethers.providers.Web3Provider(window.ethereum);
-export const contractAddress = '0x17d0bd2EEe6c6fb61cE8c95557c41635c17B9924';
+export const contractAddress = '0x1983334f7d7F2bceB0090f50960B1B19C5d34548';
 
 export const signer = provider.getSigner();
 

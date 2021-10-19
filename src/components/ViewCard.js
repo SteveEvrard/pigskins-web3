@@ -15,6 +15,16 @@ import Countdown from 'react-countdown';
 import PlaceBidDialog from './dialogs/PlaceBidDialog';
 import ClaimDialog from './dialogs/ClaimDialog';
 
+export const getItems = (attributes) => {
+    let items = [];
+    if(blank.toString() !== resolveFootball(attributes).toString()) items.push('Football');
+    if(blank.toString() !== resolveWater(attributes).toString()) items.push('Water');
+    if(blank.toString() !== resolveCrown(attributes).toString()) items.push('Crown');
+
+    if(items.length === 0) return 'None';
+    return items.join(', ');
+}
+
 const ViewCard = ( props ) => {
 
     const displayDialog = useSelector((state) => state.viewCard.value.displayDialog);
@@ -55,16 +65,6 @@ const ViewCard = ( props ) => {
         dispatch(setDisplayDialog(true));
     }
 
-    const getItems = () => {
-        let items = [];
-        if(blank.toString() !== resolveFootball(card.attributeHash).toString()) items.push('Football');
-        if(blank.toString() !== resolveWater(card.attributeHash).toString()) items.push('Water');
-        if(blank.toString() !== resolveCrown(card.attributeHash).toString()) items.push('Crown');
-
-        if(items.length === 0) return 'None';
-        return items.join(', ');
-    }
-
     const PlayerInfo = ( {card, mobile} ) => {
         return (
             <List sx={mobile ? mobileListStyle : desktopListStyle}>
@@ -76,7 +76,7 @@ const ViewCard = ( props ) => {
                 <Divider />
                 <ListItem>Card Type: {cardTypes[card.cardType]}</ListItem>
                 <Divider />
-                <ListItem>Items: {getItems()}</ListItem>
+                <ListItem>Items: {getItems(card.attributeHash)}</ListItem>
                 <Divider />
                 <ListItem>Card ID: {card.cardId}</ListItem>
             </List>
@@ -163,7 +163,7 @@ const ViewCard = ( props ) => {
         const desktopStyle = {display: 'flex', justifyContent: 'space-between', marginTop: '3vw', width: '50vw'};
         return(
             <div style={mobile ? mobileStyle : desktopStyle}>
-                <div style={{marginBottom: '6vw'}}><Button style={{fontWeight: 600, fontSize: mobile ? '4vw' : '1.3vw', width: mobile ? '90vw' : '22vw'}} onClick={openDialog} size='large' variant='contained'>Sell</Button></div>
+                <div style={{marginBottom: '6vw'}}><Button disabled={card.inUse} style={{backgroundColor: card.inUse ? 'rgb(151, 60, 29)' : '', fontWeight: 600, fontSize: mobile ? '4vw' : '1.3vw', width: mobile ? '90vw' : '22vw'}} onClick={openDialog} size='large' variant='contained'>{card.inUse ? 'Card In Use' : 'Sell'}</Button></div>
                 <div style={{marginBottom: '6vw'}}><Button color='secondary' style={{fontWeight: 600, fontSize: mobile ? '4vw' : '1.3vw', width: mobile ? '90vw' : '22vw'}} onClick={handleClose} size='large' variant='contained'>Close</Button></div>
             </div>
         )

@@ -14,7 +14,7 @@ const Info = ( props ) => {
     const isMobile = useSelector((state) => state.mobile.value);
 
     return(
-        <div>
+        <div style={{marginTop: '2vw'}}>
             <div style={{display: 'flex', justifyContent: 'center'}}>
                 <div style={{display: 'flex', justifyContent: 'center', marginBottom: '3vw', width: isMobile ? '100vw' : '70vw'}}>
                     <img src={common} alt='' style={{width: isMobile ? '40vw' : '20vw'}} />

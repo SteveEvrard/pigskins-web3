@@ -40,7 +40,7 @@ const Purchase = ( props ) => {
     }
 
     return (
-        <div>
+        <div style={{marginTop: '2vw'}}>
             <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
                 {!isMobile ? 
                 <div>

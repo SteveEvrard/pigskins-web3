@@ -5,6 +5,7 @@ import mobileReducer from './device/deviceSlice';
 import notificationReducer from './notification/notificationSlice';
 import auctionDetailReducer from './auction-detail/auctionSlice';
 import viewCardReducer from './view-card/viewCardSlice';
+import gameReducer from './games/gameSlice';
 
 export default configureStore({  
     reducer: {
@@ -13,6 +14,7 @@ export default configureStore({
         mobile: mobileReducer,
         notification: notificationReducer,
         auction: auctionDetailReducer,
-        viewCard: viewCardReducer
+        viewCard: viewCardReducer,
+        game: gameReducer
     },
 }, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())

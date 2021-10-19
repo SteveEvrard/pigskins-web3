@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, MenuItem, Menu, Badge } from '@mui/material';
 import { Link as RouterLink, useHistory } from 'react-router-dom';
 import SportsFootballIcon from '@mui/icons-material/SportsFootball';
@@ -6,9 +6,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import MenuIcon from '@mui/icons-material/Menu';
 import { setCardDetail, setDisplayCard } from '../store/card-detail/cardDetailSlice';
 import { styled } from '@mui/material/styles';
+import { signer } from '../ethereum/ethers';
 
 const headerOptions = [
     {label: 'Purchase', href: '/purchase'},
+    {label: 'Open Games', href: '/games'},
     {label: 'Auction', href: '/auction'},
     {label: 'Completed', href: '/claim'},
     {label: 'My Cards', href: '/cards'},
@@ -41,9 +43,23 @@ const Header = ( props ) => {
     const dispatch = useDispatch();
     const history = useHistory();
     const [anchorEl, setAnchorEl] = useState(null);
+    const [headerItems, setHeaderItems] = useState(headerOptions);
     const open = Boolean(anchorEl);
+    const getAccount = async () => signer.getAddress();
     const isMobile = useSelector((state) => state.mobile.value);
     const notification = useSelector((state) => state.notification.value);
+
+    useEffect(() => {
+        checkOwner();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    const checkOwner = async () => {
+        const account = await getAccount();
+        if (account === process.env.REACT_APP_ACCOUNT_OWNER) {
+            setHeaderItems(headerItems => [...headerItems, {label: 'Admin', href: '/admin'}])
+        }
+    }
 
     function home() {
         dispatch(setCardDetail({}));
@@ -60,7 +76,7 @@ const Header = ( props ) => {
     }
 
     const getMenuButtons = () => {
-        return headerOptions.map(({ label, href }) => {
+        return headerItems.map(({ label, href }) => {
             return (
                 <Button
                     {...{component: RouterLink, to: href}}
@@ -79,7 +95,7 @@ const Header = ( props ) => {
     };
 
     const getMobileMenuButtons = () => {
-        return headerOptions.map(({ label, href }) => {
+        return headerItems.map(({ label, href }) => {
             return (
                 <MenuItem 
                     {...{component: RouterLink, to: href}}
@@ -141,7 +157,7 @@ const Header = ( props ) => {
     );
 
     return (
-        <header style={{height: '80px'}}>
+        <header style={{height: '55px'}}>
             <AppBar sx={{backgroundColor: "#31572c"}}>
                 {isMobile ? displayMobile() : displayDesktop()}
             </AppBar>

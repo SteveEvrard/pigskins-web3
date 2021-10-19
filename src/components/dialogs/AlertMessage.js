@@ -3,16 +3,22 @@ import { Button } from '@mui/material';
 import { setDisplayDialog, setPrice, setAuctionTime } from '../../store/view-card/viewCardSlice';
 import { useDispatch } from 'react-redux';
 import { setCardDetail, setDisplayCard } from '../../store/card-detail/cardDetailSlice';
+import { setDisplayDialog as setDisplay } from '../../store/games/gameSlice';
+import { useHistory } from 'react-router-dom';
 
-const AlertMessage = ( { mobile, successMessage, error } ) => {
+const AlertMessage = ( { mobile, successMessage, error, shouldRoute } ) => {
 
     const dispatch = useDispatch();
+    const history = useHistory();
+    
     const handleClose = () => {
+        dispatch(setDisplay(false));
         dispatch(setDisplayDialog(false));
         dispatch(setDisplayCard(false));
         dispatch(setCardDetail({}))
         dispatch(setPrice(0.01));
         dispatch(setAuctionTime(3600));
+        if(shouldRoute) history.push('/games');
     };
 
     return (
