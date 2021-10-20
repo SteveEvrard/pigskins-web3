@@ -18,6 +18,8 @@ import Info from './components/Info';
 import Games from './components/Games';
 import Admin from './components/Admin';
 import JoinGame from './components/JoinGame';
+import MyGames from './components/MyGames';
+import GameDetails from './components/GameDetails';
 
 const theme = createTheme({
   status: {
@@ -77,6 +79,8 @@ const App = () => {
             <Route path='/purchase' component={Purchase} />
             <Route path='/games' exact={true} component={Games} />
             <Route path='/games/:id' component={JoinGame} />
+            <Route path='/my-games' exact={true} component={MyGames} />
+            <Route path='/my-games/:id' component={GameDetails} />
             <Route path='/cards' component={UserCards} />
             <Route path='/auction' component={Auction} />
             <Route path='/claim' component={Claim} />

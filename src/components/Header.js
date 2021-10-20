@@ -11,6 +11,7 @@ import { signer } from '../ethereum/ethers';
 const headerOptions = [
     {label: 'Purchase', href: '/purchase'},
     {label: 'Open Games', href: '/games'},
+    {label: 'My Games', href: '/my-games'},
     {label: 'Auction', href: '/auction'},
     {label: 'Completed', href: '/claim'},
     {label: 'My Cards', href: '/cards'},
