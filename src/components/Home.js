@@ -32,7 +32,7 @@ const Home = ( props ) => {
                     <CardHeader title='Collectible NFT Cards' />
                     <CardContent>
                         <Typography>
-                            Collect hundreds of different football cards and compete with other players to win ETH! Each card has their own unique attributes and rareness!
+                            Collect hundreds of different football cards and compete with other players to win ETH! Each card has its own unique attributes and rareness!
                         </Typography>
                     </CardContent>
                     {account ? 
