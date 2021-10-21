@@ -9,11 +9,11 @@ import { styled } from '@mui/material/styles';
 import { signer } from '../ethereum/ethers';
 
 const headerOptions = [
-    {label: 'Purchase', href: '/purchase'},
-    {label: 'Open Games', href: '/games'},
-    {label: 'My Games', href: '/my-games'},
+    {label: 'Buy Pack', href: '/purchase'},
     {label: 'Auction', href: '/auction'},
-    {label: 'Completed', href: '/claim'},
+    {label: 'Join Game', href: '/games'},
+    {label: 'My Auctions', href: '/my-auction'},
+    {label: 'My Games', href: '/my-games'},
     {label: 'My Cards', href: '/cards'},
     {label: 'Info', href: '/info'}
 ]
@@ -89,7 +89,7 @@ const Header = ( props ) => {
                         color: "inherit"
                     }}
                 >
-                    <StyledDotDesktop invisible={!(label === 'Completed' && notification)} variant='dot' color='primary'>{label}</StyledDotDesktop>
+                    <StyledDotDesktop invisible={!(label === 'My Auctions' && notification)} variant='dot' color='primary'>{label}</StyledDotDesktop>
                 </Button>
             );
         });
@@ -109,7 +109,7 @@ const Header = ( props ) => {
                     key={label}
                     onClick={handleClose}
                 >
-                    <StyledDot anchorOrigin={{vertical: 'top', horizontal: 'right'}} invisible={!(label === 'Completed' && notification)} variant='dot' color='primary'>{label}</StyledDot>
+                    <StyledDot anchorOrigin={{vertical: 'top', horizontal: 'right'}} invisible={!(label === 'My Auctions' && notification)} variant='dot' color='primary'>{label}</StyledDot>
                 </MenuItem>
             )
         }) 

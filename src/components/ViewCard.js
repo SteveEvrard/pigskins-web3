@@ -14,6 +14,7 @@ import { TabContext, TabList, TabPanel } from '@mui/lab';
 import Countdown from 'react-countdown';
 import PlaceBidDialog from './dialogs/PlaceBidDialog';
 import ClaimDialog from './dialogs/ClaimDialog';
+import CancelAuctionDialog from './dialogs/CancelAuctionDialog';
 
 export const getItems = (attributes) => {
     let items = [];
@@ -191,9 +192,22 @@ const ViewCard = ( props ) => {
         )   
     }
 
+    const CancelButtons = ( { mobile }) => {
+        const mobileStyle = {display: 'block', justifyContent: 'space-evenly', marginTop: '6vw'};
+        const desktopStyle = {display: 'flex', justifyContent: 'space-between', marginTop: '3vw', width: '50vw'};
+        return(
+            <div style={mobile ? mobileStyle : desktopStyle}>
+                <div style={{marginBottom: '6vw'}}><Button style={{fontWeight: 600, fontSize: mobile ? '4vw' : '1.3vw', width: mobile ? '90vw' : '22vw'}} onClick={openDialog} size='large' variant='contained'>Cancel Auction</Button></div>
+                <div style={{marginBottom: '6vw'}}><Button color='secondary' style={{fontWeight: 600, fontSize: mobile ? '4vw' : '1.3vw', width: mobile ? '90vw' : '22vw'}} onClick={handleClose} size='large' variant='contained'>Close</Button></div>
+            </div>
+        )   
+    }
+
     const displayCardInfoType = (view) => {
         switch(view) {
             case 'auction':
+                return <AuctionInfo card={card} mobile={isMobile} />
+            case 'userAuction':
                 return <AuctionInfo card={card} mobile={isMobile} />
             case 'userCards':
                 return <PlayerInfo card={card} mobile={isMobile} />
@@ -208,6 +222,8 @@ const ViewCard = ( props ) => {
         switch(view) {
             case 'auction':
                 return <PlaceBidDialog card={card} mobile={isMobile} />
+            case 'userAuction':
+                return <CancelAuctionDialog mobile={isMobile} />
             case 'userCards':
                 return <CreateAuctionDialog mobile={isMobile} />
             case 'claim':
@@ -221,6 +237,8 @@ const ViewCard = ( props ) => {
         switch(view) {
             case 'auction':
                 return <BidCardButtons mobile={isMobile} />
+            case 'userAuction':
+                return <CancelButtons mobile={isMobile} />                
             case 'userCards':
                 return <SellCardButtons mobile={isMobile} />
             case 'claim':

@@ -21,6 +21,7 @@ import JoinGame from './components/JoinGame';
 import MyGames from './components/MyGames';
 import GameDetails from './components/GameDetails';
 import NotificationHelper from './utils/NotificationUtil';
+import MyAuction from './components/MyAuctions';
 
 const theme = createTheme({
   status: {
@@ -82,6 +83,7 @@ const App = () => {
             <Route path='/games/:id' component={JoinGame} />
             <Route path='/my-games' exact={true} component={MyGames} />
             <Route path='/my-games/:id' component={GameDetails} />
+            <Route path='/my-auction' component={MyAuction} />
             <Route path='/cards' component={UserCards} />
             <Route path='/auction' component={Auction} />
             <Route path='/claim' component={Claim} />

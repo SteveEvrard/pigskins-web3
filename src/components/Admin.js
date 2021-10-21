@@ -54,64 +54,86 @@ const Admin = ( props ) => {
         })
     }
 
-    return (
-        <div>
-            <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: '8vw', color: '#fff'}}>
-                Create Games
-            </Typography>
-            <div style={{display: 'flex', justifyContent: 'center'}}>
-                <div style={{width: '75vw'}}>
-                    <TextField
-                        autoFocus
-                        error={ players <= 0 }
-                        color='selected'
-                        margin='dense'
-                        id='name'
-                        label='Total Players'
-                        type='number'
-                        fullWidth
-                        variant='outlined'
-                        value={players}
-                        onChange={handlePlayersChange}
-                    />
-                    <TextField
-                        autoFocus
-                        error={ cards <= 0 }
-                        color='selected'
-                        margin='dense'
-                        id='name'
-                        label='Total Cards'
-                        type='number'
-                        fullWidth
-                        variant='outlined'
-                        value={cards}
-                        onChange={handleCardChange}
-                    />
-                    <TextField
-                        autoFocus
-                        error={ fee <= 0 }
-                        color='selected'
-                        margin='dense'
-                        id='name'
-                        label='Entry Fee'
-                        type='number'
-                        fullWidth
-                        variant='outlined'
-                        value={fee}
-                        onChange={handleFeeChange}
-                    />
-                </div>
-            </div>
+    const CreateGameComponent = () => {
+        return (
             <div>
+                <div style={{display: 'flex', justifyContent: 'center'}}>
+                    <div style={{width: '75vw'}}>
+                        <TextField
+                            autoFocus
+                            error={ players <= 0 }
+                            color='selected'
+                            margin='dense'
+                            id='name'
+                            label='Total Players'
+                            type='number'
+                            fullWidth
+                            variant='outlined'
+                            value={players}
+                            onChange={handlePlayersChange}
+                        />
+                        <TextField
+                            autoFocus
+                            error={ cards <= 0 }
+                            color='selected'
+                            margin='dense'
+                            id='name'
+                            label='Total Cards'
+                            type='number'
+                            fullWidth
+                            variant='outlined'
+                            value={cards}
+                            onChange={handleCardChange}
+                        />
+                        <TextField
+                            autoFocus
+                            error={ fee <= 0 }
+                            color='selected'
+                            margin='dense'
+                            id='name'
+                            label='Entry Fee'
+                            type='number'
+                            fullWidth
+                            variant='outlined'
+                            value={fee}
+                            onChange={handleFeeChange}
+                        />
+                    </div>
+                </div>
+                <div>
                 {processing ? 
                     <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='secondary' /></div>
                     :
                     <div>
                         <div><Button onClick={createGame} sx={{marginTop: '5vw'}} variant='contained'>Create</Button></div>
+                    </div>
+                }
+                </div>
+            </div>
+        )
+    }
+
+    const WithdrawButton = () => {
+        return (
+            <div>
+                {processing ? 
+                    <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='secondary' /></div>
+                    :
+                    <div>
                         <div><Button onClick={withdraw} sx={{marginTop: '5vw'}} variant='contained'>Withdraw ETH</Button></div>
                     </div>
                 }
             </div>
+        )
+    }
+
+    return (
+        <div>
+            <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: '8vw', color: '#fff'}}>
+                Admin Dashboard
+            </Typography>
+            <CreateGameComponent />
+            <WithdrawButton />
         </div>
     )
 }
