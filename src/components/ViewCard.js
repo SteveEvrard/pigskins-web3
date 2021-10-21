@@ -121,7 +121,7 @@ const ViewCard = ( props ) => {
                 <Box sx={{ backgroundColor: '#31572c', width: mobile ? '90vw' : '50vw', typography: 'body1' }}>
                     <TabContext value={value}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                            <TabList textColor='#fff' onChange={handleChange} aria-label="lab API tabs example">
+                            <TabList textColor='secondary' onChange={handleChange} aria-label="lab API tabs example">
                                 <Tab label="Auction" value="1" />
                                 <Tab label="Player" value="2" />
                             </TabList>
@@ -145,7 +145,7 @@ const ViewCard = ( props ) => {
                 <Box sx={{ backgroundColor: '#31572c', width: mobile ? '90vw' : '50vw', typography: 'body1' }}>
                     <TabContext value={value}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                            <TabList textColor='#fff' onChange={handleChange} aria-label="lab API tabs example">
+                            <TabList textColor='secondary' onChange={handleChange} aria-label="lab API tabs example">
                                 <Tab label="Results" value="1" />
                                 <Tab label="Player" value="2" />
                             </TabList>

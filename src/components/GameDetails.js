@@ -34,25 +34,14 @@ const GameDetails = ( props ) => {
 
     const getCards = async () => {
         setLoading(true);
+
         const user = await getAccount();
         setAccount(user);
-        console.log(game);
         const activePlayers = filterActivePlayers(game);
-        console.log(activePlayers);
         const playerWithCardIds = await mapPlayerToCardIds(activePlayers);
-        console.log(playerWithCardIds);
         setPlayers(playerWithCardIds);
-        // const allCardIds = await getAllCardIds(account);
-        // const ownedCards = filterCurrentlyOwnedCards(allCardIds);
-        // const cardsWithDetails = await getCardDetailsById(ownedCards);
-        // const availableCards = filterForAvailableCards(cardsWithDetails);
-        // const mappedCards = availableCards.map(card => {
-        //     return mapCardData(card)
-        // });
 
         setLoading(false);
-        // setCards(mappedCards);
-        // if(mappedCards.length === 0) setDisplayMessage(true);
     }
 
     const filterActivePlayers = (game) => {
@@ -76,8 +65,6 @@ const GameDetails = ( props ) => {
     const PlayerTile = ( player ) => {
 
         const shortenAddress = (address) => {
-            console.log(typeof address)
-            
             return address.substring(0, 6) + '...' + address.substring(38);
         }
         return (

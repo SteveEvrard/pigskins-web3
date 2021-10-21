@@ -107,7 +107,7 @@ const UserCards = ( props ) => {
     return (
         <div style={displayCard ? {position: 'fixed', marginTop: '2vw'} : {marginTop: '2vw'}}>
             <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: '8vw', color: '#fff'}}>
-                Cards
+                My Cards
             </Typography>
             {displayMessage ? <PageContext header={headerMessage} body={message} /> : null}
             {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : displayCards(cards)}

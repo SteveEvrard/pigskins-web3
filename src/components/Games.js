@@ -7,6 +7,7 @@ import JoinGameDialog from './dialogs/JoinGameDialog';
 import { useDispatch, useSelector } from 'react-redux';
 import { setGame } from '../store/games/gameSlice';
 import { useHistory } from 'react-router-dom';
+import PageContext from './PageContext';
 
 const Games = ( props ) => {
 
@@ -18,6 +19,9 @@ const Games = ( props ) => {
     const [loading, setLoading] = useState(false);
     const [games, setGames] = useState([]);
     const [account, setAccount] = useState('');
+    const [displayMessage, setDisplayMessage] = useState(false);
+    const headerMessage = 'No Open Games';
+    const message = 'Games Will Be Opened Shortly. Please Check Back Soon to Join.';
 
     useEffect(() => {
         getOpenGames();
@@ -87,6 +91,7 @@ const Games = ( props ) => {
     
             mappedDetails.push({active: games[i].active, entryFee, gameId, numberOfCardsPerPlayer, numberOfPlayers, open: games[i].open, players: games[i].players, winner: games[i].winner});
         }
+        if(games.length === 0) setDisplayMessage(true);
 
         return mappedDetails;
     }
@@ -135,6 +140,7 @@ const Games = ( props ) => {
             <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: '8vw', color: '#fff'}}>
                 Open Games
             </Typography>
+            {displayMessage ? <PageContext header={headerMessage} body={message} /> : null}
             {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : createGameTiles(games)}
             {displayDialog ? <JoinGameDialog /> : null}
         </div>

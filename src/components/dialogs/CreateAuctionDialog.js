@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, CircularProgress, Dialog, DialogContent, DialogTitle, MenuItem, Select, TextField } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDisplayDialog, setPrice, setAuctionTime } from '../../store/view-card/viewCardSlice';
@@ -19,6 +19,14 @@ const CreateAuctionDialog = ( { mobile } ) => {
     const [processing, setProcessing] = useState(false);
     const [complete, setComplete] = useState(false);
     const [error, setError] = useState('');
+
+    useEffect(() => {
+
+        dispatch(setPrice(0.01));
+        dispatch(setAuctionTime(3600));
+        
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handlePriceChange = (event) => {
         dispatch(setPrice(event.target.value));

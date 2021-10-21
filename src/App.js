@@ -20,6 +20,7 @@ import Admin from './components/Admin';
 import JoinGame from './components/JoinGame';
 import MyGames from './components/MyGames';
 import GameDetails from './components/GameDetails';
+import NotificationHelper from './utils/NotificationUtil';
 
 const theme = createTheme({
   status: {
@@ -73,7 +74,7 @@ const App = () => {
         <ThemeProvider theme={theme}>
 
           <Header/>
-
+          <NotificationHelper/>
           <Switch>
             <Route path='/' exact component={Home} />
             <Route path='/purchase' component={Purchase} />
