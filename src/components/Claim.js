@@ -42,6 +42,7 @@ const Claim = ( props ) => {
     const getCompletedAuctions = async () => {
         const account = await getAccount(); 
         const openedAuctions = await getOpenedAuctionsByAccount(account);
+        console.log(BigNumber.from(openedAuctions[0].args.expireDate).toString());
         const expiredAuctions = filterExpiredAuctions(openedAuctions);
         const expiredAuctionIds = mapExpiredAuctionIds(expiredAuctions);
         const closedAuctions = await filterClosedAuctions(expiredAuctions);
@@ -69,7 +70,7 @@ const Claim = ( props ) => {
     }
 
     const filterClosedAuctions = async (auctions) => {
-        let promises = [];
+        const promises = [];
 
         for(let i = 0; i < auctions.length; i++) {
             promises.push(
@@ -97,7 +98,7 @@ const Claim = ( props ) => {
     }
 
     const getCardDetailsByAuctionId = async (auctions) => {
-        let promises = [];
+        const promises = [];
 
         for(let i = 0; i < auctions.length; i++) {
             promises.push(
@@ -109,7 +110,7 @@ const Claim = ( props ) => {
     }
 
     const getUnclosedAuctionDetails = async (auctionIds) => {
-        let promises = []
+        const promises = []
 
         for(let i = 0; i < auctionIds.length; i++) {
             promises.push(

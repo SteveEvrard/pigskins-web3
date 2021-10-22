@@ -4,7 +4,7 @@ import { Button, Checkbox, Divider, List, ListItem, Typography } from '@mui/mate
 import { signer, ContractWithSigner } from '../ethereum/ethers';
 import { BigNumber } from "ethers";
 import PlayerCard from './PlayerCard';
-import { getPlayerNameById, getPlayerNumberById, getPlayerPositionById, getPlayerTeamById, getPlayerTypeById } from '../utils/PlayerUtil';
+import { getPlayerNameById, getPlayerNumberById, getPlayerPositionById, getPlayerTeamById, getPlayerTypeById, getPlayerApiIdById } from '../utils/PlayerUtil';
 import PageContext from './PageContext';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useHistory } from 'react-router-dom';
@@ -12,6 +12,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import JoinGameDialog from './dialogs/JoinGameDialog';
 import { setDisplayDialog, setSelectedCardsView } from '../store/games/gameSlice';
 import { getItems } from './ViewCard';
+import axios from 'axios';
 
 const JoinGame = ( props ) => {
 
@@ -44,17 +45,20 @@ const JoinGame = ( props ) => {
 
     const getCards = async () => {
         setLoading(true);
+        const currentWeek = await (await axios.get(`https://api.sportsdata.io/v3/nfl/scores/json/CurrentWeek?key=${process.env.REACT_APP_SD_API_KEY}`)).data;
         const account = await getAccount();
         const allCardIds = await getAllCardIds(account);
         const ownedCards = filterCurrentlyOwnedCards(allCardIds);
         const cardsWithDetails = await getCardDetailsById(ownedCards);
         const availableCards = filterForAvailableCards(cardsWithDetails);
         const mappedCards = availableCards.map(card => {
-            return mapCardData(card)
+            return mapCardData(card, currentWeek)
         });
+        const finalCards = await handlePromises(mappedCards);
+        console.log(finalCards);
         setLoading(false);
-        setCards(mappedCards);
-        if(mappedCards.length === 0) setDisplayMessage(true);
+        setCards(finalCards);
+        if(finalCards.length === 0) setDisplayMessage(true);
     }
 
     const getAllCardIds = async (acct) => {
@@ -74,7 +78,7 @@ const JoinGame = ( props ) => {
     }
 
     const getCardDetailsById = async (cardIds) => {
-        let promises = [];
+        const promises = [];
 
         for(let i = 0; i < cardIds.length; i++) {
             promises.push(
@@ -85,13 +89,28 @@ const JoinGame = ( props ) => {
         return Promise.all(promises);
     }
 
-    function mapCardData(card) {
+    const getPlayerDetails = async (card) => {
+
+        const playerId = BigNumber.from(card.playerId).toNumber();
+        const playerApiId = getPlayerApiIdById(playerId)
+
+        return (await axios.get(`https://api.sportsdata.io/v3/nfl/scores/json/Player/${playerApiId}?key=${process.env.REACT_APP_SD_API_KEY}`)).data;
+    }
+
+    const mapCardData = async (card, currentWeek) => {
+        const data = await getPlayerDetails(card);
+        console.log(data.UpcomingGameWeek)
         const cardId = BigNumber.from(card.cardId).toString();
         const playerId = BigNumber.from(card.playerId).toString();
         const attributeHash = BigNumber.from(card.attributeHash).toString();
         const cardType = BigNumber.from(card.cardType).toString();
+        const opponent = data.UpcomingGameWeek === currentWeek ? data.UpcomingGameOpponent : 'N/A';
         
-        return {cardId, playerId, attributeHash, cardType};
+        return {cardId, playerId, attributeHash, cardType, opponent: opponent};
+    }
+
+    const handlePromises = async (cardDetails) => {
+        return Promise.all(cardDetails);
     }
 
     const handleSelect = (selectedCard) => {
@@ -134,7 +153,7 @@ const JoinGame = ( props ) => {
         const position = getPlayerPositionById(card.playerId);
         const selected = getCardCountByPosition(position);
         const maxEntries = getPositionEntries(position);
-        if(!selectedCards.includes(card) && (selected === maxEntries)) {
+        if((!selectedCards.includes(card) && (selected === maxEntries)) || card.opponent === 'N/A') {
             return {pointerEvents: 'none', backgroundColor: 'gray'};
         }
     }
@@ -148,10 +167,13 @@ const JoinGame = ( props ) => {
             <ListItem onClick={() => handleSelect(card)} sx={{...checkDisabled(card), display: 'flex', cursor: 'pointer'}}>
                 <PlayerCard attributes={card.attributeHash} flippable={false} width={isMobile ? '20vw' : '15vw'} number={getPlayerNumberById(card.playerId)} team={getPlayerTeamById(card.playerId)} playerType={getPlayerTypeById(card.playerId)} cardType={card.cardType} />
                 <div style={{width: '100vw', display: 'flex', justifyContent: 'space-between'}}>
-                    <div>
+                    <div style={{width: '55vw'}}>
                         <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '5vw' : '3vw'}}>{getPlayerNameById(card.playerId)}</Typography>
                         <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '5vw' : '3vw'}}>{position}</Typography>
-                        <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '4vw' : '2vw'}}>Items: {getItems(card.attributeHash)}</Typography>
+                        <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                            <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '4vw' : '2vw'}}>Items: {getItems(card.attributeHash)}</Typography>
+                            <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '4vw' : '2vw'}}>OPP: {card.opponent}</Typography>
+                        </div>
                     </div>
                     <Checkbox checked={selectedCards.includes(card)} color='secondary' />
                 </div>

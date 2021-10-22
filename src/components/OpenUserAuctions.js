@@ -39,8 +39,9 @@ const OpenUserAuctions = ( props ) => {
         const allAuctions = await getAllAuctions(account);
         const openAuctions = filterExpiredAuctions(allAuctions);
         const auctionDetails = await getOpenAuctionDetails(openAuctions);
+        const openAuctionDetails = filterOpenAuctions(auctionDetails);
         const cardDetails = await getCardDetailsByAuctionId(openAuctions);
-        const mappedCards = mapAllCardAuctionInfo(auctionDetails, cardDetails);
+        const mappedCards = mapAllCardAuctionInfo(openAuctionDetails, cardDetails);
         const cardsMappedToString = mappedCards.map(card => {
             return mapBigNumberToData(card);
         });
@@ -60,8 +61,8 @@ const OpenUserAuctions = ( props ) => {
     }
 
     const getOpenAuctionDetails = async (auctions) => {
-        let promises = []
-
+        const promises = []
+        
         for(let i = 0; i < auctions.length; i++) {
             promises.push(
                 ContractWithSigner.auctionIdToAuction(BigNumber.from(auctions[i].args.auctionId))
@@ -72,7 +73,7 @@ const OpenUserAuctions = ( props ) => {
     }
 
     const getCardDetailsByAuctionId = async (auctions) => {
-        let promises = [];
+        const promises = [];
 
         for(let i = 0; i < auctions.length; i++) {
             promises.push(
@@ -90,6 +91,12 @@ const OpenUserAuctions = ( props ) => {
         })
 
         return mappedData;
+    }
+
+    const filterOpenAuctions = (auctions) => {
+        return auctions.filter(auction => {
+            return auction.open
+        });
     }
 
     const mapBigNumberToData = (card) => {

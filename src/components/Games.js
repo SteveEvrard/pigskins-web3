@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ContractWithSigner, Contract, signer } from '../ethereum/ethers';
+import { GameContractWithSigner, GameContract, signer } from '../ethereum/ethers';
 import { Button, Card, CardContent, Typography } from '@mui/material';
 import { BigNumber, ethers } from 'ethers';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -42,7 +42,7 @@ const Games = ( props ) => {
     }
 
     const getAllOpenedGames = async () => {
-        return ContractWithSigner.queryFilter(Contract.filters.GameCreated())
+        return GameContractWithSigner.queryFilter(GameContract.filters.GameCreated())
     }
 
     const filterForGameIds = ( games ) => {
@@ -60,7 +60,7 @@ const Games = ( props ) => {
 
         for(let i = 0; i < gameIds.length; i++) {
             promises.push(
-                ContractWithSigner.gameIdToGame(gameIds[i])
+                GameContractWithSigner.gameIdToGame(gameIds[i])
             )
         }
 
@@ -68,7 +68,7 @@ const Games = ( props ) => {
     }
 
     const getPlayersByGameId = async ( gameId ) => {
-        return await ContractWithSigner.getPlayersByGameId(BigNumber.from(gameId).toNumber());
+        return await GameContractWithSigner.getPlayersByGameId(BigNumber.from(gameId).toNumber());
     }
 
     const mapPlayersToGameDetails = async ( games ) => {

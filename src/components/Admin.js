@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, CircularProgress, TextField, Typography } from '@mui/material';
 import { ethers } from "ethers";
-import { ContractWithSigner, Contract, signer } from '../ethereum/ethers';
+import { ContractWithSigner, GameContractWithSigner, GameContract, signer } from '../ethereum/ethers';
 
 const Admin = ( props ) => {
 
@@ -28,9 +28,9 @@ const Admin = ( props ) => {
         const priceInWei = ethers.utils.parseEther(fee.toString());
         setProcessing(true);
 
-        ContractWithSigner.createGame(players, cards, priceInWei, {from: account})
+        GameContractWithSigner.createGame(players, cards, priceInWei, {from: account})
             .then(() => {
-                Contract.once(Contract.filters.GameCreated(), () => {
+                GameContract.once(GameContract.filters.GameCreated(), () => {
                     setProcessing(false);
                 })
             })

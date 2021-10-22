@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, CircularProgress, Dialog, DialogContent, DialogTitle } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDisplayDialog } from '../../store/games/gameSlice';
-import { Contract, ContractWithSigner, signer } from '../../ethereum/ethers';
+import { GameContract, GameContractWithSigner, signer } from '../../ethereum/ethers';
 import { BigNumber, ethers } from "ethers";
 import AlertMessage from './AlertMessage';
 import { getPlayerNameById, getPlayerPositionById } from '../../utils/PlayerUtil';
@@ -38,9 +38,9 @@ const JoinGameDialog = ( { mobile } ) => {
         const gameId = BigNumber.from(game.gameId).toNumber();
         const entryFee = ethers.utils.formatEther(BigNumber.from(game.entryFee.toString()));
 
-        ContractWithSigner.joinGame(gameId, cardIds, {from: account, value: ethers.utils.parseEther(entryFee)})
+        GameContractWithSigner.joinGame(gameId, cardIds, {from: account, value: ethers.utils.parseEther(entryFee)})
             .then(() => {
-                Contract.once(Contract.filters.GameJoined(null, account), () => {
+                GameContract.once(GameContract.filters.GameJoined(null, account), () => {
                     setProcessing(false);
                     setComplete(true);
                 })

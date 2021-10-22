@@ -41,7 +41,7 @@ const NotificationHelper = () => {
     }
     
     const filterClosedAuctions = async (auctions) => {
-        let promises = [];
+        const promises = [];
     
         for(let i = 0; i < auctions.length; i++) {
             promises.push(
@@ -69,7 +69,7 @@ const NotificationHelper = () => {
     }
     
     const getCardDetailsByAuctionId = async (auctions) => {
-        let promises = [];
+        const promises = [];
     
         for(let i = 0; i < auctions.length; i++) {
             promises.push(
@@ -81,7 +81,7 @@ const NotificationHelper = () => {
     }
     
     const getUnclosedAuctionDetails = async (auctionIds) => {
-        let promises = []
+        const promises = []
     
         for(let i = 0; i < auctionIds.length; i++) {
             promises.push(

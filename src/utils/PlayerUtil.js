@@ -246,6 +246,10 @@ export const getPlayerPositionById = (id) => {
     return players[id].position;
 }
 
+export const getPlayerApiIdById = (id) => {
+    return players[id].apiId;
+}
+
 export const getTeamName = (id) => {
     return teamNames[getPlayerTeamById(id)];
 }

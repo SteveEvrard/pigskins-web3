@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Divider, List, ListItem, Typography } from '@mui/material';
-import { signer, ContractWithSigner } from '../ethereum/ethers';
+import { signer, GameContractWithSigner } from '../ethereum/ethers';
 import { BigNumber } from "ethers";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useHistory } from 'react-router-dom';
@@ -55,7 +55,7 @@ const GameDetails = ( props ) => {
 
         for(let i = 0; i < players.length; i++) {
             promises.push(
-                {player: players[i], cards: await ContractWithSigner.getCardEntriesByPlayer(BigNumber.from(game.gameId), players[i])}
+                {player: players[i], cards: await GameContractWithSigner.getCardEntriesByPlayer(BigNumber.from(game.gameId), players[i])}
             )
         }
 

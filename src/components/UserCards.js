@@ -57,7 +57,7 @@ const UserCards = ( props ) => {
     }
 
     const getCardDetailsById = async (cardIds) => {
-        let promises = [];
+        const promises = [];
 
         for(let i = 0; i < cardIds.length; i++) {
             promises.push(

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, CircularProgress, Dialog, DialogContent, DialogTitle, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { setDisplayDialog, setPrice } from '../../store/view-card/viewCardSlice';
+import { setDisplayDialog } from '../../store/view-card/viewCardSlice';
 import { Contract, ContractWithSigner, signer } from '../../ethereum/ethers';
 import { BigNumber } from "ethers";
 import AlertMessage from './AlertMessage';
@@ -22,19 +22,18 @@ const CancelAuctionDialog = ( { mobile } ) => {
     const handleCancel = () => {
         dispatch(setDisplayDialog(false));
         dispatch(setCardDetail(card));
-        dispatch(setPrice(0.01));
         setError('');
     };
 
-    const endAuction = async () => {
+    const cancelAuction = async () => {
         setProcessing(true);
 
         const account = await getAccount();
         const cardId = BigNumber.from(card.cardId).toNumber();
 
-        ContractWithSigner.endAuction(cardId, {from: account})
+        ContractWithSigner.cancelAuction(cardId, {from: account})
             .then(() => {
-                Contract.once(Contract.filters.AuctionClosed(null, cardId), () => {
+                Contract.once(Contract.filters.AuctionCancelled(null, null), () => {
                     setProcessing(false);
                     setComplete(true);
                 })
@@ -61,7 +60,7 @@ const CancelAuctionDialog = ( { mobile } ) => {
                 <div>
                     <Typography sx={{textAlign: 'center'}} variant='h6'>Are You Sure You Would Like to Cancel this Auction?</Typography>
                     <div style={mobile ? mobileStyle : desktopStyle}>
-                        <div style={{display: 'flex', justifyContent: 'center', marginBottom: mobile ? '3vw' : '1vw'}}><Button disabled={price <= 0} style={{fontWeight: 600, fontSize: mobile ? '4vw' : '1.3vw', width: mobile ? '70vw' : '26vw'}} onClick={endAuction} size='large' variant='contained'>Cancel Auction</Button></div>
+                        <div style={{display: 'flex', justifyContent: 'center', marginBottom: mobile ? '3vw' : '1vw'}}><Button disabled={price <= 0} style={{fontWeight: 600, fontSize: mobile ? '4vw' : '1.3vw', width: mobile ? '70vw' : '26vw'}} onClick={cancelAuction} size='large' variant='contained'>Cancel Auction</Button></div>
                         <div style={{display: 'flex', justifyContent: 'center', marginBottom: mobile ? '3vw' : '1vw'}}><Button style={{color: 'black', backgroundColor: 'lightgrey', fontWeight: 600, fontSize: mobile ? '4vw' : '1.3vw', width: mobile ? '70vw' : '26vw'}} onClick={handleCancel} size='large' variant='contained'>Back</Button></div>
                     </div>
                 </div>
