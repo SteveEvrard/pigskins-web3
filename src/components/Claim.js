@@ -42,7 +42,6 @@ const Claim = ( props ) => {
     const getCompletedAuctions = async () => {
         const account = await getAccount(); 
         const openedAuctions = await getOpenedAuctionsByAccount(account);
-        console.log(BigNumber.from(openedAuctions[0].args.expireDate).toString());
         const expiredAuctions = filterExpiredAuctions(openedAuctions);
         const expiredAuctionIds = mapExpiredAuctionIds(expiredAuctions);
         const closedAuctions = await filterClosedAuctions(expiredAuctions);
@@ -176,7 +175,7 @@ const Claim = ( props ) => {
     }
 
     return (
-        <div style={{marginTop: '2vw'}}>
+        <div style={{marginTop: '2vw', width: '100vw'}}>
             {displayMessage ? <PageContext header={headerMessage} body={message} /> : null}
             {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : displayCards(cards)}
             {displayCard ? <ViewCard view={'claim'}/> : null}

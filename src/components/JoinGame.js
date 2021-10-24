@@ -55,7 +55,6 @@ const JoinGame = ( props ) => {
             return mapCardData(card, currentWeek)
         });
         const finalCards = await handlePromises(mappedCards);
-        console.log(finalCards);
         setLoading(false);
         setCards(finalCards);
         if(finalCards.length === 0) setDisplayMessage(true);
@@ -99,7 +98,6 @@ const JoinGame = ( props ) => {
 
     const mapCardData = async (card, currentWeek) => {
         const data = await getPlayerDetails(card);
-        console.log(data.UpcomingGameWeek)
         const cardId = BigNumber.from(card.cardId).toString();
         const playerId = BigNumber.from(card.playerId).toString();
         const attributeHash = BigNumber.from(card.attributeHash).toString();

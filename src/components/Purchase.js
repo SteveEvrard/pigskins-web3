@@ -22,10 +22,13 @@ const Purchase = ( props ) => {
 
         const account = await getAccount();
         dispatch(setCardDetail({}));
+        const gas = await ContractWithSigner.estimateGas.purchaseCardPack({from: account, value: ethers.utils.parseEther("0.005")});
+        console.log('gas', gas)
 
-        ContractWithSigner.purchaseCardPack({from: account, value: ethers.utils.parseEther("0.005")})
-            .then(() => {
+        ContractWithSigner.purchaseCardPack({from: account, value: ethers.utils.parseEther("0.005"), gasLimit: gas})
+            .then((data) => {
                 setDisplayCardPack(false);
+                console.log('pack info', data)
                 Contract.once(Contract.filters.CardPackPurchased(account), () => {
                     setProcessing(false);
                     setComplete(true);

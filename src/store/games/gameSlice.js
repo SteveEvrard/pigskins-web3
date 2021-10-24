@@ -7,7 +7,8 @@ export const gameSlice = createSlice({
         value: {
             game: {},
             displayDialog: false,
-            selectedCards: []
+            selectedCards: [],
+            cardIds: []
         }
     },
     reducers: {
@@ -19,6 +20,9 @@ export const gameSlice = createSlice({
         },
         setSelectedCardsView: (state, action) => {
             state.value.selectedCards = action.payload
+        },
+        setCardIds: (state, action) => {
+            state.value.cardIds = action.payload
         }
     }
 
@@ -27,5 +31,6 @@ export const gameSlice = createSlice({
 export const { setGame } = gameSlice.actions;
 export const { setDisplayDialog } = gameSlice.actions;
 export const { setSelectedCardsView } = gameSlice.actions;
+export const { setCardIds } = gameSlice.actions;
 
 export default gameSlice.reducer;
