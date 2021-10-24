@@ -20,11 +20,11 @@ const getPlayerStats = async (week, playerId) => {
 
 const calculateBoost = (points, cardType) => {
     if(cardType === '1') {
-        return points * 1.1;
+        return Math.round((points * 1.1) * 100) / 100;
     } else if(cardType === '2') {
-        return points * 1.25;
+        return Math.round((points * 1.25) * 100) / 100;
     } else if(cardType === '3') {
-        return points * 1.4;
+        return Math.round((points * 1.4) * 100) / 100;
     } else {
         return points;
     }
