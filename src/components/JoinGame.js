@@ -60,7 +60,7 @@ const JoinGame = ( props ) => {
         if(finalCards.length === 0) setDisplayMessage(true);
     }
 
-    const getAllCardIds = async (acct) => {
+    const getAllCardIds = async ( acct ) => {
         return ContractWithSigner.getUserOwnedCards(acct);
     }
 
