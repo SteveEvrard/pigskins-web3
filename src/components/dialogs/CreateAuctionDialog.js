@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, CircularProgress, Dialog, DialogContent, DialogTitle, MenuItem, Select, TextField } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDisplayDialog, setPrice, setAuctionTime } from '../../store/view-card/viewCardSlice';
-import { Contract, ContractWithSigner, signer } from '../../ethereum/ethers';
+import { ContractWithSigner, signer } from '../../ethereum/ethers';
 import { BigNumber, ethers } from "ethers";
 import AlertMessage from './AlertMessage';
 import { setCardDetail } from '../../store/card-detail/cardDetailSlice';
@@ -54,10 +54,8 @@ const CreateAuctionDialog = ( { mobile } ) => {
 
         ContractWithSigner.createCardAuction(cardId, startingBid, time, {from: account})
             .then(() => {
-                Contract.once(Contract.filters.AuctionOpened(null, cardId), () => {
-                    setProcessing(false);
-                    setComplete(true);
-                })
+                setProcessing(false);
+                setComplete(true);
             })
             .catch(err => {
                 console.log(err);
@@ -73,7 +71,7 @@ const CreateAuctionDialog = ( { mobile } ) => {
             <DialogTitle sx={{backgroundColor: '#fff', color: 'black', textAlign: 'center'}}>Create Auction</DialogTitle>
             <DialogContent sx={{backgroundColor: '#fff', paddingTop: '20px !important'}}>
                 { complete ? 
-                <AlertMessage successMessage='Auction Created!' error={error} mobile={mobile} />
+                <AlertMessage successMessage='Auction Created! Processing Now!' error={error} mobile={mobile} />
                 :
                 processing ? 
                 <div style={{display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='primary' /></div>

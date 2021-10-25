@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { signer, Contract } from "../ethereum/ethers";
+import { signer, Contract, GameContract } from "../ethereum/ethers";
 import { Alert, Button, Slide, Snackbar } from '@mui/material';
 import CardPack from '../components/CardPack';
 import { useDispatch, useSelector } from 'react-redux';
@@ -37,6 +37,11 @@ const AlertMessage = ( props ) => {
     const listenForContractEvents = async () => {
         const account = await signer.getAddress();
         listenForPurchase(account);
+        listenForCreateAuction(account);
+        listenForJoinGame(account);
+        listenForCancelAuction(account);
+        listenForCloseAuction(account);
+        listenForBidPlaced(account);
     }
     
     const listenForPurchase = (acct) => {
@@ -45,6 +50,41 @@ const AlertMessage = ( props ) => {
             setOpen(true);
             setDisplayCardsButton(true);
         });
+    }
+
+    const listenForCreateAuction = (acct) => {
+        Contract.on(Contract.filters.AuctionOpened(null, null, null, null, acct), () => {
+            setMessage('Auction Created Successfully');
+            setOpen(true);
+        })
+    }
+
+    const listenForJoinGame = (acct) => {
+        GameContract.on(GameContract.filters.GameJoined(null, acct), () => {
+            setMessage('Joined Game Successfully, Good Luck!');
+            setOpen(true);            
+        })
+    }
+
+    const listenForCancelAuction = (acct) => {
+        Contract.on(Contract.filters.AuctionCancelled(null, acct), () => {
+            setMessage('Auction Cancelled Successfully');
+            setOpen(true);
+        })
+    }
+
+    const listenForCloseAuction = (acct) => {
+        Contract.on(Contract.filters.AuctionClosed(null, null, null, acct, null), () => {
+            setMessage('Auction Closed Successfully');
+            setOpen(true);
+        })
+    }
+
+    const listenForBidPlaced = (acct) => {
+        Contract.on(Contract.filters.BidPlaced(null, null, null, acct), () => {
+            setMessage('Bid Placed Successfully');
+            setOpen(true);
+        })
     }
 
     return (

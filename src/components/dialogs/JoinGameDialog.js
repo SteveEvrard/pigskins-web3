@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, CircularProgress, Dialog, DialogContent, DialogTitle } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDisplayDialog } from '../../store/games/gameSlice';
-import { GameContract, GameContractWithSigner, signer } from '../../ethereum/ethers';
+import { GameContractWithSigner, signer } from '../../ethereum/ethers';
 import { BigNumber, ethers } from "ethers";
 import AlertMessage from './AlertMessage';
 import { getPlayerNameById, getPlayerPositionById } from '../../utils/PlayerUtil';
@@ -37,13 +37,12 @@ const JoinGameDialog = ( { mobile } ) => {
         const account = await getAccount();
         const gameId = BigNumber.from(game.gameId).toNumber();
         const entryFee = ethers.utils.formatEther(BigNumber.from(game.entryFee.toString()));
+        console.log('fee', entryFee);
 
-        GameContractWithSigner.joinGame(gameId, cardIds, {from: account, value: ethers.utils.parseEther(entryFee)})
+        GameContractWithSigner.joinGame(gameId, cardIds, process.env.REACT_APP_CALL_SECRET.toString(), {from: account, value: ethers.utils.parseEther(entryFee)})
             .then(() => {
-                GameContract.once(GameContract.filters.GameJoined(null, account), () => {
-                    setProcessing(false);
-                    setComplete(true);
-                })
+                setProcessing(false);
+                setComplete(true);
             })
             .catch(err => {
                 console.log(err);
@@ -59,7 +58,7 @@ const JoinGameDialog = ( { mobile } ) => {
             <DialogTitle sx={{paddingBottom: '0', fontSize: mobile ? '6vw' : '3vw', fontWeight: 600, fontFamily: "Work Sans, sans-serif", backgroundColor: '#fff', color: 'black', textAlign: 'center'}}>Your Team</DialogTitle>
             <DialogContent sx={{backgroundColor: '#fff', paddingTop: '20px !important'}}>
                 { complete ? 
-                <AlertMessage shouldRoute={true} successMessage='Game Joined! Good Luck!' error={error} mobile={mobile} />
+                <AlertMessage shouldRoute={true} successMessage='Game Joined! Processing Now!' error={error} mobile={mobile} />
                 :
                 processing ? 
                 <div style={{display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='primary' /></div>

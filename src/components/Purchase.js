@@ -23,7 +23,7 @@ const Purchase = ( props ) => {
         const gas = await ContractWithSigner.estimateGas.purchaseCardPack({from: account, value: ethers.utils.parseEther("0.005")});
         console.log('gas', gas)
 
-        ContractWithSigner.purchaseCardPack({from: account, value: ethers.utils.parseEther("0.005"), gasLimit: gas})
+        ContractWithSigner.purchaseCardPack({from: account, value: ethers.utils.parseEther("0.005"), gasLimit: gas.mul('3').div('2')})
             .then(() => {
                 setProcessing(false);
                 setPurchaseMade(true);

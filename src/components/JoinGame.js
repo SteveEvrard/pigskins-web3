@@ -151,7 +151,7 @@ const JoinGame = ( props ) => {
         const position = getPlayerPositionById(card.playerId);
         const selected = getCardCountByPosition(position);
         const maxEntries = getPositionEntries(position);
-        if((!selectedCards.includes(card) && (selected === maxEntries)) || card.opponent === 'N/A') {
+        if((!selectedCards.includes(card) && (selected === maxEntries))) {
             return {pointerEvents: 'none', backgroundColor: 'gray'};
         }
     }

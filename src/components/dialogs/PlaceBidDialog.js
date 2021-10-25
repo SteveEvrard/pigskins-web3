@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, CircularProgress, Dialog, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDisplayDialog, setPrice } from '../../store/view-card/viewCardSlice';
-import { Contract, ContractWithSigner, signer } from '../../ethereum/ethers';
+import { ContractWithSigner, signer } from '../../ethereum/ethers';
 import { BigNumber, ethers } from "ethers";
 import AlertMessage from './AlertMessage';
 import { setCardDetail } from '../../store/card-detail/cardDetailSlice';
@@ -49,10 +49,8 @@ const PlaceBidDialog = ( { mobile } ) => {
 
         ContractWithSigner.placeBid(cardId, {from: account, value: bid})
             .then(() => {
-                Contract.once(Contract.filters.BidPlaced(null, cardId, null, account), () => {
-                    setProcessing(false);
-                    setComplete(true);
-                })
+                setProcessing(false);
+                setComplete(true);
             })
             .catch(err => {
                 console.log(err);
@@ -68,7 +66,7 @@ const PlaceBidDialog = ( { mobile } ) => {
             <DialogTitle sx={{backgroundColor: '#fff', color: 'black', textAlign: 'center'}}>Place Bid</DialogTitle>
             <DialogContent sx={{backgroundColor: '#fff', paddingTop: '20px !important'}}>
                 { complete ? 
-                <AlertMessage successMessage='Bid Placed!' error={error} mobile={mobile} />
+                <AlertMessage successMessage='Bid Placed! Processing Now!' error={error} mobile={mobile} />
                 :
                 processing ? 
                 <div style={{display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='primary' /></div>

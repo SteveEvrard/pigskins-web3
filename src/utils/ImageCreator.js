@@ -294,7 +294,7 @@ export const resolveFootball = (attrHash) => {
 
     const footballHash = Number(attrHash.substring(0, 2));
 
-    if (footballHash % 10 === 0) {
+    if (footballHash % 15 === 0) {
         return football;
     } else {
         return blank;

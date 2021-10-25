@@ -5,6 +5,7 @@ import { ContractWithSigner, GameContractWithSigner, GameContract, signer, Contr
 
 const Admin = ( props ) => {
 
+    const [secret, setSecret] = useState('');
     const [players, setPlayers] = useState(10);
     const [cards, setCards] = useState(6);
     const [fee, setFee] = useState(0.1);
@@ -22,6 +23,10 @@ const Admin = ( props ) => {
     const handleFeeChange = (event) => {
         setFee(event.target.value);
     };
+
+    const handleSecretChange = (event) => {
+        setSecret(event.target.value);
+    }
 
     const createGame = async () => {
         const account = await getAccount();
@@ -66,6 +71,15 @@ const Admin = ( props ) => {
         .catch(err => {
             console.log(err);
             setProcessing(false)
+        })
+    }
+
+    const setSecretCall = async () => {
+        const account = await getAccount();
+        setProcessing(true);
+
+        GameContractWithSigner.setSecret(secret, {from: account}).then(() => {
+            setProcessing(false);
         })
     }
 
@@ -187,6 +201,36 @@ const Admin = ( props ) => {
         )
     }
 
+    const SetSecretComponent = () => {
+        return (
+            <div>
+                <div style={{display: 'flex', justifyContent: 'center'}}>
+                    <div style={{width: '75vw'}}>
+                        <TextField
+                            autoFocus
+                            color='selected'
+                            margin='dense'
+                            label='Secret'
+                            fullWidth
+                            variant='outlined'
+                            value={secret}
+                            onChange={handleSecretChange}
+                        />
+                    </div>
+                </div>
+                <div>
+                {processing ? 
+                    <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='secondary' /></div>
+                    :
+                    <div>
+                        <div><Button onClick={setSecretCall} sx={{marginTop: '5vw'}} variant='contained'>Set</Button></div>
+                    </div>
+                }
+                </div>
+            </div>
+        )
+    }
+
     const WithdrawButton = () => {
         return (
             <div>
@@ -208,6 +252,7 @@ const Admin = ( props ) => {
             </Typography>
             <CreateGameComponent />
             <WithdrawButton />
+            <SetSecretComponent />
             <CreateCustomCardComponent />
         </div>
     )
