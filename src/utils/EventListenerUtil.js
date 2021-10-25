@@ -4,6 +4,7 @@ import { Alert, Button, Slide, Snackbar } from '@mui/material';
 import CardPack from '../components/CardPack';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDisplayCards } from '../store/ui/uiSlice';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 function SlideTransition(props) {
     return <Slide {...props} direction="down" />;
@@ -11,7 +12,9 @@ function SlideTransition(props) {
 
 const AlertMessage = ( props ) => {
 
+
     const dispatch = useDispatch();
+    const isMobile = useSelector((state) => state.mobile.value);
     const displayCards = useSelector((state) => state.ui.value);
     const [message, setMessage] = useState('Success');
     const [open, setOpen] = useState(false);
@@ -46,11 +49,11 @@ const AlertMessage = ( props ) => {
 
     return (
         <div>
-            <Snackbar ContentProps={{height: '10vw'}} TransitionComponent={SlideTransition} onClose={handleClose} autoHideDuration={5000} open={open} anchorOrigin={{horizontal: 'center', vertical: 'top'}}>
-                <Alert variant='filled' sx={{fontSize: '4vw', width: '100vw', marginTop: '1vw'}} severity='success'>
-                    <div style={{width: '100%', display: 'flex', justifyContent: 'space-between'}}>
-                        <div style={{position: 'absolute', top: '5vw'}}>{message}</div>
-                        {displayCardsButton ? <Button onClick={handleDisplayCards} sx={{position: 'absolute', right: '3vw', top: '2.5vw'}} variant='contained'>View</Button> : null}
+            <Snackbar ContentProps={{height: '10vw'}} TransitionComponent={SlideTransition} onClose={handleClose} autoHideDuration={5000} open={open} anchorOrigin={{horizontal: 'center', vertical: isMobile ? 'top' : 'bottom'}}>
+                <Alert icon={<CheckCircleOutlineIcon fontSize={isMobile ? '' : 'large'} />} variant='filled' sx={{fontSize: isMobile ? '4vw' : '2vw', width: isMobile ? '100vw' : '60vw', marginTop: '1vw'}} severity='success'>
+                    <div style={isMobile ? {width: '100%', display: 'flex', justifyContent: 'space-between'} : {}}>
+                        <div style={isMobile ? {position: 'absolute', top: '5vw'} : {}}>{message}</div>
+                        {displayCardsButton ? <Button onClick={handleDisplayCards} sx={{width: isMobile ? '' : '10vw', position: 'absolute', right: '3vw', top: isMobile ? '2.5vw' : '2vw'}} variant='contained'>View</Button> : null}
                     </div>
                 </Alert>
             </Snackbar>
