@@ -116,7 +116,7 @@ const GameDetails = ( props ) => {
                 points = points + playerPoints;
             }
 
-            return points;
+            return  Math.round(points * 100) / 100;
         }
 
         return (

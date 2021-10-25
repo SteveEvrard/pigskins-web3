@@ -26,7 +26,7 @@ const calculateBoost = (points, cardType) => {
     } else if(cardType === '3') {
         return Math.round((points * 1.4) * 100) / 100;
     } else {
-        return Math.round(points * 100) / 100;;
+        return Math.round(points * 100) / 100;
     }
 }
 
