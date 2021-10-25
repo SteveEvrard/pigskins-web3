@@ -99,7 +99,7 @@ const GameDetailDialog = ( { mobile } ) => {
         return (
             <ListItem sx={{padding: 0, display: 'flex', cursor: 'pointer'}}>
                 <PlayerCard attributes={card.attributeHash} flippable={false} width={mobile ? '20vw' : '6vw'} number={getPlayerNumberById(card.playerId)} team={getPlayerTeamById(card.playerId)} playerType={getPlayerTypeById(card.playerId)} cardType={card.cardType} />
-                <div style={{width: mobile ? '57vw' : '80%', display: 'flex', justifyContent: 'space-between'}}>
+                <div style={{width: mobile ? '55vw' : '80%', display: 'flex', justifyContent: 'space-between'}}>
                     <div style={{width: '55vw'}}>
                         <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: mobile ? '4vw' : '1.5vw'}}>{getPlayerNameById(card.playerId)}</Typography>
                         <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: mobile ? '4vw' : '1.5vw'}}>{position}</Typography>
@@ -136,7 +136,7 @@ const GameDetailDialog = ( { mobile } ) => {
 
     return (
         <Dialog PaperProps={{style: mobile ? {minWidth: '80vw'} : {width: mobile ? '30vw' : '70vw'}}} open={true}>
-            <DialogContent sx={{padding: 0, backgroundColor: '#31572c'}}>
+            <DialogContent sx={{border: 'white', borderStyle: 'solid', padding: 0, backgroundColor: '#31572c'}}>
                 <div onClick={handleCancel} style={{zIndex: 1, cursor: 'pointer', position: 'absolute', right: 0}}><CloseIcon sx={{color: '#fff', fontSize: mobile ? '12vw' : '5vw'}}></CloseIcon></div>
                 {loading ? <CircularProgress style={{marginLeft: '15vw'}} color='secondary' size={200} /> : <CardList />}
             </DialogContent>
