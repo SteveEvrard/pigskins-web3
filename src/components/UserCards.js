@@ -106,7 +106,7 @@ const UserCards = ( props ) => {
 
     return (
         <div style={displayCard ? {position: 'fixed', marginTop: '2vw'} : {marginTop: '2vw'}}>
-            <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: '8vw', color: '#fff'}}>
+            <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: isMobile ? '8vw' : '6vw', color: '#fff'}}>
                 My Cards
             </Typography>
             {displayMessage ? <PageContext header={headerMessage} body={message} /> : null}

@@ -131,7 +131,7 @@ const MyGames = ( props ) => {
 
     return (
         <div style={{marginTop: '2vw'}}>
-            <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: '8vw', color: '#fff'}}>
+            <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: isMobile ? '8vw' : '6vw', color: '#fff'}}>
                 My Games
             </Typography>
             {displayMessage ? <PageContext header={headerMessage} body={message} /> : null}

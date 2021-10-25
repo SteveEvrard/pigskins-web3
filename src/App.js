@@ -7,7 +7,7 @@ import Purchase from './components/Purchase';
 import Auction from './components/Auction';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import UserCards from './components/UserCards';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setAccount } from './store/account/accountSlice';
 import { useMediaQuery } from 'react-responsive';
 import { setMobile } from './store/device/deviceSlice';
@@ -54,6 +54,7 @@ const App = () => {
     query: '(max-width: 428px)'
   });
   const dispatch = useDispatch();
+  const account = useSelector((state) => state.account.value);
 
 
   useEffect(() => {
@@ -88,7 +89,7 @@ const App = () => {
             <Route path='/auction' component={Auction} />
             <Route path='/claim' component={Claim} />
             <Route path='/info' component={Info} />
-            <Route path='/admin' component={Admin} />
+            {account === process.env.REACT_APP_ACCOUNT_OWNER ? <Route path='/admin' component={Admin} /> : null}
           </Switch>
         </ThemeProvider>
     </div>
