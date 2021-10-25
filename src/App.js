@@ -22,6 +22,7 @@ import MyGames from './components/MyGames';
 import GameDetails from './components/GameDetails';
 import NotificationHelper from './utils/NotificationUtil';
 import MyAuction from './components/MyAuctions';
+import AlertMessage from './utils/EventListenerUtil';
 
 const theme = createTheme({
   status: {
@@ -77,6 +78,8 @@ const App = () => {
 
           <Header/>
           <NotificationHelper/>
+          <AlertMessage/>
+          
           <Switch>
             <Route path='/' exact component={Home} />
             <Route path='/purchase' component={Purchase} />

@@ -2,42 +2,42 @@ import React, { useState, useEffect } from 'react';
 import { Backdrop, Button, Typography } from '@mui/material';
 import PlayerCard from './PlayerCard';
 import { getPlayerNumberById, getPlayerTeamById, getPlayerTypeById } from '../utils/PlayerUtil';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import CircularProgress from '@mui/material/CircularProgress';
-import { Contract, ContractWithSigner } from '../ethereum/ethers';
+import { Contract, ContractWithSigner, signer } from '../ethereum/ethers';
 import { BigNumber } from "ethers";
-
-let cards = [];
+import { setDisplayCards } from '../store/ui/uiSlice';
 
 const CardPack = ( props ) => {
 
+    const dispatch = useDispatch();
     const [open, setOpen] = useState(true);
     const [loading, setLoading] = useState(false);
+    const [cards, setCards] = useState([]);
     const isMobile = useSelector((state) => state.mobile.value);
-    const account = useSelector((state) => state.account.value);
+    const getAccount = async () => signer.getAddress();
 
     const handleClose = () => {
         setOpen(false);
+        dispatch(setDisplayCards(false));
     };
-
 
     useEffect(() => {
 
         setLoading(true);
-
-        ContractWithSigner.queryFilter(Contract.filters.CardCreated(null, null, null, null, account))
-        .then(data => {
-            cards = [];
-            
-            for(let i = data.length - 1; i >= data.length - 10; i--) {
-                cards.push(mapCardData(data[i]));
-            }
-
-            setLoading(false);
-        });
-
+        getCardsPurchased();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const getCardsPurchased = async () => {
+        const account = await getAccount();
+        const data = await ContractWithSigner.queryFilter(Contract.filters.CardCreated(null, null, null, null, account));
+
+        for(let i = data.length - 1; i >= data.length - 10; i--) {
+            setCards(cards => [...cards, mapCardData(data[i])]);
+        }
+        setLoading(false);
+    }
 
     function mapCardData(card) {
         const cardId = BigNumber.from(card.args.cardId).toString();
