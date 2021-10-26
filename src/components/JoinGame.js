@@ -18,6 +18,7 @@ const JoinGame = ( props ) => {
 
     const history = useHistory();
     const displayDialog = useSelector((state) => state.game.value.displayDialog);
+    const game = useSelector((state) => state.game.value.game);
     const dispatch = useDispatch();
     const [cards, setCards] = useState([]);
     const [selectedCards, setSelectedCards] = useState([]);
@@ -45,14 +46,15 @@ const JoinGame = ( props ) => {
 
     const getCards = async () => {
         setLoading(true);
-        const currentWeek = await (await axios.get(`https://api.sportsdata.io/v3/nfl/scores/json/CurrentWeek?key=${process.env.REACT_APP_SD_API_KEY}`)).data;
+        // const currentWeek = await (await axios.get(`https://api.sportsdata.io/v3/nfl/scores/json/CurrentWeek?key=${process.env.REACT_APP_SD_API_KEY}`)).data;
+        const week = game.week;
         const account = await getAccount();
         const allCardIds = await getAllCardIds(account);
         const ownedCards = filterCurrentlyOwnedCards(allCardIds);
         const cardsWithDetails = await getCardDetailsById(ownedCards);
         const availableCards = filterForAvailableCards(cardsWithDetails);
         const mappedCards = availableCards.map(card => {
-            return mapCardData(card, currentWeek)
+            return mapCardData(card, week)
         });
         const finalCards = await handlePromises(mappedCards);
         setLoading(false);
@@ -102,7 +104,7 @@ const JoinGame = ( props ) => {
         const playerId = BigNumber.from(card.playerId).toString();
         const attributeHash = BigNumber.from(card.attributeHash).toString();
         const cardType = BigNumber.from(card.cardType).toString();
-        const opponent = data.UpcomingGameWeek === currentWeek ? data.UpcomingGameOpponent : 'N/A';
+        const opponent = data.UpcomingGameWeek.toString() === currentWeek ? data.UpcomingGameOpponent : 'N/A';
         
         return {cardId, playerId, attributeHash, cardType, opponent: opponent};
     }
@@ -151,7 +153,8 @@ const JoinGame = ( props ) => {
         const position = getPlayerPositionById(card.playerId);
         const selected = getCardCountByPosition(position);
         const maxEntries = getPositionEntries(position);
-        if((!selectedCards.includes(card) && (selected === maxEntries))) {
+        if((!selectedCards.includes(card) && (selected === maxEntries)) || (card.opponent === 'N/A')) {
+        // if((!selectedCards.includes(card) && (selected === maxEntries))) {
             return {pointerEvents: 'none', backgroundColor: 'gray'};
         }
     }

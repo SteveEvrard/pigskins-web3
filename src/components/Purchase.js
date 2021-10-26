@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import PlayerCard from './PlayerCard';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useDispatch, useSelector } from 'react-redux';
-import { ContractWithSigner, signer } from '../ethereum/ethers';
+import { ContractWithSigner } from '../ethereum/ethers';
 import { ethers } from "ethers";
 import { setCardDetail } from '../store/card-detail/cardDetailSlice';
 
@@ -13,17 +13,14 @@ const Purchase = ( props ) => {
     const isMobile = useSelector((state) => state.mobile.value);
     const [processing, setProcessing] = useState(false);
     const [purchaseMade, setPurchaseMade] = useState(false);
-    const getAccount = async () => signer.getAddress();
 
     const buyCardPack = async () => {
         setProcessing(true);
 
-        const account = await getAccount();
         dispatch(setCardDetail({}));
-        const gas = await ContractWithSigner.estimateGas.purchaseCardPack({from: account, value: ethers.utils.parseEther("0.005")});
-        console.log('gas', gas)
+        const gas = await ContractWithSigner.estimateGas.purchaseCardPack({value: ethers.utils.parseEther("0.005")});
 
-        ContractWithSigner.purchaseCardPack({from: account, value: ethers.utils.parseEther("0.005"), gasLimit: gas.mul('3').div('2')})
+        ContractWithSigner.purchaseCardPack({value: ethers.utils.parseEther("0.005"), gasLimit: gas.mul('4').div('3')})
             .then(() => {
                 setProcessing(false);
                 setPurchaseMade(true);
@@ -46,8 +43,8 @@ const Purchase = ( props ) => {
                     <Typography sx={{fontSize: isMobile ? '12vw' : '7vw', color: '#fff', fontFamily: "Work Sans, sans-serif", fontWeight: 600}} variant='h2'>Purchase Card Pack Now!</Typography>
                     <Typography sx={{fontSize: isMobile ? '7vw' : '3vw', color: '#fff', fontFamily: "Work Sans, sans-serif", fontWeight: 600}} variant='h4'>Each pack contains 10 unique player cards.</Typography>
                     <Typography sx={{fontSize: isMobile ? '7vw' : '3vw', color: '#fff', fontFamily: "Work Sans, sans-serif", fontWeight: 600}} variant='h4'>Cards can be used to compete, trade, and more!</Typography>
-                    <Button disabled={processing} sx={{fontSize: '30px', fontFamily: "Work Sans, sans-serif", height: '65px', width: '50%', marginTop: '30px'}} onClick={buyCardPack} size='large' variant='contained' color='primary'>{processing ? <CircularProgress color='secondary' /> : 'Buy'}</Button>
                     {purchaseMade ? <Card sx={{marginTop: '2vw', backgroundColor: '#d8572a', fontSize: isMobile ? '4vw' : '2vw', color: '#fff', fontFamily: "Work Sans, sans-serif", fontWeight: 600}} variant='h4'>Transaction Processing Now. Look For Popup When Transaction Completes to View Your New Cards.</Card> : null}
+                    <Button disabled={processing} sx={{marginBottom: isMobile ? '' : '3vw', fontSize: '30px', fontFamily: "Work Sans, sans-serif", height: '65px', width: '50%', marginTop: '30px'}} onClick={buyCardPack} size='large' variant='contained' color='primary'>{processing ? <CircularProgress color='secondary' /> : 'Buy'}</Button>
                     {isMobile ? 
                         <div style={{display: 'flex', justifyContent: 'space-evenly', marginTop: '5vw'}}>
                             <PlayerCard flippable={false} width='50vw' number={12} team={'19'} cardType={'2'} attributes={'193333305678900'} />

@@ -10,9 +10,9 @@ import GameDetailDialog from './dialogs/GameDetailDialog';
 import PersonIcon from '@mui/icons-material/Person';
 import { setCardIds, setDisplayDialog } from '../store/games/gameSlice';
 import { calculatePoints } from '../utils/PlayerStatUtil';
-import axios from 'axios';
 import { getPlayerApiIdById } from '../utils/PlayerUtil';
 import { getItems } from './ViewCard';
+import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 
 const GameDetails = ( props ) => {
 
@@ -21,7 +21,6 @@ const GameDetails = ( props ) => {
     const dispatch = useDispatch();
     const [players, setPlayers] = useState([]);
     const [account, setAccount] = useState('');
-    const [week, setWeek] = useState('');
     const [selectedCards, setSelectedCards] = useState([]);
     const [loading, setLoading] = useState(false);
     const getAccount = async () => signer.getAddress();
@@ -31,6 +30,7 @@ const GameDetails = ( props ) => {
     useEffect(() => {
         getCards();
         setSelectedCards([]);
+        setPlayers([]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -40,15 +40,66 @@ const GameDetails = ( props ) => {
 
     const getCards = async () => {
         setLoading(true);
-        const currentWeek = await (await axios.get(`https://api.sportsdata.io/v3/nfl/scores/json/CurrentWeek?key=${process.env.REACT_APP_SD_API_KEY}`)).data;
-        setWeek(currentWeek);
         const user = await getAccount();
+        const week = Number(game.week);
         setAccount(user);
         const activePlayers = filterActivePlayers(game);
         const playerWithCardIds = await mapPlayerToCardIds(activePlayers);
-        setPlayers(playerWithCardIds);
+        await getScoreByPlayer(playerWithCardIds, week);
 
         setLoading(false);
+    }
+
+    const getScoreByPlayer = async (players, week) => {
+        const promises = [];
+
+        for(let i = 0; i < players.length; i++) {
+            promises.push(
+                getScore(players[i], week)
+            )
+        }
+
+        return Promise.all(promises);
+    }
+
+    const getScore = async (player, week) => {
+        const cardsWithDetails = await getCardDetails(player.cards);
+        const totalScore = await getTeamScore(cardsWithDetails, week);
+        setPlayers(players => [...players, {...player, points: totalScore}]);
+    }
+
+    const getCardDetails = async (cards) => {
+        const promises = [];
+
+        for(let i = 0; i < cards.length; i++) {
+            promises.push(
+                ContractWithSigner.cardIdToCard(BigNumber.from(cards[i]).toNumber())
+            )
+        }
+
+        return Promise.all(promises);
+    }
+
+    const getSinglePlayerScore = async (card, week) => {
+        const playerId = BigNumber.from(card.playerId).toString();
+        const apiId = getPlayerApiIdById(playerId);
+        const items = getItems(BigNumber.from(card.attributeHash).toString());
+        const cardType = BigNumber.from(card.cardType).toString();
+
+        return await calculatePoints(items, cardType, week, apiId);
+    }
+
+    const getTeamScore = async (cards, week) => {
+        let points = 0;
+
+        for(let i = 0; i < cards.length; i++) {
+            const playerPoints = await getSinglePlayerScore(cards[i], week);
+            points = points + playerPoints;
+        }
+
+        points = Math.round(points * 100) / 100
+
+        return points;
     }
 
     const filterActivePlayers = (game) => {
@@ -73,63 +124,20 @@ const GameDetails = ( props ) => {
         return address.substring(0, 6) + '...' + address.substring(38);
     }
 
-    const PlayerTile = ( player ) => {
-
-        const [score, setScore] = useState(-1);
-        useEffect(() => {
-            getScore(player.player.cards);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, []);
-
-        const getScore = async (cards) => {
-            const cardsWithDetails = await getCardDetails(cards);
-            const totalScore = await getTeamScore(cardsWithDetails);
-            setScore(totalScore)
-        }
-
-        const getCardDetails = async (cards) => {
-            const promises = [];
-
-            for(let i = 0; i < cards.length; i++) {
-                promises.push(
-                    ContractWithSigner.cardIdToCard(BigNumber.from(cards[i]).toNumber())
-                )
-            }
-
-            return Promise.all(promises);
-        }
-
-        const getSinglePlayerScore = async (card) => {
-            const playerId = BigNumber.from(card.playerId).toString();
-            const apiId = getPlayerApiIdById(playerId);
-            const items = getItems(BigNumber.from(card.attributeHash).toString());
-            const cardType = BigNumber.from(card.cardType).toString();
-
-            return await calculatePoints(items, cardType, week, apiId);
-        }
-
-        const getTeamScore = async (cards) => {
-            let points = 0;
-
-            for(let i = 0; i < cards.length; i++) {
-                const playerPoints = await getSinglePlayerScore(cards[i]);
-                points = points + playerPoints;
-            }
-
-            return  Math.round(points * 100) / 100;
-        }
+    const PlayerTile = ( {player, place} ) => {
 
         return (
             <ListItem sx={{display: 'flex'}}>
-                <div>
+                <div style={isMobile ? {} : {display: 'flex', justifyContent: 'center', width: '100vw'}}>
                     <div style={{width: '90vw', display: 'flex', justifyContent: 'space-between'}}>
                         <Typography sx={{color: 'white', marginTop: isMobile ? '1vw' : '', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '5vw' : '3vw'}}>
-                            {shortenAddress(player.player.player)}
-                            {player.player.player === account ? <PersonIcon sx={{marginBottom: isMobile ? '-1vw' : '-.5vw', marginLeft: '2vw'}} fontSize={isMobile ? 'medium' : 'larger'}/> : null}
+                            {place.toString()+ '. ' + shortenAddress(player.player)}
+                            {place === 1 && player.points > 0 ? <LocalFireDepartmentIcon color='primary' sx={{marginBottom: isMobile ? '-1vw' : '-.5vw', marginLeft: '1vw'}} fontSize={isMobile ? 'medium' : 'larger'}/> : null}
+                            {player.player === account ? <PersonIcon sx={{marginBottom: isMobile ? '-1vw' : '-.5vw', marginLeft: '1vw'}} fontSize={isMobile ? 'medium' : 'larger'}/> : null}
                         </Typography>
-                        <div style={{display: 'flex', justifyContent: 'space-between', width: isMobile ? '35vw' : '25vw'}}>
-                            <Typography sx={{color: 'white', textAlign: 'right', marginTop: isMobile ? '1vw' : '', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '5vw' : '3vw'}}>{score >= 0 ? score : <CircularProgress color='secondary' size={30}/>}</Typography>
-                            <Button sx={{width: isMobile ? '' : '15vw', fontSize: isMobile ? '' : '2vw'}} onClick={() => handleDisplayCards(player.player.cards)} variant='contained'>View</Button>
+                        <div style={{display: 'flex', justifyContent: 'space-between', width: isMobile ? '30vw' : '25vw'}}>
+                            <Typography sx={{color: 'white', textAlign: 'right', marginTop: isMobile ? '1vw' : '', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '5vw' : '3vw'}}>{player.points >= 0 ? player.points : <CircularProgress color='secondary' size={30}/>}</Typography>
+                            <Button sx={{width: isMobile ? '' : '15vw', marginLeft: '1vw', fontSize: isMobile ? '' : '2vw'}} onClick={() => handleDisplayCards(player.cards)} variant='contained'>View</Button>
                         </div>
                     </div>
                 </div>
@@ -154,6 +162,10 @@ const GameDetails = ( props ) => {
 
     const PlayerList = () => {
 
+        players.sort((a, b) => {
+            return b.points - a.points
+        })
+
         return (
             <List sx={{top: '20vw'}}>
                 {
@@ -161,11 +173,12 @@ const GameDetails = ( props ) => {
                         return (
                             <div key={i}>
                                 <Divider />
-                                <PlayerTile player={player} />
+                                <PlayerTile place={i + 1} player={player} />
                             </div>
                         )
                     })
                 }
+                <Divider />
             </List>
         )
     }
@@ -178,7 +191,7 @@ const GameDetails = ( props ) => {
                     <span style={{cursor: 'pointer'}} onClick={backToGames}><ArrowBackIcon sx={{backgroundColor: 'white', borderRadius: '4px', position: 'fixed', left: '3vw', fontSize: isMobile ? '13vw' : '7vw'}} color='third' /></span>Game Details
                 </Typography>
             </div>
-            {loading ? <CircularProgress style={{marginTop: '35vw'}} color='secondary' size={200} /> : <PlayerList />}
+            {loading ? <CircularProgress style={{marginTop: isMobile ? '35vw' : '20vw'}} color='secondary' size={200} /> : <PlayerList />}
         </div>
     )
 }

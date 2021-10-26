@@ -25,13 +25,13 @@ const Home = ( props ) => {
     return(
         <div style={{display: isMobile ? 'block' : 'flex', marginTop: '2vw', justifyContent: 'space-evenly'}}>
             <div>
-                <img alt='' style={{width: '100%'}} src={cards}/>
+                <img alt='' style={{width: isMobile ? '100%' : '40vw'}} src={cards}/>
             </div>
             <div style={isMobile ? {width: '90vw', margin: 'auto', marginBottom: '3vw'} : {}}>
                 <Card style={{marginRight: isMobile ? '0' : '25px', height: '100%'}}>
-                    <CardHeader title='Collectible NFT Cards' />
+                    <CardHeader titleTypographyProps={{style: {fontSize: isMobile ? '' : '5vw'}}} title='Collectible NFT Cards' />
                     <CardContent>
-                        <Typography>
+                        <Typography sx={{fontSize: isMobile ? '4vw' : '2vw'}} component='p'>
                             Collect hundreds of different football cards and compete with other players to win ETH! Each card has its own unique attributes and rareness!
                         </Typography>
                     </CardContent>

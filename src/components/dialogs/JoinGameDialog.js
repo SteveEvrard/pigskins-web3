@@ -37,7 +37,6 @@ const JoinGameDialog = ( { mobile } ) => {
         const account = await getAccount();
         const gameId = BigNumber.from(game.gameId).toNumber();
         const entryFee = ethers.utils.formatEther(BigNumber.from(game.entryFee.toString()));
-        console.log('fee', entryFee);
 
         GameContractWithSigner.joinGame(gameId, cardIds, process.env.REACT_APP_CALL_SECRET.toString(), {from: account, value: ethers.utils.parseEther(entryFee)})
             .then(() => {

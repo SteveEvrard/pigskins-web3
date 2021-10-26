@@ -45,7 +45,7 @@ const NotificationHelper = () => {
     
         for(let i = 0; i < auctions.length; i++) {
             promises.push(
-                ContractWithSigner.queryFilter(Contract.filters.AuctionClosed(BigNumber.from(auctions[i].args.auctionId).toNumber(), null, null, null, null))
+                ContractWithSigner.queryFilter(Contract.filters.AuctionClosed(BigNumber.from(auctions[i].args.auctionId).toNumber(), null, null, null, null, null))
             );
         }
     

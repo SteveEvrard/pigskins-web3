@@ -57,7 +57,7 @@ const MyGames = ( props ) => {
 
     const filterForOpenGames = ( games ) => {
         return games.filter(game => {
-            return game.open;
+            return game.active;
         })
     }
 
@@ -82,8 +82,9 @@ const MyGames = ( props ) => {
             const gameId = BigNumber.from(games[i].gameId).toString();
             const numberOfCardsPerPlayer = BigNumber.from(games[i].numberOfCardsPerPlayer).toString();
             const numberOfPlayers = BigNumber.from(games[i].numberOfPlayers).toString();
+            const week = BigNumber.from(games[i].numberOfPlayers).toString();
     
-            mappedDetails.push({active: games[i].active, entryFee, gameId, numberOfCardsPerPlayer, numberOfPlayers, open: games[i].open, players: games[i].players, winner: games[i].winner});
+            mappedDetails.push({active: games[i].active, entryFee, gameId, numberOfCardsPerPlayer, numberOfPlayers, players: games[i].players, week, winner: games[i].winner});
         }
         if(games.length === 0) setDisplayMessage(true);
 
@@ -120,7 +121,7 @@ const MyGames = ( props ) => {
                                     <div style={{fontSize: isMobile ? '' : '2vw', fontWeight: 600, textAlign: 'left'}}>{ game.numberOfCardsPerPlayer } Cards</div>
                                     <div style={{fontSize: isMobile ? '' : '2vw', fontWeight: 600, textAlign: 'left'}}>Players {getNumberOfActivePlayers(game.players)}/{game.numberOfPlayers}</div>
                                 </div>
-                                <Button onClick={() => handleDisplay(game)} sx={{fontSize: isMobile ? '' : '2vw' ,width: isMobile ? '40vw' : '20vw'}} variant='contained'>View</Button>
+                                <Button onClick={() => handleDisplay(game)} sx={{fontSize: isMobile ? '5vw' : '2vw', width: isMobile ? '40vw' : '20vw'}} variant='contained'>View</Button>
                             </CardContent>
                         </Card>
                     </div>

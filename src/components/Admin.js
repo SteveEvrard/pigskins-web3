@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, CircularProgress, TextField, Typography } from '@mui/material';
 import { ethers } from "ethers";
 import { ContractWithSigner, GameContractWithSigner, GameContract, signer, Contract } from '../ethereum/ethers';
+import { endActiveGames } from '../utils/WinnerUtil';
 
 const Admin = ( props ) => {
 
@@ -9,6 +10,7 @@ const Admin = ( props ) => {
     const [players, setPlayers] = useState(10);
     const [cards, setCards] = useState(6);
     const [fee, setFee] = useState(0.1);
+    const [week, setWeek] = useState(0);
     const [processing, setProcessing] = useState(false);
     const getAccount = async () => signer.getAddress();
 
@@ -24,16 +26,19 @@ const Admin = ( props ) => {
         setFee(event.target.value);
     };
 
+    const handleWeekChange = (event) => {
+        setWeek(event.target.value);
+    };
+
     const handleSecretChange = (event) => {
         setSecret(event.target.value);
     }
 
     const createGame = async () => {
-        const account = await getAccount();
         const priceInWei = ethers.utils.parseEther(fee.toString());
         setProcessing(true);
 
-        GameContractWithSigner.createGame(players, cards, priceInWei, {from: account})
+        GameContractWithSigner.createGame(players, cards, priceInWei, week)
             .then(() => {
                 GameContract.once(GameContract.filters.GameCreated(), () => {
                     setProcessing(false);
@@ -89,7 +94,6 @@ const Admin = ( props ) => {
                 <div style={{display: 'flex', justifyContent: 'center'}}>
                     <div style={{width: '75vw'}}>
                         <TextField
-                            autoFocus
                             error={ players <= 0 }
                             color='selected'
                             margin='dense'
@@ -102,7 +106,6 @@ const Admin = ( props ) => {
                             onChange={handlePlayersChange}
                         />
                         <TextField
-                            autoFocus
                             error={ cards <= 0 }
                             color='selected'
                             margin='dense'
@@ -115,7 +118,6 @@ const Admin = ( props ) => {
                             onChange={handleCardChange}
                         />
                         <TextField
-                            autoFocus
                             error={ fee <= 0 }
                             color='selected'
                             margin='dense'
@@ -126,6 +128,18 @@ const Admin = ( props ) => {
                             variant='outlined'
                             value={fee}
                             onChange={handleFeeChange}
+                        />
+                        <TextField
+                            error={ week <= 0 }
+                            color='selected'
+                            margin='dense'
+                            id='name'
+                            label='Week'
+                            type='number'
+                            fullWidth
+                            variant='outlined'
+                            value={week}
+                            onChange={handleWeekChange}
                         />
                     </div>
                 </div>
@@ -147,45 +161,6 @@ const Admin = ( props ) => {
             <div>
                 <div style={{display: 'flex', justifyContent: 'center'}}>
                     <div style={{width: '75vw'}}>
-                        <TextField
-                            autoFocus
-                            error={ players <= 0 }
-                            color='selected'
-                            margin='dense'
-                            id='name'
-                            label='Total Players'
-                            type='number'
-                            fullWidth
-                            variant='outlined'
-                            value={players}
-                            onChange={handlePlayersChange}
-                        />
-                        <TextField
-                            autoFocus
-                            error={ cards <= 0 }
-                            color='selected'
-                            margin='dense'
-                            id='name'
-                            label='Total Cards'
-                            type='number'
-                            fullWidth
-                            variant='outlined'
-                            value={cards}
-                            onChange={handleCardChange}
-                        />
-                        <TextField
-                            autoFocus
-                            error={ fee <= 0 }
-                            color='selected'
-                            margin='dense'
-                            id='name'
-                            label='Entry Fee'
-                            type='number'
-                            fullWidth
-                            variant='outlined'
-                            value={fee}
-                            onChange={handleFeeChange}
-                        />
                     </div>
                 </div>
                 <div>
@@ -207,7 +182,6 @@ const Admin = ( props ) => {
                 <div style={{display: 'flex', justifyContent: 'center'}}>
                     <div style={{width: '75vw'}}>
                         <TextField
-                            autoFocus
                             color='selected'
                             margin='dense'
                             label='Secret'
@@ -245,6 +219,20 @@ const Admin = ( props ) => {
         )
     }
 
+    const EndGameButton = () => {
+        return (
+            <div>
+                {processing ? 
+                    <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='secondary' /></div>
+                    :
+                    <div>
+                        <div><Button onClick={endActiveGames} sx={{marginTop: '5vw'}} variant='contained'>End Games</Button></div>
+                    </div>
+                }
+            </div>
+        )
+    }
+
     return (
         <div>
             <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: '8vw', color: '#fff'}}>
@@ -252,6 +240,7 @@ const Admin = ( props ) => {
             </Typography>
             <CreateGameComponent />
             <WithdrawButton />
+            <EndGameButton />
             <SetSecretComponent />
             <CreateCustomCardComponent />
         </div>

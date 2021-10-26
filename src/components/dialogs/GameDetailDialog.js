@@ -9,13 +9,13 @@ import PlayerCard from '../PlayerCard';
 import { getItems } from '../ViewCard';
 import CloseIcon from '@mui/icons-material/Close';
 import { calculatePoints } from '../../utils/PlayerStatUtil';
-import axios from 'axios';
 import { getPlayerApiIdById } from '../../utils/PlayerUtil';
 
 const GameDetailDialog = ( { mobile } ) => {
     
     const dispatch = useDispatch();
     const cardIds = useSelector((state) => state.game.value.cardIds);
+    const game = useSelector((state) => state.game.value.game);
     const [cards, setCards] = useState([]);
     const [loading, setLoading] = useState(false);
     const sortOrder = ['QB', 'RB', 'WR', 'TE'];
@@ -87,13 +87,13 @@ const GameDetailDialog = ( { mobile } ) => {
         }
 
         const getSinglePlayerScore = async (card) => {
-            const currentWeek = await (await axios.get(`https://api.sportsdata.io/v3/nfl/scores/json/CurrentWeek?key=${process.env.REACT_APP_SD_API_KEY}`)).data;
+            const week = game.week;
             const playerId = BigNumber.from(card.playerId).toString();
             const apiId = getPlayerApiIdById(playerId);
             const items = getItems(BigNumber.from(card.attributeHash).toString());
             const cardType = BigNumber.from(card.cardType).toString();
 
-            return await calculatePoints(items, cardType, currentWeek, apiId);
+            return await calculatePoints(items, cardType, week, apiId);
         }
 
         return (

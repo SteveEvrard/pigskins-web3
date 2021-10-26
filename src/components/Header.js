@@ -43,6 +43,7 @@ const Header = ( props ) => {
 
     const dispatch = useDispatch();
     const history = useHistory();
+    const [hideMenu, setHideMenu] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const [headerItems, setHeaderItems] = useState(headerOptions);
     const open = Boolean(anchorEl);
@@ -59,6 +60,9 @@ const Header = ( props ) => {
         const account = await getAccount();
         if (account === process.env.REACT_APP_ACCOUNT_OWNER) {
             setHeaderItems(headerItems => [...headerItems, {label: 'Admin', href: '/admin'}])
+        }
+        if (!account) {
+            setHideMenu(true);
         }
     }
 
@@ -122,7 +126,7 @@ const Header = ( props ) => {
                     <SportsFootballIcon sx={{marginTop: '3px'}} fontSize='large'/>
                     {logo}
                 </div>
-                <div>{getMenuButtons()}</div>
+                {hideMenu ? null : <div>{getMenuButtons()}</div>}
             </Toolbar>
         )
     };
@@ -137,9 +141,10 @@ const Header = ( props ) => {
                 <StyledBadge color='primary' invisible={!notification}>
                     <MenuIcon onClick={handleClick} fontSize='large'/>
                 </StyledBadge>
+                {hideMenu ? null : 
                 <Menu onClick={handleClose} anchorEl={anchorEl} open={open}>
                     {getMobileMenuButtons()}
-                </Menu>
+                </Menu>}
             </Toolbar>
         )
     }

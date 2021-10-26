@@ -5,9 +5,14 @@ import CardPack from '../components/CardPack';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDisplayCards } from '../store/ui/uiSlice';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import { useMediaQuery } from 'react-responsive';
 
 function SlideTransition(props) {
-    return <Slide {...props} direction="down" />;
+    const mobile = useMediaQuery({
+        query: '(max-width: 428px)'
+    });
+
+    return <Slide {...props} direction={mobile ? 'down' : 'up'} />;
 }
 
 const AlertMessage = ( props ) => {
@@ -54,6 +59,7 @@ const AlertMessage = ( props ) => {
 
     const listenForCreateAuction = (acct) => {
         Contract.on(Contract.filters.AuctionOpened(null, null, null, null, acct), () => {
+            setDisplayCardsButton(false);
             setMessage('Auction Created Successfully');
             setOpen(true);
         })
@@ -61,6 +67,7 @@ const AlertMessage = ( props ) => {
 
     const listenForJoinGame = (acct) => {
         GameContract.on(GameContract.filters.GameJoined(null, acct), () => {
+            setDisplayCardsButton(false);
             setMessage('Joined Game Successfully, Good Luck!');
             setOpen(true);            
         })
@@ -68,6 +75,7 @@ const AlertMessage = ( props ) => {
 
     const listenForCancelAuction = (acct) => {
         Contract.on(Contract.filters.AuctionCancelled(null, acct), () => {
+            setDisplayCardsButton(false);
             setMessage('Auction Cancelled Successfully');
             setOpen(true);
         })
@@ -75,6 +83,7 @@ const AlertMessage = ( props ) => {
 
     const listenForCloseAuction = (acct) => {
         Contract.on(Contract.filters.AuctionClosed(null, null, null, acct, null), () => {
+            setDisplayCardsButton(false);
             setMessage('Auction Closed Successfully');
             setOpen(true);
         })
@@ -82,6 +91,7 @@ const AlertMessage = ( props ) => {
 
     const listenForBidPlaced = (acct) => {
         Contract.on(Contract.filters.BidPlaced(null, null, null, acct), () => {
+            setDisplayCardsButton(false);
             setMessage('Bid Placed Successfully');
             setOpen(true);
         })
