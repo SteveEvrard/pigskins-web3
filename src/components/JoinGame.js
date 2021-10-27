@@ -100,13 +100,29 @@ const JoinGame = ( props ) => {
 
     const mapCardData = async (card, currentWeek) => {
         const data = await getPlayerDetails(card);
+        const injuryStatus = getInjuryStatusLetter(data.InjuryStatus);
         const cardId = BigNumber.from(card.cardId).toString();
         const playerId = BigNumber.from(card.playerId).toString();
         const attributeHash = BigNumber.from(card.attributeHash).toString();
         const cardType = BigNumber.from(card.cardType).toString();
         const opponent = data.UpcomingGameWeek.toString() === currentWeek ? data.UpcomingGameOpponent : 'N/A';
         
-        return {cardId, playerId, attributeHash, cardType, opponent: opponent};
+        return {cardId, playerId, attributeHash, injury: injuryStatus, cardType, opponent: opponent};
+    }
+
+    const getInjuryStatusLetter = (injury) => {
+        switch(injury) {
+            case 'Out':
+                return 'O'
+            case 'Probable':
+                return 'P'
+            case 'Questionable':
+                return 'Q'
+            case 'Doubtful':
+                return 'D'
+            default:
+                return ''
+        }
     }
 
     const handlePromises = async (cardDetails) => {
@@ -169,8 +185,8 @@ const JoinGame = ( props ) => {
                 <PlayerCard attributes={card.attributeHash} flippable={false} width={isMobile ? '20vw' : '15vw'} number={getPlayerNumberById(card.playerId)} team={getPlayerTeamById(card.playerId)} playerType={getPlayerTypeById(card.playerId)} cardType={card.cardType} />
                 <div style={{width: '100vw', display: 'flex', justifyContent: 'space-between'}}>
                     <div style={{width: '55vw'}}>
-                        <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '5vw' : '3vw'}}>{getPlayerNameById(card.playerId)}</Typography>
-                        <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '5vw' : '3vw'}}>{position}</Typography>
+                        <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '4.5vw' : '3vw'}}>{getPlayerNameById(card.playerId)}<span style={{color:'red'}}>{' ' + card.injury}</span></Typography>
+                        <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '4.5vw' : '3vw'}}>{position}</Typography>
                         <div style={{display: 'flex', justifyContent: 'space-between'}}>
                             <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '4vw' : '2vw'}}>Items: {getItems(card.attributeHash)}</Typography>
                             <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '4vw' : '2vw'}}>OPP: {card.opponent}</Typography>
