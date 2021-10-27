@@ -7,6 +7,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { Contract, ContractWithSigner, signer } from '../ethereum/ethers';
 import { BigNumber } from "ethers";
 import { setDisplayCards } from '../store/ui/uiSlice';
+import CloseIcon from '@mui/icons-material/Close';
 
 const CardPack = ( props ) => {
 
@@ -65,6 +66,7 @@ const CardPack = ( props ) => {
 
     return (
         <Backdrop style={{display: 'block', overflow: 'scroll', backgroundColor: 'rgba(0, 0, 0, 0.86)'}} open={open} sx={{zIndex: 1}}>
+            {isMobile ? <div onClick={handleClose}><CloseIcon sx={{color: 'white', position: 'fixed', top: '15vw', right: '1vw', fontSize: '8vw'}} /></div> : null}
             <div style={{marginTop: isMobile ? '20vw' : '12%'}}>
                 {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : <div style={{display: 'flex', justifyContent: 'space-evenly', flexWrap: 'wrap'}}>{mapDataToCards(cards)}</div>}
             </div>

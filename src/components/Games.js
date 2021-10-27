@@ -35,7 +35,8 @@ const Games = ( props ) => {
         const allGames = await getAllOpenedGames();
         const allGameIds = filterForGameIds(allGames);
         const gameDetails = await getGameDetailsById(allGameIds);
-        const gamesWithPlayers = await mapPlayersToGameDetails(gameDetails);
+        const activeGames = filterForActiveGames(gameDetails)
+        const gamesWithPlayers = await mapPlayersToGameDetails(activeGames);
         const mappedGameDetails = mapData(gamesWithPlayers);
         setGames(mappedGameDetails);
         setLoading(false);
@@ -65,6 +66,10 @@ const Games = ( props ) => {
         }
 
         return Promise.all(promises);
+    }
+
+    const filterForActiveGames = ( games ) => {
+        return games.filter(game => {return game.active});
     }
 
     const getPlayersByGameId = async ( gameId ) => {

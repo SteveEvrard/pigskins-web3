@@ -82,7 +82,7 @@ const MyGames = ( props ) => {
             const gameId = BigNumber.from(games[i].gameId).toString();
             const numberOfCardsPerPlayer = BigNumber.from(games[i].numberOfCardsPerPlayer).toString();
             const numberOfPlayers = BigNumber.from(games[i].numberOfPlayers).toString();
-            const week = BigNumber.from(games[i].numberOfPlayers).toString();
+            const week = BigNumber.from(games[i].week).toString();
     
             mappedDetails.push({active: games[i].active, entryFee, gameId, numberOfCardsPerPlayer, numberOfPlayers, players: games[i].players, week, winner: games[i].winner});
         }
@@ -104,6 +104,7 @@ const MyGames = ( props ) => {
     }
 
     const handleDisplay = (game) => {
+        console.log(game)
         dispatch(setGame(game))
         history.push(`/my-games/${game.gameId}`)
     }
