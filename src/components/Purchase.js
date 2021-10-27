@@ -3,8 +3,7 @@ import React, { useState } from 'react';
 import PlayerCard from './PlayerCard';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useDispatch, useSelector } from 'react-redux';
-import { ContractWithSigner } from '../ethereum/ethers';
-import { ethers } from "ethers";
+import { Contract, ContractWithSigner } from '../ethereum/ethers';
 import { setCardDetail } from '../store/card-detail/cardDetailSlice';
 
 const Purchase = ( props ) => {
@@ -18,9 +17,11 @@ const Purchase = ( props ) => {
         setProcessing(true);
 
         dispatch(setCardDetail({}));
-        const gas = await ContractWithSigner.estimateGas.purchaseCardPack({value: ethers.utils.parseEther("0.005")});
+        const purchasePrice = await Contract.cardPackFee();
+        console.log('pack', purchasePrice)
+        const gas = await ContractWithSigner.estimateGas.purchaseCardPack({value: purchasePrice});
 
-        ContractWithSigner.purchaseCardPack({value: ethers.utils.parseEther("0.005"), gasLimit: gas.mul('4').div('3')})
+        ContractWithSigner.purchaseCardPack({value: purchasePrice, gasLimit: gas.mul('4').div('3')})
             .then(() => {
                 setProcessing(false);
                 setPurchaseMade(true);

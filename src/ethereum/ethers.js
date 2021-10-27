@@ -4,8 +4,8 @@ import CardGame from './abi/CardGameAbi.json';
 
 export const provider = new ethers.providers.Web3Provider(window.ethereum);
 
-export const cardAuctionContractAddress = '0x6Bdd52359e68d0Ca59439253E8F94d233ABcff4b';
-export const cardGameContractAddress = '0xc800B634E03BBf4856cef491312FF54d3803B265';
+export const cardAuctionContractAddress = '0xc658f7F06264e040C9fA21c0C07F88623fFda2c2';
+export const cardGameContractAddress = '0xc6d2d01af86F80A8C81F70f56Ffd9c7c42d1dd01';
 
 export const signer = provider.getSigner();
 

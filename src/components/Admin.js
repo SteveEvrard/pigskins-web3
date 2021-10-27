@@ -10,6 +10,7 @@ const Admin = ( props ) => {
     const [players, setPlayers] = useState(10);
     const [cards, setCards] = useState(6);
     const [fee, setFee] = useState(0.1);
+    const [cardPackPrice, setCardPackPrice] = useState(0.1);
     const [week, setWeek] = useState(0);
     const [processing, setProcessing] = useState(false);
     const getAccount = async () => signer.getAddress();
@@ -24,6 +25,10 @@ const Admin = ( props ) => {
 
     const handleFeeChange = (event) => {
         setFee(event.target.value);
+    };
+
+    const handlePurchasePriceChange = (event) => {
+        setCardPackPrice(event.target.value);
     };
 
     const handleWeekChange = (event) => {
@@ -51,11 +56,10 @@ const Admin = ( props ) => {
     }
 
     const withdraw = async () => {
-        const account = await getAccount();
-        const amount = ethers.utils.parseEther('0.01');
+        const amount = ethers.utils.parseEther('0.1');
         setProcessing(true);
 
-        ContractWithSigner.withdraw(amount, {from: account}).then(() => {
+        ContractWithSigner.withdraw(amount).then(() => {
             setProcessing(false)
         })
         .catch((err) => {
@@ -84,6 +88,15 @@ const Admin = ( props ) => {
         setProcessing(true);
 
         GameContractWithSigner.setSecret(secret, {from: account}).then(() => {
+            setProcessing(false);
+        })
+    }
+
+    const setCardPurchase = async () => {
+        const amount = ethers.utils.parseEther(cardPackPrice.toString());
+        setProcessing(true);
+
+        ContractWithSigner.setCardPackFee(amount).then(() => {
             setProcessing(false);
         })
     }
@@ -205,6 +218,35 @@ const Admin = ( props ) => {
         )
     }
 
+    const SetPurchaseComponent = () => {
+        return (
+            <div>
+                <div style={{display: 'flex', justifyContent: 'center'}}>
+                    <div style={{width: '75vw'}}>
+                        <TextField
+                            color='selected'
+                            margin='dense'
+                            label='Pack Price'
+                            fullWidth
+                            variant='outlined'
+                            value={cardPackPrice}
+                            onChange={handlePurchasePriceChange}
+                        />
+                    </div>
+                </div>
+                <div>
+                {processing ? 
+                    <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='secondary' /></div>
+                    :
+                    <div>
+                        <div><Button onClick={setCardPurchase} sx={{marginTop: '5vw'}} variant='contained'>Set</Button></div>
+                    </div>
+                }
+                </div>
+            </div>
+        )
+    }
+
     const WithdrawButton = () => {
         return (
             <div>
@@ -243,6 +285,7 @@ const Admin = ( props ) => {
             <EndGameButton />
             <SetSecretComponent />
             <CreateCustomCardComponent />
+            <SetPurchaseComponent />
         </div>
     )
 }
