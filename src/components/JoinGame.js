@@ -188,8 +188,8 @@ const JoinGame = ( props ) => {
                         <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '4.5vw' : '3vw'}}>{getPlayerNameById(card.playerId)}<span style={{color:'red'}}>{' ' + card.injury}</span></Typography>
                         <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '4.5vw' : '3vw'}}>{position}</Typography>
                         <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                            <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '4vw' : '2vw'}}>Items: {getItems(card.attributeHash)}</Typography>
-                            <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '4vw' : '2vw'}}>OPP: {card.opponent}</Typography>
+                            <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '3.5vw' : '2vw'}}>Items: {getItems(card.attributeHash)}</Typography>
+                            <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '3.5vw' : '2vw'}}>OPP: {card.opponent}</Typography>
                         </div>
                     </div>
                     <Checkbox checked={selectedCards.includes(card)} color='secondary' />
