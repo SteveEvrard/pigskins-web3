@@ -1,10 +1,13 @@
-import { Card, CardContent, CardHeader } from '@mui/material';
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { Card, CardContent, CardHeader } from '@mui/material';
 
 const PageContext = ( props ) => {
 
+    const isMobile = useSelector((state) => state.mobile.value);
+
     return (
-        <div style={{display: 'flex', justifyContent: 'center'}}>
+        <div style={{marginTop: props.parent === 'join-game' ? isMobile ? '35vw' : '25vw' : '', display: 'flex', justifyContent: 'center'}}>
             <Card sx={{width: '80vw', maxWidth: '550px', color: 'white', backgroundColor: '#31572c'}}>
                 <CardHeader titleTypographyProps={{fontWeight: 600}} component='h2' title={props.header} />
                 <CardContent sx={{fontWeight: 600}}>{props.body}</CardContent>

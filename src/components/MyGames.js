@@ -104,7 +104,6 @@ const MyGames = ( props ) => {
     }
 
     const handleDisplay = (game) => {
-        console.log(game)
         dispatch(setGame(game))
         history.push(`/my-games/${game.gameId}`)
     }

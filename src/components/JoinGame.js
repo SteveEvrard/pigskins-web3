@@ -222,7 +222,7 @@ const JoinGame = ( props ) => {
                 </div>
             </div>
             {loading ? <CircularProgress style={{marginTop: '35vw'}} color='secondary' size={200} /> : <CardList />}
-            {displayMessage ? <PageContext header={headerMessage} body={message} /> : null}
+            {displayMessage ? <PageContext parent={'join-game'} header={headerMessage} body={message} /> : null}
         </div>
     )
 }

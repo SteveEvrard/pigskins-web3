@@ -32,7 +32,7 @@ const Home = ( props ) => {
                     <CardHeader titleTypographyProps={{style: {fontSize: isMobile ? '' : '5vw'}}} title='Collectible NFT Cards' />
                     <CardContent>
                         <Typography sx={{fontSize: isMobile ? '4vw' : '2vw'}} component='p'>
-                            Collect hundreds of different football cards and compete with other players to win ETH! Each card has its own unique attributes and rareness!
+                            Collect thousands of different football cards and compete with other players to win ETH! Each card has its own unique attributes and rareness!
                         </Typography>
                     </CardContent>
                     {account ? 

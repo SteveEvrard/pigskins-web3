@@ -17,7 +17,6 @@ const UserCards = ( props ) => {
     const [loading, setLoading] = useState(false);
     const [displayMessage, setDisplayMessage] = useState(false);
     const getAccount = async () => signer.getAddress();
-    const selectedCard = useSelector((state) => state.cardDetail.value);
     const displayCard = useSelector((state) => state.cardDetail.value.displayCard);
     const isMobile = useSelector((state) => state.mobile.value);
     const headerMessage = 'No Cards Owned';
@@ -85,7 +84,7 @@ const UserCards = ( props ) => {
 
     function displayCards(cards) {
         return (
-            <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'space-evenly', position: selectedCard.playerId ? 'fixed' : 'inherit' }}>{createCards(cards)}</div>
+            <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'space-evenly'}}>{createCards(cards)}</div>
         )
     }
 
@@ -105,7 +104,7 @@ const UserCards = ( props ) => {
     }
 
     return (
-        <div style={displayCard ? {position: 'fixed', marginTop: '2vw'} : {marginTop: '2vw'}}>
+        <div style={{marginTop: '2vw'}}>
             <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: isMobile ? '8vw' : '6vw', color: '#fff'}}>
                 My Cards
             </Typography>

@@ -36,7 +36,6 @@ const Games = ( props ) => {
         const allGameIds = filterForGameIds(allGames);
         const gameDetails = await getGameDetailsById(allGameIds);
         const activeGames = filterForActiveGames(gameDetails)
-        console.log(activeGames);
         const gamesWithPlayers = await mapPlayersToGameDetails(activeGames);
         const mappedGameDetails = mapData(gamesWithPlayers);
         setGames(mappedGameDetails);
