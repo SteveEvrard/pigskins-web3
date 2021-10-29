@@ -72,7 +72,7 @@ const Admin = ( props ) => {
         const account = await getAccount();
 
         setProcessing(true);
-        ContractWithSigner.mintCustomCard(account, 181, 1, 999999999999999, {from: account}).then(() => {
+        ContractWithSigner.mintCustomCard(account, 68, 0, 999999910099999, {from: account}).then(() => {
             Contract.once(Contract.filters.CardCreated(null, null, null, null, account), () => {
                 setProcessing(false);
             })
