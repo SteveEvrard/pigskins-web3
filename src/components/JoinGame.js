@@ -46,7 +46,6 @@ const JoinGame = ( props ) => {
 
     const getCards = async () => {
         setLoading(true);
-        // const currentWeek = await (await axios.get(`https://api.sportsdata.io/v3/nfl/scores/json/CurrentWeek?key=${process.env.REACT_APP_SD_API_KEY}`)).data;
         const week = game.week;
         const account = await getAccount();
         const allCardIds = await getAllCardIds(account);
