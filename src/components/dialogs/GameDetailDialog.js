@@ -74,7 +74,8 @@ const GameDetailDialog = ( { mobile } ) => {
 
         const card = cardData.card
         const position = getPlayerPositionById(card.playerId);  
-        const [score, setScore] = useState(-1);
+        const [score, setScore] = useState(0);
+        const [loading, setLoading] = useState(true);
 
         useEffect(() => {
             getScore()
@@ -83,7 +84,8 @@ const GameDetailDialog = ( { mobile } ) => {
 
         const getScore = async () => {
             const playerScore = await getSinglePlayerScore(card);
-            setScore(playerScore)
+            setScore(playerScore);
+            setLoading(false);
         }
 
         const getSinglePlayerScore = async (card) => {
@@ -108,7 +110,7 @@ const GameDetailDialog = ( { mobile } ) => {
                         </div>
                     </div>
                     <div style={{margin: 'auto'}}>
-                        <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: mobile ? '5vw' : '3vw'}}>{score >= 0 ? score : <CircularProgress color='secondary' size={30}/>}</Typography>
+                        <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: mobile ? '5vw' : '3vw'}}>{loading ? <CircularProgress color='secondary' size={30}/> : score}</Typography>
                     </div>
                 </div>
             </ListItem>
