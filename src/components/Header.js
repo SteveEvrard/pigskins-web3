@@ -47,12 +47,13 @@ const Header = ( props ) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [headerItems, setHeaderItems] = useState(headerOptions);
     const open = Boolean(anchorEl);
-    const getAccount = async () => signer.getAddress();
+    const getAccount = async () => signer.getAddress().catch(() => setHideMenu(true));
     const isMobile = useSelector((state) => state.mobile.value);
     const notification = useSelector((state) => state.notification.value);
 
     useEffect(() => {
         checkOwner();
+        checkWeb3Connected();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -61,7 +62,10 @@ const Header = ( props ) => {
         if (account === process.env.REACT_APP_ACCOUNT_OWNER) {
             setHeaderItems(headerItems => [...headerItems, {label: 'Admin', href: '/admin'}])
         }
-        if (!account) {
+    }
+
+    const checkWeb3Connected = async () => {
+        if(!signer) {
             setHideMenu(true);
         }
     }

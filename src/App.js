@@ -11,8 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setAccount } from './store/account/accountSlice';
 import { useMediaQuery } from 'react-responsive';
 import { setMobile } from './store/device/deviceSlice';
-import { signer, provider, cardGameContractAddress } from './ethereum/ethers';
-import { BigNumber, ethers } from "ethers";
+import { signer } from './ethereum/ethers';
 import Claim from './components/Claim';
 import Info from './components/Info';
 import Games from './components/Games';
@@ -61,7 +60,6 @@ const App = () => {
   useEffect(() => {
 
     dispatch(setMobile(isMobile));
-    provider.getBalance(cardGameContractAddress).then(data => console.log('balance', ethers.utils.formatEther(BigNumber.from(data).toString()).toString()));
 
     getAccount();
 
@@ -69,7 +67,9 @@ const App = () => {
   },[]);
 
   const getAccount = async () => {
-    await signer.getAddress().then(acct => dispatch(setAccount(acct)));
+    if(signer) {
+      await signer.getAddress().then(acct => dispatch(setAccount(acct)));
+    }
   }
 
   return (
