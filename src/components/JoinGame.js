@@ -181,11 +181,11 @@ const JoinGame = ( props ) => {
 
         return (
             <ListItem onClick={() => handleSelect(card)} sx={{...checkDisabled(card), display: 'flex', cursor: 'pointer'}}>
-                <PlayerCard attributes={card.attributeHash} flippable={false} width={isMobile ? '20vw' : '15vw'} number={getPlayerNumberById(card.playerId)} team={getPlayerTeamById(card.playerId)} playerType={getPlayerTypeById(card.playerId)} cardType={card.cardType} />
+                <PlayerCard attributes={card.attributeHash} flippable={false} width={isMobile ? '20vw' : '10vw'} number={getPlayerNumberById(card.playerId)} team={getPlayerTeamById(card.playerId)} playerType={getPlayerTypeById(card.playerId)} cardType={card.cardType} />
                 <div style={{width: '100vw', display: 'flex', justifyContent: 'space-between'}}>
                     <div style={{width: '55vw'}}>
-                        <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '4.5vw' : '3vw'}}>{getPlayerNameById(card.playerId)}<span style={{color:'red'}}>{' ' + card.injury}</span></Typography>
-                        <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '4.5vw' : '3vw'}}>{position}</Typography>
+                        <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '4.5vw' : '2vw'}}>{getPlayerNameById(card.playerId)}<span style={{color:'red'}}>{' ' + card.injury}</span></Typography>
+                        <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '4.5vw' : '2vw'}}>{position}</Typography>
                         <div style={{display: 'flex', justifyContent: 'space-between'}}>
                             <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '3.5vw' : '2vw'}}>Items: {getItems(card.attributeHash)}</Typography>
                             <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '3.5vw' : '2vw'}}>OPP: {card.opponent}</Typography>
@@ -200,7 +200,7 @@ const JoinGame = ( props ) => {
     const CardList = () => {
 
         return (
-            <List sx={{top: '30vw'}}>
+            <List sx={{top: isMobile ? '30vw' : '21vw'}}>
                 {
                     cards.map((card, i) => {
                         return (
