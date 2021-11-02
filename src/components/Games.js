@@ -120,6 +120,9 @@ const Games = ( props ) => {
     }
 
     const createGameTiles = ( games ) => {
+        games.sort((a, b) => {
+            return Number(b.week) - Number(a.week)
+        })
         return games.map((game, i) => {
             return(
                 <div style={{display: 'flex', justifyContent: 'center', marginBottom: isMobile ? '3vw' : '1vw'}} key={i}>
