@@ -4,10 +4,10 @@ import { calculatePoints } from './PlayerStatUtil';
 import { getPlayerApiIdById } from './PlayerUtil';
 import { getItems } from '../components/ViewCard';
 
-export const endActiveGames = async () => {
+export const endActiveGamesByWeek = async (week) => {
     const openedGames = await getOpenedGames();
     const gamesWithDetails = await getGameDetails(openedGames);
-    const filteredForActiveGames = filterForActiveGames(gamesWithDetails);
+    const filteredForActiveGames = filterForActiveGames(gamesWithDetails, week);
     const gamesWithPlayers = await getPlayersByGame(filteredForActiveGames);
     const gamesWithActivePlayers = getAllCardsByPlayers(gamesWithPlayers);
     const gamesWithActivePlayersAndCardIds = await getGameDetailsWithPlayerCards(gamesWithActivePlayers);
@@ -49,9 +49,10 @@ const getGameDetails = async (games) => {
     return Promise.all(promises);
 }
 
-const filterForActiveGames = (games) => {
+const filterForActiveGames = (games, week) => {
     return games.filter(game => {
-        return game.active
+        const gameWeek = BigNumber.from(game.week).toString();
+        return game.active && gameWeek === week;
     })
 }
 

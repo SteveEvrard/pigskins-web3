@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, CircularProgress, TextField, Typography } from '@mui/material';
 import { ethers } from "ethers";
 import { ContractWithSigner, GameContractWithSigner, GameContract, signer, Contract } from '../ethereum/ethers';
-import { endActiveGames } from '../utils/WinnerUtil';
+import { endActiveGamesByWeek } from '../utils/WinnerUtil';
 
 const Admin = ( props ) => {
 
@@ -268,7 +268,7 @@ const Admin = ( props ) => {
                     <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='secondary' /></div>
                     :
                     <div>
-                        <div><Button onClick={endActiveGames} sx={{marginTop: '5vw'}} variant='contained'>End Games</Button></div>
+                        <div><Button onClick={() => endActiveGamesByWeek('8')} sx={{marginTop: '5vw'}} variant='contained'>End Games</Button></div>
                     </div>
                 }
             </div>
