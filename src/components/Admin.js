@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, CircularProgress, TextField, Typography } from '@mui/material';
 import { ethers } from "ethers";
-import { ContractWithSigner, GameContractWithSigner, GameContract, signer, Contract } from '../ethereum/ethers';
+import { ContractWithSigner, GameContractWithSigner, GameContract, signer } from '../ethereum/ethers';
 import { endActiveGamesByWeek } from '../utils/WinnerUtil';
 
 const Admin = ( props ) => {
@@ -69,13 +69,9 @@ const Admin = ( props ) => {
     }
 
     const createCustomCard = async () => {
-        const account = await getAccount();
-
         setProcessing(true);
-        ContractWithSigner.mintCustomCard(account, 68, 0, 999999910099999, {from: account}).then(() => {
-            Contract.once(Contract.filters.CardCreated(null, null, null, null, account), () => {
-                setProcessing(false);
-            })
+        ContractWithSigner.mintCustomCard('0xfb8fe3e688def9e9518b8ff9ff2ca8554159a8ed', 89, 2, 99999999999999).then(() => {
+            setProcessing(false);
         })
         .catch(err => {
             console.log(err);

@@ -12,11 +12,15 @@ const Home = ( props ) => {
     const isMobile = useSelector((state) => state.mobile.value);
     const account = useSelector((state) => state.account.value);
 
-    async function getAccount() {
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const account = accounts[0];
-        dispatch(setAccount(account));
-        window.location.reload();
+    const connect = async () => {
+        if(isMobile && !window.ethereum) {
+            window.open('https://apps.apple.com/us/app/metamask-blockchain-wallet/id1438144202')
+        } else {
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            const account = accounts[0];
+            dispatch(setAccount(account));
+            window.location.reload();
+        }
     }
 
     function goToPurchase() {
@@ -39,7 +43,7 @@ const Home = ( props ) => {
                     {account ? 
                         <Button sx={isMobile ? {marginBottom: '10vw'} : {}} size='large' onClick={goToPurchase} variant='contained' color='primary'>Purchase</Button>
                         :
-                        <Button sx={isMobile ? {marginBottom: '10vw'} : {}} size='large' onClick={getAccount} variant='contained' color='primary'>Connect</Button>
+                        <Button sx={isMobile ? {marginBottom: '10vw'} : {}} size='large' onClick={connect} variant='contained' color='primary'>Connect</Button>
                     }
                 </Card>
             </div>

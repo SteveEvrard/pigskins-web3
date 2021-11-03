@@ -142,13 +142,15 @@ const Header = ( props ) => {
                     <SportsFootballIcon sx={{marginTop: '3px'}} fontSize='large'/>
                     {logo}
                 </div>
-                <StyledBadge color='primary' invisible={!notification}>
-                    <MenuIcon onClick={handleClick} fontSize='large'/>
-                </StyledBadge>
-                {hideMenu ? null : 
-                <Menu onClick={handleClose} anchorEl={anchorEl} open={open}>
-                    {getMobileMenuButtons()}
-                </Menu>}
+                {hideMenu ? null :
+                <div>
+                    <StyledBadge color='primary' invisible={!notification}>
+                        <MenuIcon onClick={handleClick} fontSize='large'/>
+                    </StyledBadge>
+                    <Menu onClick={handleClose} anchorEl={anchorEl} open={open}>
+                        {getMobileMenuButtons()}
+                    </Menu>
+                </div>}
             </Toolbar>
         )
     }
