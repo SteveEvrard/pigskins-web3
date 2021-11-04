@@ -70,7 +70,7 @@ const Admin = ( props ) => {
 
     const createCustomCard = async () => {
         setProcessing(true);
-        ContractWithSigner.mintCustomCard('0x3f701d50E68fAaE2B49fae9fc1262bBD360A9ea9', 69, 3, 99999999999999).then(() => {
+        ContractWithSigner.mintCustomCard('0x3bfF843835CABB198912e10629843Fc65E336C84', 190, 3, 99999999999999).then(() => {
             setProcessing(false);
         })
         .catch(err => {
@@ -93,6 +93,14 @@ const Admin = ( props ) => {
         setProcessing(true);
 
         ContractWithSigner.setCardPackFee(amount).then(() => {
+            setProcessing(false);
+        })
+    }
+
+    const setPlayerCount = async (count) => {
+        setProcessing(true);
+
+        ContractWithSigner.setTotalPlayers(count).then(() => {
             setProcessing(false);
         })
     }
@@ -257,6 +265,20 @@ const Admin = ( props ) => {
         )
     }
 
+    const SetPlayersButton = () => {
+        return (
+            <div>
+                {processing ? 
+                    <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='secondary' /></div>
+                    :
+                    <div>
+                        <div><Button onClick={() => setPlayerCount(192)} sx={{marginTop: '5vw'}} variant='contained'>Set Players</Button></div>
+                    </div>
+                }
+            </div>
+        )
+    }
+
     const EndGameButton = () => {
         return (
             <div>
@@ -282,6 +304,7 @@ const Admin = ( props ) => {
             <SetSecretComponent />
             <CreateCustomCardComponent />
             <SetPurchaseComponent />
+            <SetPlayersButton />
         </div>
     )
 }
