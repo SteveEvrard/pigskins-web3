@@ -22,6 +22,7 @@ import GameDetails from './components/GameDetails';
 import NotificationHelper from './utils/NotificationUtil';
 import MyAuction from './components/MyAuctions';
 import AlertMessage from './utils/EventListenerUtil';
+import LeaderBoard from './components/LeaderBoard';
 
 const theme = createTheme({
   status: {
@@ -92,6 +93,7 @@ const App = () => {
             <Route path='/auction' component={Auction} />
             <Route path='/claim' component={Claim} />
             <Route path='/info' component={Info} />
+            <Route path='/leader-board' component={LeaderBoard} />
             {account === process.env.REACT_APP_ACCOUNT_OWNER ? <Route path='/admin' component={Admin} /> : null}
           </Switch>
         </ThemeProvider>

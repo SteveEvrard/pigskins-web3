@@ -12,6 +12,7 @@ const headerOptions = [
     {label: 'Buy Pack', href: '/purchase'},
     {label: 'Auction', href: '/auction'},
     {label: 'Join Game', href: '/games'},
+    {label: 'Leader Board', href: '/leader-board'},
     {label: 'My Auctions', href: '/my-auction'},
     {label: 'My Games', href: '/my-games'},
     {label: 'My Cards', href: '/cards'},
