@@ -118,11 +118,11 @@ const LeaderBoard = ( props ) => {
 
         return (
             <List sx={{top: isMobile ? '20vw' : '10vw'}}>
-                <div style={{display: 'flex', justifyContent: 'right', width: '100vw'}}>
-                    <Typography sx={{width: '10vw', marginRight: isMobile ? '8vw' : '11vw', marginBottom: isMobile ? '3vw' : '', fontFamily: "Work Sans, sans-serif", fontWeight: 800, fontSize: isMobile ? '5vw' : '5vw', color: '#fff'}}>
+                <div style={{display: 'flex', justifyContent: 'right', width: '100vw', marginBottom: isMobile ? '10vw' : ''}}>
+                    <Typography sx={{position: isMobile ? 'fixed' : '', right: isMobile ? '17vw' : '', width: '10vw', marginRight: isMobile ? '8vw' : '11vw', marginBottom: isMobile ? '3vw' : '', fontFamily: "Work Sans, sans-serif", fontWeight: 800, fontSize: isMobile ? '5vw' : '5vw', color: '#fff'}}>
                         Wins
                     </Typography>
-                    <Typography sx={{width: '10vw', marginRight: isMobile ? '7vw' : '4vw', marginBottom: isMobile ? '3vw' : '', fontFamily: "Work Sans, sans-serif", fontWeight: 800, fontSize: isMobile ? '5vw' : '5vw', color: '#fff'}}>
+                    <Typography sx={{position: isMobile ? 'fixed' : '', width: '10vw', marginRight: isMobile ? '7vw' : '4vw', marginBottom: isMobile ? '3vw' : '', fontFamily: "Work Sans, sans-serif", fontWeight: 800, fontSize: isMobile ? '5vw' : '5vw', color: '#fff'}}>
                         ETH
                     </Typography>
                 </div>
