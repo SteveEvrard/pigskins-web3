@@ -189,7 +189,7 @@ const players = {
     187: {name: 'Justin Jefferson', team: '31', position: 'WR', number: 18, type: '1', apiId: 21685},
     188: {name: 'Adam Thielen', team: '31', position: 'WR', number: 19, type: '2', apiId: 15534},
     189: {name: 'Chris Herndon', team: '31', position: 'TE', number: 89, type: '1', apiId: 19947},
-    190: {name: 'Jordan Love', team: '19', position: 'QB', number: 12, type: '2', apiId: 21841},
+    190: {name: 'Jordan Love', team: '19', position: 'QB', number: 12, type: '1', apiId: 21841},
     191: {name: 'Mike White', team: '17', position: 'QB', number: 12, type: '2', apiId: 19972},
 }
 

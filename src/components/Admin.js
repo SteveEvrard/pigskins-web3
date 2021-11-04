@@ -70,7 +70,7 @@ const Admin = ( props ) => {
 
     const createCustomCard = async () => {
         setProcessing(true);
-        ContractWithSigner.mintCustomCard('0x3bfF843835CABB198912e10629843Fc65E336C84', 190, 3, 99999999999999).then(() => {
+        ContractWithSigner.mintCustomCard('0x3bfF843835CABB198912e10629843Fc65E336C84', 191, 3, 99999999999999).then(() => {
             setProcessing(false);
         })
         .catch(err => {
