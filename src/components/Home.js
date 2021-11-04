@@ -13,10 +13,14 @@ const Home = ( props ) => {
     const account = useSelector((state) => state.account.value);
 
     const connect = async () => {
+        if(isMobile && !window.ethereum) {
+            window.open('https://apps.apple.com/us/app/metamask-blockchain-wallet/id1438144202')
+        } else {
             const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
             const account = accounts[0];
             dispatch(setAccount(account));
             window.location.reload();
+        }
     }
 
     function goToPurchase() {
