@@ -56,7 +56,7 @@ const Admin = ( props ) => {
     }
 
     const withdraw = async () => {
-        const amount = ethers.utils.parseEther('0.1');
+        const amount = ethers.utils.parseEther('1');
         setProcessing(true);
 
         ContractWithSigner.withdraw(amount).then(() => {

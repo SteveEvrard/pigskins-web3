@@ -124,7 +124,7 @@ const GameDetails = ( props ) => {
         return address.substring(0, 6) + '...' + address.substring(38);
     }
 
-    const PlayerTile = ( {player, place} ) => {
+    const PlayerTile = ( {player, place, highScore} ) => {
 
         return (
             <ListItem sx={{display: 'flex'}}>
@@ -132,7 +132,7 @@ const GameDetails = ( props ) => {
                     <div style={{width: '90vw', display: 'flex', justifyContent: 'space-between'}}>
                         <Typography sx={{color: 'white', marginTop: isMobile ? '1vw' : '', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '5vw' : '3vw'}}>
                             {place.toString()+ '. ' + shortenAddress(player.player)}
-                            {place === 1 && player.points > 0 ? <LocalFireDepartmentIcon color='primary' sx={{marginBottom: isMobile ? '-1vw' : '-.5vw', marginLeft: '1vw'}} fontSize={isMobile ? 'medium' : 'larger'}/> : null}
+                            {(place === 1 || player.points === highScore) && player.points > 0 ? <LocalFireDepartmentIcon color='primary' sx={{marginBottom: isMobile ? '-1vw' : '-.5vw', marginLeft: '1vw'}} fontSize={isMobile ? 'medium' : 'larger'}/> : null}
                             {player.player === account ? <PersonIcon sx={{marginBottom: isMobile ? '-1vw' : '-.5vw', marginLeft: '1vw'}} fontSize={isMobile ? 'medium' : 'larger'}/> : null}
                         </Typography>
                         <div style={{display: 'flex', justifyContent: 'space-between', width: isMobile ? '33vw' : '25vw'}}>
@@ -166,6 +166,8 @@ const GameDetails = ( props ) => {
             return b.points - a.points
         })
 
+        const highScore = players[0] ? players[0].points : 0;
+
         return (
             <List sx={{top: '20vw'}}>
                 {
@@ -173,7 +175,7 @@ const GameDetails = ( props ) => {
                         return (
                             <div key={i}>
                                 <Divider />
-                                <PlayerTile place={i + 1} player={player} />
+                                <PlayerTile place={i + 1} player={player} highScore={highScore} />
                             </div>
                         )
                     })
