@@ -272,7 +272,7 @@ const Admin = ( props ) => {
                     <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='secondary' /></div>
                     :
                     <div>
-                        <div><Button onClick={() => setPlayerCount(192)} sx={{marginTop: '5vw'}} variant='contained'>Set Players</Button></div>
+                        <div><Button onClick={() => setPlayerCount(193)} sx={{marginTop: '5vw'}} variant='contained'>Set Players</Button></div>
                     </div>
                 }
             </div>
@@ -286,7 +286,7 @@ const Admin = ( props ) => {
                     <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='secondary' /></div>
                     :
                     <div>
-                        <div><Button onClick={() => endActiveGamesByWeek('8')} sx={{marginTop: '5vw'}} variant='contained'>End Games</Button></div>
+                        <div><Button onClick={() => endActiveGamesByWeek('9')} sx={{marginTop: '5vw'}} variant='contained'>End Games</Button></div>
                     </div>
                 }
             </div>

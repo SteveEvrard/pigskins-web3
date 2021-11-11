@@ -191,6 +191,7 @@ const players = {
     189: {name: 'Chris Herndon', team: '31', position: 'TE', number: 89, type: '1', apiId: 19947},
     190: {name: 'Jordan Love', team: '19', position: 'QB', number: 12, type: '1', apiId: 21841},
     191: {name: 'Mike White', team: '17', position: 'QB', number: 12, type: '2', apiId: 19972},
+    192: {name: 'Pat Freiermuth', team: '28', position: 'TE', number: 88, type: '2', apiId: 22507},
 }
 
 const teamNames = {
