@@ -40,7 +40,7 @@ const players = {
     38: {name: 'Nick Chubb', team: '5', position: 'RB', number: 24, type: '1', apiId: 19798},
     39: {name: 'Kareem Hunt', team: '5', position: 'RB', number: 27, type: '1', apiId: 18944},
     40: {name: 'Jarvis Landry', team: '5', position: 'WR', number: 80, type: '1', apiId: 16020},
-    41: {name: 'Odell Beckham Jr', team: '5', position: 'WR', number: 13, type: '1', apiId: 16389},
+    41: {name: 'Odell Beckham Jr', team: '23', position: 'WR', number: 13, type: '1', apiId: 16389},
     42: {name: 'Donovan Peoples-Jones', team: '5', position: 'WR', number: 11, type: '1', apiId: 21754},
     43: {name: 'Austin Hooper', team: '5', position: 'TE', number: 81, type: '1', apiId: 17963},
     44: {name: 'Tom Brady', team: '6', position: 'QB', number: 12, type: '2', apiId: 4314},
