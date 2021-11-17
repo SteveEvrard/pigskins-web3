@@ -181,7 +181,6 @@ const getTeamScore = async (cards, week) => {
     }
 
     points = Math.round(points * 100) / 100
-    console.log('points', points)
 
     return points;
 }

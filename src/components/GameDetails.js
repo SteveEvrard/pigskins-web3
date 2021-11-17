@@ -121,7 +121,7 @@ const GameDetails = ( props ) => {
     }
 
     const shortenAddress = (address) => {
-        return address.substring(0, 6) + '...' + address.substring(38);
+        return address.substring(0, 8);
     }
 
     const PlayerTile = ( {player, place, highScore} ) => {

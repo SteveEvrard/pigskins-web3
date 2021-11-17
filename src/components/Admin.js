@@ -70,7 +70,7 @@ const Admin = ( props ) => {
 
     const createCustomCard = async () => {
         setProcessing(true);
-        ContractWithSigner.mintCustomCard('0x3bfF843835CABB198912e10629843Fc65E336C84', 191, 3, 99999999999999).then(() => {
+        ContractWithSigner.mintCustomCard('0xe57D2Bc60c30CB7472ECF072526A92a268b02c2f', 149, 3, 99999999999999).then(() => {
             setProcessing(false);
         })
         .catch(err => {
@@ -286,7 +286,7 @@ const Admin = ( props ) => {
                     <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='secondary' /></div>
                     :
                     <div>
-                        <div><Button onClick={() => endActiveGamesByWeek('9')} sx={{marginTop: '5vw'}} variant='contained'>End Games</Button></div>
+                        <div><Button onClick={() => endActiveGamesByWeek('10')} sx={{marginTop: '5vw'}} variant='contained'>End Games</Button></div>
                     </div>
                 }
             </div>
