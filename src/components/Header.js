@@ -92,7 +92,7 @@ const Header = ( props ) => {
     }
 
     const openMobileTwitter = () => {
-        window.open('https://mobile.twitter.com/PigskinsNFT', '_blank')
+        window.open('twitter://mobile.twitter.com/PigskinsNFT', '_blank')
     }
 
     const openDiscord = () => {
