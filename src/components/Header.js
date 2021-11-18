@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, MenuItem, Menu, Badge } from '@mui/material';
 import { Link as RouterLink, useHistory } from 'react-router-dom';
-import SportsFootballIcon from '@mui/icons-material/SportsFootball';
 import { useDispatch, useSelector } from 'react-redux';
 import MenuIcon from '@mui/icons-material/Menu';
 import { setCardDetail, setDisplayCard } from '../store/card-detail/cardDetailSlice';
 import { styled } from '@mui/material/styles';
 import { signer } from '../ethereum/ethers';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import { mdiDiscord } from '@mdi/js';
+import Icon from '@mdi/react'
 
 const headerOptions = [
     {label: 'Buy Pack', href: '/purchase'},
@@ -85,6 +87,14 @@ const Header = ( props ) => {
         setAnchorEl(null);
     }
 
+    const openTwitter = () => {
+        window.open('https://twitter.com/PigskinsNFT', '_blank')
+    }
+
+    const openDiscord = () => {
+        window.open('https://discord.gg/zKTqRqwD', '_blank')
+    }
+
     const getMenuButtons = () => {
         return headerItems.map(({ label, href }) => {
             return (
@@ -127,9 +137,10 @@ const Header = ( props ) => {
     const displayDesktop = () => {
         return (
             <Toolbar sx={{display: 'flex', justifyContent: 'space-between'}}>
-                <div onClick={home} style={{display: 'flex', cursor: 'pointer'}}>
-                    <SportsFootballIcon sx={{marginTop: '3px'}} fontSize='large'/>
+                <div style={{display: 'flex', cursor: 'pointer'}}>
                     {logo}
+                    <div onClick={openTwitter}><TwitterIcon sx={{marginTop: '3px', marginLeft: '1.5vw'}} fontSize='large'/></div>
+                    <div onClick={openDiscord}><Icon style={{marginTop: '3px'}} size={1.75} path={mdiDiscord} /></div>
                 </div>
                 {hideMenu ? null : <div>{getMenuButtons()}</div>}
             </Toolbar>
@@ -139,9 +150,10 @@ const Header = ( props ) => {
     const displayMobile = () => {
         return (
             <Toolbar sx={{display: 'flex', justifyContent: 'space-between'}}>
-                <div onClick={home} style={{display: 'flex', cursor: 'pointer'}}>
-                    <SportsFootballIcon sx={{marginTop: '3px'}} fontSize='large'/>
+                <div style={{display: 'flex', cursor: 'pointer'}}>
                     {logo}
+                    <div onClick={openTwitter}><TwitterIcon sx={{marginTop: '3px', marginLeft: '1.5vw'}} fontSize='large'/></div>
+                    <div onClick={openDiscord}><Icon style={{marginTop: '3px'}} size={1.75} path={mdiDiscord} /></div>
                 </div>
                 {hideMenu ? null :
                 <div>
@@ -157,7 +169,7 @@ const Header = ( props ) => {
     }
 
     const logo = (
-        <Typography variant="h4" component="h1"
+        <Typography onClick={home} variant="h4" component="h1"
             sx={{
                 fontFamily: "Work Sans, sans-serif",
                 fontWeight: 600,
