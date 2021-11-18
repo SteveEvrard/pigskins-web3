@@ -91,6 +91,10 @@ const Header = ( props ) => {
         window.open('https://twitter.com/PigskinsNFT', '_blank')
     }
 
+    const openMobileTwitter = () => {
+        window.open('https://mobile.twitter.com/PigskinsNFT', '_blank')
+    }
+
     const openDiscord = () => {
         window.open('https://discord.gg/zKTqRqwD', '_blank')
     }
@@ -152,7 +156,7 @@ const Header = ( props ) => {
             <Toolbar sx={{display: 'flex', justifyContent: 'space-between'}}>
                 <div style={{display: 'flex', cursor: 'pointer'}}>
                     {logo}
-                    <div onClick={openTwitter}><TwitterIcon sx={{marginTop: '3px', marginLeft: '1.5vw'}} fontSize='large'/></div>
+                    <div onClick={openMobileTwitter}><TwitterIcon sx={{marginTop: '3px', marginLeft: '1.5vw'}} fontSize='large'/></div>
                     <div onClick={openDiscord}><Icon style={{marginTop: '3px'}} size={1.75} path={mdiDiscord} /></div>
                 </div>
                 {hideMenu ? null :
