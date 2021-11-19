@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PlayerCard from './PlayerCard';
 import CircularProgress from '@mui/material/CircularProgress';
-import { getPlayerNumberById, getPlayerTeamById, getPlayerTypeById } from '../utils/PlayerUtil';
+import { getPlayerNumberById, getPlayerPositionById, getPlayerTeamById, getPlayerTypeById } from '../utils/PlayerUtil';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCardDetail, setDisplayCard } from '../store/card-detail/cardDetailSlice';
 import ViewCard from './ViewCard';
@@ -9,6 +9,8 @@ import { signer, ContractWithSigner } from '../ethereum/ethers';
 import { BigNumber } from "ethers";
 import PageContext from './PageContext';
 import { Typography } from '@mui/material';
+import CardFilter from './CardFilter';
+import { setPosition, setRarity } from '../store/card-filter/cardFilterSlice';
 
 const UserCards = ( props ) => {
 
@@ -19,6 +21,8 @@ const UserCards = ( props ) => {
     const getAccount = async () => signer.getAddress();
     const displayCard = useSelector((state) => state.cardDetail.value.displayCard);
     const isMobile = useSelector((state) => state.mobile.value);
+    const selectedPosition = useSelector((state) => state.cardFilter.value.position);
+    const selectedRarity = useSelector((state) => state.cardFilter.value.rarity);
     const headerMessage = 'No Cards Owned';
     const message = 'Purchase cards from a card pack or auction to view them here'
 
@@ -30,6 +34,16 @@ const UserCards = ( props ) => {
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    useEffect(() => {
+
+        return () => {
+            dispatch(setPosition('Position'));
+            dispatch(setRarity('Rarity'));
+        }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     const getCards = async () => {
         setLoading(true);
@@ -88,8 +102,31 @@ const UserCards = ( props ) => {
         )
     }
 
+    const filterCards = (cards) => {
+        const filteredByPosition = cards.filter((card) => {
+            if(selectedPosition === 'Position' || selectedPosition === 'All') {
+                return true;
+            }
+            const position = getPlayerPositionById(card.playerId);
+            return position === selectedPosition;
+        });
+
+        const filteredByRarity = filteredByPosition.filter((card) => {
+            if(selectedRarity === 'Rarity' || selectedRarity ===  'All') {
+                return true;
+            }
+
+            return card.cardType === selectedRarity;
+        });
+
+        return filteredByRarity;
+    }
+
+
     function createCards(cards) {
-        return cards.map((card, i) => {
+        const filteredCards = filterCards(cards);
+
+        return filteredCards.map((card, i) => {
             const { cardId, playerId, cardType, attributeHash, inUse } = card;
             const team = getPlayerTeamById(playerId);
             const number = getPlayerNumberById(playerId);
@@ -108,6 +145,7 @@ const UserCards = ( props ) => {
             <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: isMobile ? '8vw' : '6vw', color: '#fff'}}>
                 My Cards
             </Typography>
+            <CardFilter/>
             {displayMessage ? <PageContext header={headerMessage} body={message} /> : null}
             {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : displayCards(cards)}
             {displayCard ? <ViewCard view={'userCards'}/> : null}

@@ -7,6 +7,7 @@ import auctionDetailReducer from './auction-detail/auctionSlice';
 import viewCardReducer from './view-card/viewCardSlice';
 import gameReducer from './games/gameSlice';
 import uiReducer from './ui/uiSlice';
+import cardFilterReducer from './card-filter/cardFilterSlice';
 
 export default configureStore({  
     reducer: {
@@ -17,6 +18,7 @@ export default configureStore({
         auction: auctionDetailReducer,
         viewCard: viewCardReducer,
         game: gameReducer,
-        ui: uiReducer
+        ui: uiReducer,
+        cardFilter: cardFilterReducer
     },
 }, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())

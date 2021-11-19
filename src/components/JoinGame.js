@@ -13,6 +13,8 @@ import JoinGameDialog from './dialogs/JoinGameDialog';
 import { setDisplayDialog, setSelectedCardsView } from '../store/games/gameSlice';
 import { getItems } from './ViewCard';
 import axios from 'axios';
+import CardFilter from './CardFilter';
+import { setPosition, setRarity } from '../store/card-filter/cardFilterSlice';
 
 const JoinGame = ( props ) => {
 
@@ -26,12 +28,24 @@ const JoinGame = ( props ) => {
     const [displayMessage, setDisplayMessage] = useState(false);
     const getAccount = async () => signer.getAddress();
     const isMobile = useSelector((state) => state.mobile.value);
+    const selectedPosition = useSelector((state) => state.cardFilter.value.position);
+    const selectedRarity = useSelector((state) => state.cardFilter.value.rarity);
     const headerMessage = 'No Cards Owned';
     const message = 'Purchase cards from a card pack or auction to view them here'
 
     useEffect(() => {
         getCards();
         setSelectedCards([]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+
+        return () => {
+            dispatch(setPosition('Position'));
+            dispatch(setRarity('Rarity'));
+        }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -174,6 +188,26 @@ const JoinGame = ( props ) => {
         }
     }
 
+    const filterCards = (cards) => {
+        const filteredByPosition = cards.filter((card) => {
+            if(selectedPosition === 'Position' || selectedPosition === 'All') {
+                return true;
+            }
+            const position = getPlayerPositionById(card.playerId);
+            return position === selectedPosition;
+        });
+
+        const filteredByRarity = filteredByPosition.filter((card) => {
+            if(selectedRarity === 'Rarity' || selectedRarity ===  'All') {
+                return true;
+            }
+
+            return card.cardType === selectedRarity;
+        });
+
+        return filteredByRarity;
+    }
+
     const CardTile = ( cardData ) => {
 
         const card = cardData.card;
@@ -198,11 +232,12 @@ const JoinGame = ( props ) => {
     }
 
     const CardList = () => {
+        const filteredCards = filterCards(cards);
 
         return (
-            <List sx={{top: isMobile ? '30vw' : '21vw'}}>
+            <List sx={{top: isMobile ? '45vw' : '21vw'}}>
                 {
-                    cards.map((card, i) => {
+                    filteredCards.map((card, i) => {
                         return (
                             <div key={i}>
                                 <Divider />
@@ -218,11 +253,13 @@ const JoinGame = ( props ) => {
     return (
         <div>
             {displayDialog ? <JoinGameDialog mobile={isMobile} cards={selectedCards}/> : null}
-            <div style={{position: 'fixed', backgroundColor: '#7ebc89', zIndex: 1, padding: '2vw 0'}}>
+            <div style={{position: 'fixed', backgroundColor: '#7ebc89', zIndex: 1, padding: '1vw 0'}}>
                 <Typography sx={{width: '100vw', marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: isMobile ? '8vw' : '6vw', color: '#fff'}}>
                     <span style={{cursor: 'pointer'}} onClick={backToGames}><ArrowBackIcon sx={{backgroundColor: 'white', borderRadius: '4px', position: 'fixed', left: '3vw', fontSize: isMobile ? '13vw' : '7vw'}} color='third' /></span>Select Cards
                 </Typography>
+                {isMobile ? <CardFilter /> : null}
                 <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
+                    {isMobile ? null : <CardFilter />}
                     <div>
                         <div style={{fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '4vw' : '2vw', position: 'relative', zIndex: 2, color: 'white'}}>
                             QB: {getCardCountByPosition('QB')}/1
@@ -236,7 +273,7 @@ const JoinGame = ( props ) => {
                     <Button onClick={openDialog} disabled={selectedCards.length !== 6} sx={{fontSize: isMobile ?  '' : '2vw', width: '30vw'}} variant='contained'>Join</Button>
                 </div>
             </div>
-            {loading ? <CircularProgress style={{marginTop: '35vw'}} color='secondary' size={200} /> : <CardList />}
+            {loading ? <CircularProgress style={{marginTop: '50vw'}} color='secondary' size={200} /> : <CardList />}
             {displayMessage ? <PageContext parent={'join-game'} header={headerMessage} body={message} /> : null}
         </div>
     )

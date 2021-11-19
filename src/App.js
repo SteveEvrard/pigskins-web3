@@ -42,6 +42,9 @@ const theme = createTheme({
     third: {
       main: '#7ebc89'
     },
+    darkGreen: {
+      main: '#31572c'
+    },
     neutral: {
       main: '#64748B',
       contrastText: '#fff',
