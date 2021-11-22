@@ -12,7 +12,7 @@ const players = {
     10: {name: 'Damien Williams', team: '1', position: 'RB', number: 8, type: '1', apiId: 16031},
     11: {name: 'Allen Robinson', team: '1', position: 'WR', number: 12, type: '1', apiId: 16263},
     12: {name: 'Darnell Mooney', team: '1', position: 'WR', number: 11, type: '1', apiId: 21961},
-    13: {name: 'Breshad Perriman', team: '1', position: 'WR', number: 19, type: '1', apiId: 16787},
+    13: {name: 'Breshad Perriman', team: '6', position: 'WR', number: 19, type: '1', apiId: 16787},
     14: {name: 'Andy Dalton', team: '1', position: 'QB', number: 14, type: '2', apiId: 12841},
     15: {name: 'Cole Kmet', team: '1', position: 'TE', number: 85, type: '2', apiId: 21772},
     16: {name: 'Joe Burrow', team: '2', position: 'QB', number: 9, type: '2', apiId: 21693},
