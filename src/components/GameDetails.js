@@ -135,7 +135,7 @@ const GameDetails = ( props ) => {
                             {(place === 1 || player.points === highScore) && player.points > 0 ? <LocalFireDepartmentIcon color='primary' sx={{marginBottom: isMobile ? '-1vw' : '-.5vw', marginLeft: '1vw'}} fontSize={isMobile ? 'medium' : 'larger'}/> : null}
                             {player.player === account ? <PersonIcon sx={{marginBottom: isMobile ? '-1vw' : '-.5vw', marginLeft: '1vw'}} fontSize={isMobile ? 'medium' : 'larger'}/> : null}
                         </Typography>
-                        <div style={{display: 'flex', justifyContent: 'space-between', width: isMobile ? '33vw' : '25vw'}}>
+                        <div style={{display: 'flex', justifyContent: 'space-between', width: isMobile ? '37vw' : '30vw'}}>
                             <Typography sx={{color: 'white', textAlign: 'right', marginTop: isMobile ? '1vw' : '', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '5vw' : '3vw'}}>{player.points >= 0 ? player.points : <CircularProgress color='secondary' size={30}/>}</Typography>
                             <Button sx={{width: isMobile ? '' : '15vw', marginLeft: '1vw', fontSize: isMobile ? '' : '2vw'}} onClick={() => handleDisplayCards(player.cards)} variant='contained'>View</Button>
                         </div>
