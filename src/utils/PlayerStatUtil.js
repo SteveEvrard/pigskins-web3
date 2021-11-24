@@ -3,10 +3,10 @@ import axios from 'axios';
 export const calculatePoints = async (items, cardType, week, playerId) => {
     const stats = await getPlayerStats(week, playerId);
     if(!stats) return 0;
-    const passingPoints = getPassingPoints(stats, items);
-    const rushingPoints = getRushingPoints(stats, items);
-    const receivingPoints = getReceivingPoints(stats, items);
-    const specialTeamsPoints = getSpecialTeamsPoints(stats, items);
+    const passingPoints = getPassingPoints(stats, items, cardType);
+    const rushingPoints = getRushingPoints(stats, items, cardType);
+    const receivingPoints = getReceivingPoints(stats, items, cardType);
+    const specialTeamsPoints = getSpecialTeamsPoints(stats, items, cardType);
     const turnovers = getTurnovers(stats, items);
 
     const totalPoints = passingPoints + rushingPoints + receivingPoints + specialTeamsPoints - turnovers;
@@ -30,10 +30,14 @@ const calculateBoost = (points, cardType) => {
     }
 }
 
-const getPassingPoints = (data, items) => {
+const getPassingPoints = (data, items, cardType) => {
     const yards = data.PassingYards / 25;
     const scores = data.PassingTouchdowns * 4;
 
+    if(cardType === '4') {
+        return yards + (scores * 1.5);
+    }
+
     if(items.includes('Water') && items.includes('Crown')) {
         return (yards * 1.3) + (scores * 2);
     } else if(items.includes('Water')) {
@@ -45,10 +49,14 @@ const getPassingPoints = (data, items) => {
     }
 }
 
-const getRushingPoints = (data, items) => {
+const getRushingPoints = (data, items, cardType) => {
     const yards = data.RushingYards / 10;
     const scores = data.RushingTouchdowns * 6;
 
+    if(cardType === '4') {
+        return yards + (scores * 1.5);
+    }
+
     if(items.includes('Water') && items.includes('Crown')) {
         return (yards * 1.3) + (scores * 2);
     } else if(items.includes('Water')) {
@@ -60,10 +68,14 @@ const getRushingPoints = (data, items) => {
     }
 }
 
-const getReceivingPoints = (data, items) => {
+const getReceivingPoints = (data, items, cardType) => {
     const yards = data.ReceivingYards / 10;
     const scores = data.ReceivingTouchdowns * 6;
     const catches = data.Receptions;
+
+    if(cardType === '4') {
+        return yards + (scores * 1.5) + catches;
+    }
 
     if(items.includes('Water') && items.includes('Crown')) {
         return (yards * 1.3) + (scores * 2) + catches;
@@ -86,7 +98,12 @@ const getTurnovers = (data, items) => {
     return interceptions + fumbles;
 }
 
-const getSpecialTeamsPoints = (data, items) => {
+const getSpecialTeamsPoints = (data, items, cardType) => {
+
+    if(cardType === '4') {
+        return data.SpecialTeamsTouchdowns * 6 * 1.5;
+    }
+
     if(items.includes('Crown')) {
         return data.SpecialTeamsTouchdowns * 6 * 2;
     } else {

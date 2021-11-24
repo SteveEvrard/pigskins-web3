@@ -2,6 +2,7 @@ import legendary from '../images/legendary.png';
 import exotic from '../images/exotic.png';
 import rare from '../images/rare.png';
 import common from '../images/common.png';
+import thanksgiving from '../images/thanksgiving.png';
 import fortyNiners1 from '../images/49ers-1.png';
 import fortyNiners2 from '../images/49ers-2.png';
 import bears1 from '../images/bears-1.png';
@@ -110,6 +111,8 @@ export const resolveCardType = ( type ) => {
             return exotic;
         case '3':
             return legendary;
+        case '4':
+            return thanksgiving;
         default:
             return '';
     }

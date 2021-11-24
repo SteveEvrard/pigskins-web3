@@ -201,8 +201,11 @@ const JoinGame = ( props ) => {
             if(selectedRarity === 'Rarity' || selectedRarity ===  'All') {
                 return true;
             }
+            if((selectedRarity === '0') || (selectedRarity === '1') || (selectedRarity === '2') || (selectedRarity === '3')) {
+                return card.cardType === selectedRarity;
+            }
 
-            return card.cardType === selectedRarity;
+            return Number(card.cardType) > 3;
         });
 
         return filteredByRarity;

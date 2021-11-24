@@ -37,6 +37,7 @@ const CardFilter = ( props ) => {
                 <MenuItem value={'1'}>Rare</MenuItem>
                 <MenuItem value={'2'}>Exotic</MenuItem>
                 <MenuItem value={'3'}>Legendary</MenuItem>
+                <MenuItem value={'Special'}>Special</MenuItem>
             </Select>
         </div>
     )

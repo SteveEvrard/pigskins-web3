@@ -37,7 +37,8 @@ const ViewCard = ( props ) => {
         0: 'Common',
         1: 'Rare',
         2: 'Exotic',
-        3: 'Legendary'
+        3: 'Legendary',
+        4: 'Thanksgiving'
     }
 
     const mobileStyle = {display: 'block', color: 'white', marginTop: '20vw'};
