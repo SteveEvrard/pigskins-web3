@@ -7,6 +7,7 @@ import common from '../images/common.png';
 import crown from '../images/crown-view.png';
 import water from '../images/water-view.png';
 import football from '../images/football-view.png';
+import thanksgiving from '../images/thanksgiving.png';
 import { Card, CardContent, CardHeader } from '@mui/material';
 
 const Info = ( props ) => {
@@ -48,6 +49,15 @@ const Info = ( props ) => {
                     <Card sx={{width: isMobile ? '55vw' : '40vw', marginRight: '5vw'}}>
                         <CardHeader sx={{paddingBottom: 0}} titleTypographyProps={{fontFamily: "Open Sans, sans-serif", fontSize: isMobile ? '5vw' : '3vw', fontWeight: 600}} title='Legendary Card' />
                         <CardContent sx={{fontSize: isMobile ? '3.5vw' : '1.5vw', fontFamily: "Open Sans, sans-serif"}}>Legendary cards receive a 40% increase to their final point total. 1 in 100 Cards are Legendary.</CardContent>
+                    </Card>
+                </div>
+            </div>
+            <div style={{display: 'flex', justifyContent: 'center'}}>
+                <div style={{display: 'flex', justifyContent: 'center', marginBottom: '3vw', width: isMobile ? '100vw' : '70vw'}}>
+                    <img src={thanksgiving} alt='' style={{width: isMobile ? '40vw' : '20vw', height: isMobile ? '155px' : '', margin: isMobile ? 'auto' : ''}} />
+                    <Card sx={{width: isMobile ? '55vw' : '40vw', marginRight: '5vw'}}>
+                        <CardHeader sx={{paddingBottom: 0}} titleTypographyProps={{fontFamily: "Open Sans, sans-serif", fontSize: isMobile ? '5vw' : '3vw', fontWeight: 600}} title='Thanksgiving Card' />
+                        <CardContent sx={{fontSize: isMobile ? '3.5vw' : '1.5vw', fontFamily: "Open Sans, sans-serif"}}>Thanksgiving cards receive a 30% increase to their final point total and 50% more points from touchdowns. Thanksgiving cards were a one time special release. Only 4 were minted.</CardContent>
                     </Card>
                 </div>
             </div>
