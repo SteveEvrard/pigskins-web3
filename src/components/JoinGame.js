@@ -279,7 +279,7 @@ const JoinGame = ( props ) => {
                     <Button onClick={openDialog} disabled={selectedCards.length !== 6} sx={{fontSize: isMobile ?  '' : '2vw', width: '30vw'}} variant='contained'>Join</Button>
                 </div>
             </div>
-            {loading ? <CircularProgress style={{marginTop: '50vw'}} color='secondary' size={200} /> : <CardList />}
+            {loading ? <CircularProgress style={{marginTop: isMobile ? '50vw' : '25vw'}} color='secondary' size={200} /> : <CardList />}
             {displayMessage ? <PageContext parent={'join-game'} header={headerMessage} body={message} /> : null}
         </div>
     )

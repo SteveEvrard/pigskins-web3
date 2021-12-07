@@ -286,7 +286,7 @@ const Admin = ( props ) => {
                     <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='secondary' /></div>
                     :
                     <div>
-                        <div><Button onClick={() => endActiveGamesByWeek('12')} sx={{marginTop: '5vw'}} variant='contained'>End Games</Button></div>
+                        <div><Button onClick={() => endActiveGamesByWeek('13')} sx={{marginTop: '5vw'}} variant='contained'>End Games</Button></div>
                     </div>
                 }
             </div>
