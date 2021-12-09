@@ -56,7 +56,7 @@ const Admin = ( props ) => {
     }
 
     const withdraw = async () => {
-        const amount = ethers.utils.parseEther('1');
+        const amount = ethers.utils.parseEther('5');
         setProcessing(true);
 
         ContractWithSigner.withdraw(amount).then(() => {
@@ -70,7 +70,7 @@ const Admin = ( props ) => {
 
     const createCustomCard = async () => {
         setProcessing(true);
-        ContractWithSigner.mintCustomCard('0x3bfF843835CABB198912e10629843Fc65E336C84', 16, 2, 99999999999999).then(() => {
+        ContractWithSigner.mintCustomCard('0xbC042A410A990144aE4F91Dd89293299c9bF283E', 19, 2, 99999999999999).then(() => {
             setProcessing(false);
         })
         .catch(err => {

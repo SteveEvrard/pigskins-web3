@@ -100,7 +100,6 @@ const CreateAuctionDialog = ( { mobile } ) => {
                             value={time}
                             onChange={handleTimeChange}
                         >
-                            <MenuItem value={300}>5 Minutes *Test Only*</MenuItem>
                             <MenuItem value={3600}>1 Hour</MenuItem>
                             <MenuItem value={7200}>2 Hours</MenuItem>
                             <MenuItem value={10800}>3 Hours</MenuItem>
