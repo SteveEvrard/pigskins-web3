@@ -126,15 +126,17 @@ const Games = ( props ) => {
         return games.map((game, i) => {
             return(
                 <div style={{display: 'flex', justifyContent: 'center', marginBottom: isMobile ? '3vw' : '1vw'}} key={i}>
-                    <div style={{width: isMobile ? '90vw' : '55vw'}}>
-                        <Card sx={{color: 'white', backgroundColor: '#31572c'}}>
+                    <div style={{width: isMobile ? '90vw' : '75vw'}}>
+                        <Card sx={{color: 'white', backgroundColor: '#C89D7C'}}>
                             <CardContent sx={{display: 'flex', justifyContent: 'space-between'}}>
-                                {!isMobile ? <div style={{marginTop: '2vw', fontSize: '3vw', fontWeight: 600, textAlign: 'left'}}>{ ethers.utils.formatEther(game.entryFee) } ETH</div> : null}
-                                <div>
-                                    <div style={{fontSize: isMobile ? '' : '2vw', fontWeight: 600, textAlign: 'left'}}>Week {game.week}</div>
-                                    {isMobile ? <div style={{fontWeight: 600, textAlign: 'left'}}>{ ethers.utils.formatEther(game.entryFee) } ETH</div> : null}
-                                    <div style={{fontSize: isMobile ? '' : '2vw', fontWeight: 600, textAlign: 'left'}}>{ game.numberOfCardsPerPlayer } Cards</div>
-                                    <div style={{fontSize: isMobile ? '' : '2vw', fontWeight: 600, textAlign: 'left'}}>Players {getNumberOfActivePlayers(game.players)}/{game.numberOfPlayers}</div>
+                                <div style={{display: 'flex', width: isMobile ? '' : '25vw', justifyContent: 'space-between'}}>
+                                    {!isMobile ? <div style={{marginTop: '2vw', fontSize: '3vw', fontWeight: 600, color: 'black', textAlign: 'left'}}>{ ethers.utils.formatEther(game.entryFee) } ETH</div> : null}
+                                    <div>
+                                        <div style={{fontSize: isMobile ? '' : '2vw', fontWeight: 600, color: 'black', textAlign: 'left'}}>Week {game.week}</div>
+                                        {isMobile ? <div style={{fontWeight: 600, color: 'black', textAlign: 'left'}}>{ ethers.utils.formatEther(game.entryFee) } ETH</div> : null}
+                                        <div style={{fontSize: isMobile ? '' : '2vw', fontWeight: 600, color: 'black', textAlign: 'left'}}>{ game.numberOfCardsPerPlayer } Cards</div>
+                                        <div style={{fontSize: isMobile ? '' : '2vw', fontWeight: 600, color: 'black', textAlign: 'left'}}>Players {getNumberOfActivePlayers(game.players)}/{game.numberOfPlayers}</div>
+                                    </div>
                                 </div>
                                 <Button disabled={game.players.includes(account) || (Number(game.numberOfPlayers) === game.players.length)} onClick={() => handleDisplay(game)} sx={{fontSize: isMobile ? '5vw' : '2vw', width: isMobile ? '40vw' : '20vw'}} variant='contained'>Join</Button>
                             </CardContent>
@@ -147,11 +149,11 @@ const Games = ( props ) => {
 
     return (
         <div style={{marginTop: '2vw'}}>
-            <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: isMobile ? '8vw' : '6vw', color: '#fff'}}>
+            <Typography sx={{marginBottom: '3vw', fontSize: isMobile ? '8vw' : '6vw', color: 'black'}}>
                 Games
             </Typography>
             {displayMessage ? <PageContext header={headerMessage} body={message} /> : null}
-            {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : createGameTiles(games)}
+            {loading ? <CircularProgress style={{marginTop: '10%'}} color='darkGreen' size={200} /> : createGameTiles(games)}
             {displayDialog ? <JoinGameDialog /> : null}
         </div>
     )

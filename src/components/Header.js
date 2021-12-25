@@ -11,7 +11,7 @@ import { mdiDiscord } from '@mdi/js';
 import Icon from '@mdi/react'
 
 const headerOptions = [
-    {label: 'Buy Pack', href: '/purchase'},
+    // {label: 'Buy Pack', href: '/purchase'},
     {label: 'Auction', href: '/auction'},
     {label: 'Join Game', href: '/games'},
     {label: 'Leader Board', href: '/leader-board'},
@@ -87,10 +87,6 @@ const Header = ( props ) => {
         setAnchorEl(null);
     }
 
-    const openTwitter = () => {
-        window.open('https://twitter.com/PigskinsNFT', '_blank');
-    }
-
     const openMobileTwitter = () => {
         window.open('https://twitter.com/PigskinsNFT', '_blank');
     }
@@ -106,10 +102,9 @@ const Header = ( props ) => {
                     {...{component: RouterLink, to: href}}
                     key={label}
                     sx={{
-                        fontFamily: "Open Sans, sans-serif",
-                        fontWeight: 700,
                         key: label,
-                        color: "inherit"
+                        color: "black",
+                        fontWeight: 600
                     }}
                 >
                     <StyledDotDesktop invisible={!(label === 'My Auctions' && notification)} variant='dot' color='primary'>{label}</StyledDotDesktop>
@@ -124,10 +119,9 @@ const Header = ( props ) => {
                 <MenuItem 
                     {...{component: RouterLink, to: href}}
                     sx={{
-                        fontFamily: "Open Sans, sans-serif",
-                        fontWeight: 700,
                         key: label,
-                        color: "inherit"
+                        color: "black",
+                        fontWeight: 600
                     }}
                     key={label}
                     onClick={handleClose}
@@ -140,11 +134,9 @@ const Header = ( props ) => {
 
     const displayDesktop = () => {
         return (
-            <Toolbar sx={{display: 'flex', justifyContent: 'space-between'}}>
-                <div style={{display: 'flex', cursor: 'pointer'}}>
+            <Toolbar sx={{display: 'flex', justifyContent: 'space-between',}}>
+                <div style={{display: 'flex', cursor: 'pointer', marginLeft: '6vw'}}>
                     {logo}
-                    <div onClick={openTwitter}><TwitterIcon sx={{marginTop: '3px', marginLeft: '1.5vw'}} fontSize='large'/></div>
-                    <div onClick={openDiscord}><Icon style={{marginTop: '3px'}} size={1.75} path={mdiDiscord} /></div>
                 </div>
                 {hideMenu ? null : <div>{getMenuButtons()}</div>}
             </Toolbar>
@@ -162,7 +154,7 @@ const Header = ( props ) => {
                 {hideMenu ? null :
                 <div>
                     <StyledBadge color='primary' invisible={!notification}>
-                        <MenuIcon onClick={handleClick} fontSize='large'/>
+                        <MenuIcon color='darkGreen' onClick={handleClick} fontSize='large'/>
                     </StyledBadge>
                     <Menu onClick={handleClose} anchorEl={anchorEl} open={open}>
                         {getMobileMenuButtons()}
@@ -175,19 +167,18 @@ const Header = ( props ) => {
     const logo = (
         <Typography onClick={home} variant="h4" component="h1"
             sx={{
-                fontFamily: "Work Sans, sans-serif",
-                fontWeight: 600,
-                color: "#FFFEFE",
+                color: "#2e8b57",
                 textAlign: "left",
+                fontWeight: 600
             }}
         >
-            Pigskins
+            PIGSKINS
         </Typography>
     );
 
     return (
-        <header style={{height: '55px'}}>
-            <AppBar sx={{backgroundColor: "#31572c"}}>
+        <header style={{width: '100vw', marginBottom: isMobile ? '55px' : '64px'}}>
+            <AppBar position='fixed' sx={{backgroundColor: "#fff"}}>
                 {isMobile ? displayMobile() : displayDesktop()}
             </AppBar>
         </header>

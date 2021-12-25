@@ -25,7 +25,7 @@ const MyAuction = ( props ) => {
 
     return (
         <div style={{marginTop: '2vw'}}>
-            <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: isMobile ? '8vw' : '6vw', color: '#fff'}}>
+            <Typography sx={{marginBottom: '3vw', fontSize: isMobile ? '8vw' : '6vw'}}>
                 My Auctions
             </Typography>
             <div style={{display: 'flex', justifyContent: 'center'}}>
@@ -33,7 +33,7 @@ const MyAuction = ( props ) => {
                     <TabContext value={value}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                             { notification ? <AnnouncementIcon sx={{color: '#d8572a', position: 'absolute', right: isMobile ? '2vw' : '11vw', fontSize: isMobile ? '6vw' : '3vw'}}/> : null}
-                            <TabList sx={{display: 'flex', justifyContent: 'center'}} textColor='secondary' onChange={handleChange} aria-label="lab API tabs example">
+                            <TabList sx={{display: 'flex', justifyContent: 'center'}} onChange={handleChange} aria-label="lab API tabs example">
                                 <Tab sx={{width: '50vw', margin: isMobile ? '' : 'auto', fontSize: isMobile ? '5vw' : '3vw'}} label="Open" value="1" />
                                 <Tab sx={{width: '50vw', margin: isMobile ? '' : 'auto', fontSize: isMobile ? '5vw' : '3vw'}} label="Completed" value="2" />
                             </TabList>

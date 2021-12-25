@@ -23,7 +23,7 @@ const AlertMessage = ( { mobile, successMessage, error, shouldRoute } ) => {
 
     return (
         <div>
-            { !error ? <h1 style={{textAlign: 'center', color: '#31572c', marginTop: 0, marginBottom: mobile ? '10vw' : '4vw'}}>{successMessage}</h1> : <div style={{textAlign: 'center', color: 'red', marginBottom: '3vw'}}>{error}</div> }
+            { !error ? <h1 style={{textAlign: 'center', color: '#2e8b57', marginTop: 0, marginBottom: mobile ? '10vw' : '4vw'}}>{successMessage}</h1> : <div style={{textAlign: 'center', color: 'red', marginBottom: '3vw'}}>{error}</div> }
             <div style={{display: 'flex', justifyContent: 'center'}}><Button style={{fontWeight: 600, fontSize: mobile ? '4vw' : '1.3vw', width: mobile ? '30vw' : '10vw'}} onClick={handleClose} size='large' variant='contained'>Done</Button></div>
         </div> 
     )

@@ -135,7 +135,7 @@ const Auction = ( props ) => {
                 <div key={i} style={{marginBottom: '3vw', cursor: 'pointer'}} onClick={() => handleCardDisplay(cardToView)}>
                     <PlayerCard key={i} attributes={attributeHash} flippable={false} width={isMobile ? '50vw' : '250px'} number={Number(number)} team={team} playerType={playerType} cardType={cardType} />
                     <div style={{display: 'flex', justifyContent: 'center'}}>
-                        <Card sx={{width: isMobile ? '30vw' : '15vw'}}>
+                        <Card sx={{width: isMobile ? '30vw' : '15vw', fontFamily: 'Roboto Slab, sans-serif', backgroundColor: '#2e8b57', color: '#fff', fontWeight: 600}}>
                             <Countdown zeroPadDays={0} date={Number(expireDate)}></Countdown>
                             <div>{ethers.utils.formatEther(`${currentBid}`, 'ether')} ETH</div>
                             <div>BIDS: {bidCount}</div>
@@ -148,11 +148,11 @@ const Auction = ( props ) => {
 
     return (
         <div style={{marginTop: '2vw'}}>
-            <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: isMobile ? '8vw' : '6vw', color: '#fff'}}>
+            <Typography sx={{marginBottom: '3vw', fontSize: isMobile ? '8vw' : '6vw'}}>
                 Card Auction
             </Typography>
             {displayMessage ? <PageContext header={headerMessage} body={message} /> : null}
-            {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : displayCards(cards)}
+            {loading ? <CircularProgress style={{marginTop: '10%'}} color='darkGreen' size={200} /> : displayCards(cards)}
             {displayCard ? <ViewCard view={'auction'}/> : null}
         </div>
     )

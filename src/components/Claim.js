@@ -165,7 +165,7 @@ const Claim = ( props ) => {
                 <div key={i} style={{marginBottom: '3vw', cursor: 'pointer'}} onClick={() => handleCardDisplay(cardToView)}>
                     <PlayerCard key={i} attributes={attributeHash} flippable={false} width={isMobile ? '50vw' : '250px'} number={Number(number)} team={team} playerType={playerType} cardType={card.cardType} />
                     <div style={{display: 'flex', justifyContent: 'center'}}>
-                        <Card sx={{width: isMobile ? '30vw' : '15vw'}}>
+                        <Card sx={{width: isMobile ? '30vw' : '15vw', backgroundColor: '#2e8b57', color: 'white'}}>
                             <div>{bidCount > 0 ? <div><div>SOLD</div><div>{`${ethers.utils.formatEther(`${currentBid}`, 'ether')} ETH`}</div></div> : 'UNSOLD'}</div>
                         </Card>
                     </div>
@@ -177,7 +177,7 @@ const Claim = ( props ) => {
     return (
         <div style={{marginTop: '2vw', width: '100vw'}}>
             {displayMessage ? <PageContext header={headerMessage} body={message} /> : null}
-            {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : displayCards(cards)}
+            {loading ? <CircularProgress style={{marginTop: '10%'}} color='darkGreen' size={200} /> : displayCards(cards)}
             {displayCard ? <ViewCard view={'claim'}/> : null}
         </div>
     )

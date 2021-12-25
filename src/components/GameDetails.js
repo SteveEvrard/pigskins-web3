@@ -130,13 +130,13 @@ const GameDetails = ( props ) => {
             <ListItem sx={{display: 'flex'}}>
                 <div style={isMobile ? {} : {display: 'flex', justifyContent: 'center', width: '100vw'}}>
                     <div style={{width: '90vw', display: 'flex', justifyContent: 'space-between'}}>
-                        <Typography sx={{color: 'white', marginTop: isMobile ? '1vw' : '', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '5vw' : '3vw'}}>
+                        <Typography sx={{marginTop: isMobile ? '1vw' : '', fontWeight: 600, fontSize: isMobile ? '5vw' : '3vw'}}>
                             {place.toString()+ '. ' + shortenAddress(player.player)}
                             {(place === 1 || player.points === highScore) && player.points > 0 ? <LocalFireDepartmentIcon color='primary' sx={{marginBottom: isMobile ? '-1vw' : '-.5vw', marginLeft: '1vw'}} fontSize={isMobile ? 'medium' : 'larger'}/> : null}
                             {player.player === account ? <PersonIcon sx={{marginBottom: isMobile ? '-1vw' : '-.5vw', marginLeft: '1vw'}} fontSize={isMobile ? 'medium' : 'larger'}/> : null}
                         </Typography>
                         <div style={{display: 'flex', justifyContent: 'space-between', width: isMobile ? '37vw' : '30vw'}}>
-                            <Typography sx={{color: 'white', textAlign: 'right', marginTop: isMobile ? '1vw' : '', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '5vw' : '3vw'}}>{player.points >= 0 ? player.points : <CircularProgress color='secondary' size={30}/>}</Typography>
+                            <Typography sx={{textAlign: 'right', marginTop: isMobile ? '1vw' : '', fontWeight: 600, fontSize: isMobile ? '5vw' : '3vw'}}>{player.points >= 0 ? player.points : <CircularProgress color='darkGreen' size={30}/>}</Typography>
                             <Button sx={{width: isMobile ? '' : '15vw', marginLeft: '1vw', fontSize: isMobile ? '' : '2vw'}} onClick={() => handleDisplayCards(player.cards)} variant='contained'>View</Button>
                         </div>
                     </div>
@@ -188,12 +188,12 @@ const GameDetails = ( props ) => {
     return (
         <div>
             {displayDialog ? <GameDetailDialog mobile={isMobile} cards={selectedCards}/> : null}
-            <div style={{position: 'fixed', backgroundColor: '#7ebc89', zIndex: 1, padding: '2vw 0'}}>
-                <Typography sx={{width: '100vw', marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: isMobile ? '8vw' : '6vw', color: '#fff'}}>
-                    <span style={{cursor: 'pointer'}} onClick={backToGames}><ArrowBackIcon sx={{backgroundColor: 'white', borderRadius: '4px', position: 'fixed', left: '3vw', fontSize: isMobile ? '13vw' : '7vw'}} color='third' /></span>Game Details
+            <div style={{position: 'fixed', zIndex: 1, padding: '2vw 0'}}>
+                <Typography sx={{width: '100vw', marginBottom: '3vw', fontSize: isMobile ? '8vw' : '6vw'}}>
+                    <span style={{cursor: 'pointer'}} onClick={backToGames}><ArrowBackIcon sx={{backgroundColor: '#2e8b57', borderRadius: '4px', position: 'fixed', left: '3vw', fontSize: isMobile ? '13vw' : '7vw'}} color='secondary' /></span>Game Details
                 </Typography>
             </div>
-            {loading ? <CircularProgress style={{marginTop: isMobile ? '35vw' : '20vw'}} color='secondary' size={200} /> : <PlayerList />}
+            {loading ? <CircularProgress style={{marginTop: isMobile ? '35vw' : '20vw'}} color='darkGreen' size={200} /> : <PlayerList />}
         </div>
     )
 }

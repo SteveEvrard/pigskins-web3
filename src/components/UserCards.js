@@ -145,12 +145,12 @@ const UserCards = ( props ) => {
 
     return (
         <div style={{marginTop: '2vw'}}>
-            <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: isMobile ? '8vw' : '6vw', color: '#fff'}}>
+            <Typography sx={{marginBottom: '3vw', fontSize: isMobile ? '8vw' : '6vw', color: 'black'}}>
                 My Cards
             </Typography>
             <CardFilter/>
             {displayMessage ? <PageContext header={headerMessage} body={message} /> : null}
-            {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : displayCards(cards)}
+            {loading ? <CircularProgress style={{marginTop: '10%'}} color='darkGreen' size={200} /> : displayCards(cards)}
             {displayCard ? <ViewCard view={'userCards'}/> : null}
         </div>
     )

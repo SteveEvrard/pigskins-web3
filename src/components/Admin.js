@@ -162,7 +162,7 @@ const Admin = ( props ) => {
                 </div>
                 <div>
                 {processing ? 
-                    <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='secondary' /></div>
+                    <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='darkGreen' /></div>
                     :
                     <div>
                         <div><Button onClick={createGame} sx={{marginTop: '5vw'}} variant='contained'>Create</Button></div>
@@ -182,7 +182,7 @@ const Admin = ( props ) => {
                 </div>
                 <div>
                 {processing ? 
-                    <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='secondary' /></div>
+                    <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='darkGreen' /></div>
                     :
                     <div>
                         <div><Button onClick={createCustomCard} sx={{marginTop: '5vw'}} variant='contained'>Mint</Button></div>
@@ -211,7 +211,7 @@ const Admin = ( props ) => {
                 </div>
                 <div>
                 {processing ? 
-                    <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='secondary' /></div>
+                    <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='darkGreen' /></div>
                     :
                     <div>
                         <div><Button onClick={setSecretCall} sx={{marginTop: '5vw'}} variant='contained'>Set</Button></div>
@@ -240,7 +240,7 @@ const Admin = ( props ) => {
                 </div>
                 <div>
                 {processing ? 
-                    <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='secondary' /></div>
+                    <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='darkGreen' /></div>
                     :
                     <div>
                         <div><Button onClick={setCardPurchase} sx={{marginTop: '5vw'}} variant='contained'>Set</Button></div>
@@ -255,7 +255,7 @@ const Admin = ( props ) => {
         return (
             <div>
                 {processing ? 
-                    <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='secondary' /></div>
+                    <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='darkGreen' /></div>
                     :
                     <div>
                         <div><Button onClick={withdraw} sx={{marginTop: '5vw'}} variant='contained'>Withdraw ETH</Button></div>
@@ -269,7 +269,7 @@ const Admin = ( props ) => {
         return (
             <div>
                 {processing ? 
-                    <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='secondary' /></div>
+                    <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='darkGreen' /></div>
                     :
                     <div>
                         <div><Button onClick={() => setPlayerCount(194)} sx={{marginTop: '5vw'}} variant='contained'>Set Players</Button></div>
@@ -283,10 +283,10 @@ const Admin = ( props ) => {
         return (
             <div>
                 {processing ? 
-                    <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='secondary' /></div>
+                    <div style={{marginTop: '5vw', display: 'flex', justifyContent: 'center'}}><CircularProgress size={100} color='darkGreen' /></div>
                     :
                     <div>
-                        <div><Button onClick={() => endActiveGamesByWeek('13')} sx={{marginTop: '5vw'}} variant='contained'>End Games</Button></div>
+                        <div><Button onClick={() => endActiveGamesByWeek('16')} sx={{marginTop: '5vw'}} variant='contained'>End Games</Button></div>
                     </div>
                 }
             </div>
@@ -295,7 +295,7 @@ const Admin = ( props ) => {
 
     return (
         <div>
-            <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: '8vw', color: '#fff'}}>
+            <Typography sx={{marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: '8vw', color: 'black'}}>
                 Admin Dashboard
             </Typography>
             <CreateGameComponent />

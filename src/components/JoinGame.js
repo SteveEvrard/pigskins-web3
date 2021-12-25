@@ -224,14 +224,14 @@ const JoinGame = ( props ) => {
                 <PlayerCard attributes={card.attributeHash} flippable={false} width={isMobile ? '20vw' : '10vw'} number={getPlayerNumberById(card.playerId)} team={getPlayerTeamById(card.playerId)} playerType={getPlayerTypeById(card.playerId)} cardType={card.cardType} />
                 <div style={{width: '100vw', display: 'flex', justifyContent: 'space-between'}}>
                     <div style={{width: '55vw'}}>
-                        <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '4.5vw' : '2vw'}}>{getPlayerNameById(card.playerId)}<span style={{color:'red'}}>{' ' + card.injury}</span></Typography>
-                        <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '4.5vw' : '2vw'}}>{position}</Typography>
+                        <Typography sx={{fontWeight: 600, fontSize: isMobile ? '4.5vw' : '2vw'}}>{getPlayerNameById(card.playerId)}<span style={{color:'red'}}>{' ' + card.injury}</span></Typography>
+                        <Typography sx={{fontWeight: 600, fontSize: isMobile ? '4.5vw' : '2vw'}}>{position}</Typography>
                         <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                            <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '3.5vw' : '2vw'}}>Items: {getItems(card.attributeHash)}</Typography>
-                            <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '3.5vw' : '2vw'}}>OPP: {card.opponent}</Typography>
+                            <Typography sx={{fontWeight: 600, fontSize: isMobile ? '3.5vw' : '2vw'}}>Items: {getItems(card.attributeHash)}</Typography>
+                            <Typography sx={{fontWeight: 600, fontSize: isMobile ? '3.5vw' : '2vw'}}>OPP: {card.opponent}</Typography>
                         </div>
                     </div>
-                    <Checkbox checked={selectedCards.includes(card)} color='secondary' />
+                    <Checkbox checked={selectedCards.includes(card)} color='darkGreen' />
                 </div>
             </ListItem>
         )
@@ -259,19 +259,19 @@ const JoinGame = ( props ) => {
     return (
         <div>
             {displayDialog ? <JoinGameDialog mobile={isMobile} cards={selectedCards}/> : null}
-            <div style={{position: 'fixed', backgroundColor: '#7ebc89', zIndex: 1, padding: '1vw 0'}}>
-                <Typography sx={{width: '100vw', marginBottom: '3vw', fontFamily: "Work Sans, sans-serif", fontSize: isMobile ? '8vw' : '6vw', color: '#fff'}}>
-                    <span style={{cursor: 'pointer'}} onClick={backToGames}><ArrowBackIcon sx={{backgroundColor: 'white', borderRadius: '4px', position: 'fixed', left: '3vw', fontSize: isMobile ? '13vw' : '7vw'}} color='third' /></span>Select Cards
+            <div style={{padding: '1vw 0', backgroundColor: 'white', zIndex: '1', position: 'fixed', paddingTop: isMobile ? '2vw' : '1vw'}}>
+                <Typography sx={{width: '100vw', marginBottom: '3vw', fontSize: isMobile ? '8vw' : '6vw'}}>
+                    <span style={{cursor: 'pointer'}} onClick={backToGames}><ArrowBackIcon sx={{backgroundColor: '#2e8b57', borderRadius: '4px', position: 'fixed', left: '3vw', fontSize: isMobile ? '13vw' : '7vw'}} color='secondary' /></span>Select Cards
                 </Typography>
                 {isMobile ? <CardFilter /> : null}
                 <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
                     {isMobile ? null : <CardFilter />}
                     <div>
-                        <div style={{fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '4vw' : '2vw', position: 'relative', zIndex: 2, color: 'white'}}>
+                        <div style={{fontWeight: 600, fontSize: isMobile ? '4vw' : '2vw', position: 'relative', zIndex: 2}}>
                             QB: {getCardCountByPosition('QB')}/1
                             RB: {getCardCountByPosition('RB')}/2
                         </div>
-                        <div style={{fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '4vw' : '2vw', position: 'relative', zIndex: 2, color: 'white'}}>
+                        <div style={{fontWeight: 600, fontSize: isMobile ? '4vw' : '2vw', position: 'relative', zIndex: 2}}>
                             WR: {getCardCountByPosition('WR')}/2
                             TE: {getCardCountByPosition('TE')}/1
                         </div>
@@ -279,7 +279,7 @@ const JoinGame = ( props ) => {
                     <Button onClick={openDialog} disabled={selectedCards.length !== 6} sx={{fontSize: isMobile ?  '' : '2vw', width: '30vw'}} variant='contained'>Join</Button>
                 </div>
             </div>
-            {loading ? <CircularProgress style={{marginTop: isMobile ? '50vw' : '25vw'}} color='secondary' size={200} /> : <CardList />}
+            {loading ? <CircularProgress style={{marginTop: isMobile ? '50vw' : '25vw'}} color='darkGreen' size={200} /> : <CardList />}
             {displayMessage ? <PageContext parent={'join-game'} header={headerMessage} body={message} /> : null}
         </div>
     )

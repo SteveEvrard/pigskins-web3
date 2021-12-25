@@ -8,7 +8,7 @@ const PageContext = ( props ) => {
 
     return (
         <div style={{marginTop: props.parent === 'join-game' ? isMobile ? '35vw' : '25vw' : '', display: 'flex', justifyContent: 'center'}}>
-            <Card sx={{width: '80vw', maxWidth: '550px', color: 'white', backgroundColor: '#31572c'}}>
+            <Card sx={{width: '80vw', maxWidth: '550px', color: 'white', backgroundColor: '#2e8b57'}}>
                 <CardHeader titleTypographyProps={{fontWeight: 600}} component='h2' title={props.header} />
                 <CardContent sx={{fontWeight: 600}}>{props.body}</CardContent>
             </Card>

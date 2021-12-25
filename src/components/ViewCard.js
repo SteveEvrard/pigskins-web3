@@ -42,10 +42,10 @@ const ViewCard = ( props ) => {
     }
 
     const mobileStyle = {display: 'block', color: 'white', marginTop: '20vw'};
-    const mobileListStyle = {margin: 'auto', fontFamily: "Work Sans, sans-serif", backgroundColor: '#31572c', fontSize: '5vw', width: '90vw', marginBottom: '5vw'};
+    const mobileListStyle = {margin: 'auto', fontFamily: "Roboto Slab, sans-serif", backgroundColor: '#2e8b57', fontSize: '5vw', width: '90vw', marginBottom: '5vw'};
 
     const desktopStyle = {display: 'flex', color: 'white', marginTop: '7vw'};
-    const desktopListStyle = {marginTop: '2vw', fontFamily: "Work Sans, sans-serif", backgroundColor: '#31572c', fontSize: '3vw', width: '50vw'};
+    const desktopListStyle = {marginTop: '2vw', fontFamily: "Roboto Slab, sans-serif", backgroundColor: '#2e8b57', fontSize: '3vw', width: '50vw'};
 
     useEffect(() => {
         return () => {
@@ -120,7 +120,7 @@ const ViewCard = ( props ) => {
 
         return (
             <div style={{display: 'flex', justifyContent: 'center'}}>
-                <Box sx={{ backgroundColor: '#31572c', width: mobile ? '90vw' : '50vw', typography: 'body1' }}>
+                <Box sx={{ backgroundColor: '#2e8b57', width: mobile ? '90vw' : '50vw', typography: 'body1' }}>
                     <TabContext value={value}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                             <TabList textColor='secondary' onChange={handleChange} aria-label="lab API tabs example">
@@ -144,7 +144,7 @@ const ViewCard = ( props ) => {
 
         return (
             <div style={{display: 'flex', justifyContent: 'center'}}>
-                <Box sx={{ backgroundColor: '#31572c', width: mobile ? '90vw' : '50vw', typography: 'body1' }}>
+                <Box sx={{ backgroundColor: '#2e8b57', width: mobile ? '90vw' : '50vw', typography: 'body1' }}>
                     <TabContext value={value}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                             <TabList textColor='secondary' onChange={handleChange} aria-label="lab API tabs example">

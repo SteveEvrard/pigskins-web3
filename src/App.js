@@ -43,12 +43,28 @@ const theme = createTheme({
       main: '#7ebc89'
     },
     darkGreen: {
-      main: '#31572c'
+      main: '#2e8b57'
     },
     neutral: {
       main: '#64748B',
       contrastText: '#fff',
     }
+  },
+  typography: {
+    fontFamily: [
+      'Roboto Slab',
+      'Roboto',
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(',')
   }
 });
 

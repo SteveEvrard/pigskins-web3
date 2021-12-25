@@ -90,7 +90,7 @@ const LeaderBoard = ( props ) => {
             <ListItem sx={{display: 'flex'}}>
                 <div style={isMobile ? {} : {display: 'flex', justifyContent: 'center', width: '100vw'}}>
                     <div style={{width: '90vw', display: 'flex', justifyContent: 'space-between'}}>
-                        <Typography sx={{color: 'white', marginTop: isMobile ? '1vw' : '', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '5vw' : '3vw'}}>
+                        <Typography sx={{color: 'black', marginTop: isMobile ? '1vw' : '', fontWeight: 600, fontSize: isMobile ? '5vw' : '3vw'}}>
                             {place.toString()+ '. ' + shortenAddress(details.winner)}
                             {place === 1 ? <LooksOneIcon sx={{color: 'gold', marginBottom: isMobile ? '-1vw' : '-.5vw', marginLeft: '1vw'}} fontSize={isMobile ? 'medium' : 'larger'}/> : null}
                             {place === 2 ? <LooksTwoIcon sx={{color: '#9a9a9a', marginBottom: isMobile ? '-1vw' : '-.5vw', marginLeft: '1vw'}} fontSize={isMobile ? 'medium' : 'larger'}/> : null}
@@ -98,8 +98,8 @@ const LeaderBoard = ( props ) => {
                             {details.winner === account ? <PersonIcon sx={{marginBottom: isMobile ? '-1vw' : '-.5vw', marginLeft: '1vw'}} fontSize={isMobile ? 'medium' : 'larger'}/> : null}
                         </Typography>
                         <div style={{display: 'flex', justifyContent: 'space-between', width: '25vw'}}>
-                            <Typography sx={{color: 'white', textAlign: 'right', marginTop: isMobile ? '1vw' : '', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '5vw' : '3vw'}}>{details.winCount}</Typography>
-                            <Typography sx={{color: 'white', textAlign: 'right', marginTop: isMobile ? '1vw' : '', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '5vw' : '3vw'}}>{details.ethWon}</Typography>
+                            <Typography sx={{color: 'black', textAlign: 'right', marginTop: isMobile ? '1vw' : '', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '5vw' : '3vw'}}>{details.winCount}</Typography>
+                            <Typography sx={{color: 'black', textAlign: 'right', marginTop: isMobile ? '1vw' : '', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: isMobile ? '5vw' : '3vw'}}>{details.ethWon}</Typography>
                         </div>
                     </div>
                 </div>
@@ -117,12 +117,12 @@ const LeaderBoard = ( props ) => {
         })
 
         return (
-            <List sx={{top: isMobile ? '20vw' : '10vw'}}>
-                <div style={{display: 'flex', justifyContent: 'right', width: '100vw', marginBottom: isMobile ? '10vw' : ''}}>
-                    <Typography sx={{position: isMobile ? 'fixed' : '', right: isMobile ? '17vw' : '', width: '10vw', marginRight: isMobile ? '8vw' : '11vw', marginBottom: isMobile ? '3vw' : '', fontFamily: "Work Sans, sans-serif", fontWeight: 800, fontSize: isMobile ? '5vw' : '5vw', color: '#fff'}}>
+            <List>
+                <div style={{display: 'flex', justifyContent: 'right', width: '100vw'}}>
+                    <Typography sx={{right: isMobile ? '17vw' : '', width: '10vw', marginRight: isMobile ? '8vw' : '11vw', marginBottom: isMobile ? '3vw' : '', fontWeight: 800, fontSize: isMobile ? '5vw' : '5vw', color: 'black'}}>
                         Wins
                     </Typography>
-                    <Typography sx={{position: isMobile ? 'fixed' : '', right: isMobile ? '0vw' : '', width: '10vw', marginRight: isMobile ? '7vw' : '4vw', marginBottom: isMobile ? '3vw' : '', fontFamily: "Work Sans, sans-serif", fontWeight: 800, fontSize: isMobile ? '5vw' : '5vw', color: '#fff'}}>
+                    <Typography sx={{right: isMobile ? '0vw' : '', width: '10vw', marginRight: isMobile ? '7vw' : '4vw', marginBottom: isMobile ? '3vw' : '', fontWeight: 800, fontSize: isMobile ? '5vw' : '5vw', color: 'black'}}>
                         ETH
                     </Typography>
                 </div>
@@ -130,7 +130,7 @@ const LeaderBoard = ( props ) => {
                     winners.map((details, i) => {
                         return (
                             <div key={i}>
-                                <Divider />
+                                <Divider sx />
                                 <WinnerTile place={i + 1} details={details} />
                             </div>
                         )
@@ -143,12 +143,12 @@ const LeaderBoard = ( props ) => {
 
     return (
         <div>
-            <div style={{position: 'fixed', backgroundColor: '#7ebc89', zIndex: 1, padding: '2vw 0'}}>
-                <Typography sx={{width: '100vw', marginBottom: isMobile ? '3vw' : '', fontFamily: "Work Sans, sans-serif", fontSize: isMobile ? '8vw' : '5vw', color: '#fff'}}>
-                    Leader Board
+            <div style={{padding: '2vw 0'}}>
+                <Typography sx={{width: '100vw', marginBottom: isMobile ? '3vw' : '', fontSize: isMobile ? '8vw' : '5vw', color: 'black'}}>
+                    LEADERBOARD
                 </Typography>
             </div>
-            {loading ? <CircularProgress style={{marginTop: isMobile ? '35vw' : '20vw'}} color='secondary' size={200} /> : <WinnerList />}
+            {loading ? <CircularProgress style={{marginTop: isMobile ? '35vw' : '20vw'}} color='darkGreen' size={200} /> : <WinnerList />}
         </div>
     )
 }

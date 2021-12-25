@@ -151,7 +151,7 @@ const OpenUserAuctions = ( props ) => {
     return (
         <div style={{marginTop: '2vw'}}>
             {displayMessage ? <PageContext header={headerMessage} body={message} /> : null}
-            {loading ? <CircularProgress style={{marginTop: '10%'}} color='secondary' size={200} /> : displayCards(cards)}
+            {loading ? <CircularProgress style={{marginTop: '10%'}} color='darkGreen' size={200} /> : displayCards(cards)}
             {displayCard ? <ViewCard view={'userAuction'}/> : null}
         </div>
     )

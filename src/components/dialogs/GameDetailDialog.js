@@ -110,7 +110,7 @@ const GameDetailDialog = ( { mobile } ) => {
                         </div>
                     </div>
                     <div style={{margin: 'auto'}}>
-                        <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: mobile ? '5vw' : '3vw'}}>{loading ? <CircularProgress color='secondary' size={30}/> : score}</Typography>
+                        <Typography sx={{color: 'white', fontFamily: "Work Sans, sans-serif", fontWeight: 600, fontSize: mobile ? '5vw' : '3vw'}}>{loading ? <CircularProgress color='darkGreen' size={30}/> : score}</Typography>
                     </div>
                 </div>
             </ListItem>
@@ -138,9 +138,9 @@ const GameDetailDialog = ( { mobile } ) => {
 
     return (
         <Dialog PaperProps={{style: mobile ? {minWidth: '80vw'} : {width: mobile ? '30vw' : '70vw'}}} open={true}>
-            <DialogContent sx={{border: 'white', borderStyle: 'solid', padding: 0, backgroundColor: '#31572c'}}>
+            <DialogContent sx={{border: 'white', borderStyle: 'solid', padding: 0, backgroundColor: '#2e8b57'}}>
                 <div onClick={handleCancel} style={{zIndex: 1, cursor: 'pointer', position: 'absolute', right: 0}}><CloseIcon sx={{color: '#fff', fontSize: mobile ? '12vw' : '5vw'}}></CloseIcon></div>
-                {loading ? <CircularProgress style={{marginLeft: '15vw'}} color='secondary' size={200} /> : <CardList />}
+                {loading ? <CircularProgress style={{marginLeft: '15vw'}} color='darkGreen' size={200} /> : <CardList />}
             </DialogContent>
         </Dialog>
     )

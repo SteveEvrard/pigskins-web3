@@ -33,7 +33,7 @@ const Purchase = ( props ) => {
     }
 
     return (
-        <div style={{marginTop: '2vw'}}>
+        <div style={{marginTop: isMobile ? '' : '6vw'}}>
             <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
                 {!isMobile ? 
                 <div>
@@ -41,11 +41,11 @@ const Purchase = ( props ) => {
                     <PlayerCard playerType='2' flippable={false} width='350px' number={10} team={'23'} cardType={'0'} attributes={'104444033333330'} />
                 </div> : null}
                 <div style={{marginTop: '30px', width: '90vw'}}>
-                    <Typography sx={{fontSize: isMobile ? '12vw' : '7vw', color: '#fff', fontFamily: "Work Sans, sans-serif", fontWeight: 600}} variant='h2'>Purchase Card Pack Now!</Typography>
-                    <Typography sx={{fontSize: isMobile ? '7vw' : '3vw', color: '#fff', fontFamily: "Work Sans, sans-serif", fontWeight: 600}} variant='h4'>Each pack contains 10 unique player cards.</Typography>
-                    <Typography sx={{fontSize: isMobile ? '7vw' : '3vw', color: '#fff', fontFamily: "Work Sans, sans-serif", fontWeight: 600}} variant='h4'>Cards can be used to compete, trade, and more!</Typography>
-                    {purchaseMade ? <Card sx={{marginTop: '2vw', backgroundColor: '#d8572a', fontSize: isMobile ? '4vw' : '2vw', color: '#fff', fontFamily: "Work Sans, sans-serif", fontWeight: 600}} variant='h4'>Transaction Processing Now. Look For Popup When Transaction Completes to View Your New Cards.</Card> : null}
-                    <Button disabled={processing} sx={{marginBottom: isMobile ? '' : '3vw', fontSize: '30px', fontFamily: "Work Sans, sans-serif", height: '65px', width: '50%', marginTop: '30px'}} onClick={buyCardPack} size='large' variant='contained' color='primary'>{processing ? <CircularProgress color='secondary' /> : 'Buy'}</Button>
+                    <Typography sx={{fontSize: isMobile ? '12vw' : '7vw', fontWeight: 600}} variant='h2'>Purchase Card Pack Now!</Typography>
+                    <Typography sx={{fontSize: isMobile ? '7vw' : '3vw', fontWeight: 600}} variant='h4'>Each pack contains 10 unique player cards.</Typography>
+                    <Typography sx={{fontSize: isMobile ? '7vw' : '3vw', fontWeight: 600}} variant='h4'>Cards can be used to compete, trade, and more!</Typography>
+                    {purchaseMade ? <Card sx={{marginTop: '2vw', backgroundColor: '#d8572a', fontSize: isMobile ? '4vw' : '2vw', fontWeight: 600}} variant='h4'>Transaction Processing Now. Look For Popup When Transaction Completes to View Your New Cards.</Card> : null}
+                    <Button disabled={processing} sx={{marginBottom: isMobile ? '' : '3vw', fontSize: '30px', height: '65px', width: '50%', marginTop: '30px'}} onClick={buyCardPack} size='large' variant='contained' color='primary'>{processing ? <CircularProgress color='darkGreen' /> : 'Buy'}</Button>
                     {isMobile ? 
                         <div style={{display: 'flex', justifyContent: 'space-evenly', marginTop: '5vw'}}>
                             <PlayerCard playerType='2' flippable={false} width='50vw' number={12} team={'19'} cardType={'2'} attributes={'193333305678900'} />
