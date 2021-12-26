@@ -119,10 +119,10 @@ const LeaderBoard = ( props ) => {
         return (
             <List>
                 <div style={{display: 'flex', justifyContent: 'right', width: '100vw'}}>
-                    <Typography sx={{right: isMobile ? '17vw' : '', width: '10vw', marginRight: isMobile ? '8vw' : '11vw', marginBottom: isMobile ? '3vw' : '', fontWeight: 800, fontSize: isMobile ? '5vw' : '5vw', color: 'black'}}>
+                    <Typography sx={{position: isMobile ? 'fixed' : '', top: isMobile ? '28vw' : '', right: isMobile ? '17vw' : '', width: '10vw', marginRight: isMobile ? '8vw' : '11vw', marginBottom: isMobile ? '3vw' : '', fontWeight: 800, fontSize: isMobile ? '5vw' : '5vw', color: 'black'}}>
                         Wins
                     </Typography>
-                    <Typography sx={{right: isMobile ? '0vw' : '', width: '10vw', marginRight: isMobile ? '7vw' : '4vw', marginBottom: isMobile ? '3vw' : '', fontWeight: 800, fontSize: isMobile ? '5vw' : '5vw', color: 'black'}}>
+                    <Typography sx={{position: isMobile ? 'fixed' : '', top: isMobile ? '28vw' : '', right: isMobile ? '0vw' : '', width: '10vw', marginRight: isMobile ? '7vw' : '4vw', marginBottom: isMobile ? '3vw' : '', fontWeight: 800, fontSize: isMobile ? '5vw' : '5vw', color: 'black'}}>
                         ETH
                     </Typography>
                 </div>
