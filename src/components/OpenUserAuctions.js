@@ -137,7 +137,7 @@ const OpenUserAuctions = ( props ) => {
                 <div key={i} style={{marginBottom: '3vw', cursor: 'pointer'}} onClick={() => handleCardDisplay(cardToView)}>
                     <PlayerCard key={i} attributes={attributeHash} flippable={false} width={isMobile ? '50vw' : '250px'} number={Number(number)} team={team} playerType={playerType} cardType={cardType} />
                     <div style={{display: 'flex', justifyContent: 'center'}}>
-                        <Card sx={{width: isMobile ? '30vw' : '15vw'}}>
+                        <Card sx={{width: isMobile ? '30vw' : '15vw', backgroundColor: '#2e8b57', color: '#fff'}}>
                             <Countdown zeroPadDays={0} date={Number(expireDate)}></Countdown>
                             <div>{ethers.utils.formatEther(`${currentBid}`, 'ether')} ETH</div>
                             <div>BIDS: {bidCount}</div>

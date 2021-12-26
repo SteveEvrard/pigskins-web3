@@ -109,6 +109,7 @@ const LeaderBoard = ( props ) => {
 
     const WinnerList = () => {
 
+        console.log(winners);
         winners.sort((a, b) => {
             if(b.winCount === a.winCount){
                 return b.ethWon - a.ethWon;
@@ -119,10 +120,10 @@ const LeaderBoard = ( props ) => {
         return (
             <List>
                 <div style={{display: 'flex', justifyContent: 'right', width: '100vw'}}>
-                    <Typography sx={{position: isMobile ? 'fixed' : '', top: isMobile ? '28vw' : '', right: isMobile ? '17vw' : '', width: '10vw', marginRight: isMobile ? '8vw' : '11vw', marginBottom: isMobile ? '3vw' : '', fontWeight: 800, fontSize: isMobile ? '5vw' : '5vw', color: 'black'}}>
+                    <Typography sx={{position: isMobile ? 'absolute' : '', top: isMobile ? '-6vw' : '', right: isMobile ? '17vw' : '', width: '10vw', marginRight: isMobile ? '8vw' : '11vw', marginBottom: isMobile ? '3vw' : '', fontWeight: 800, fontSize: isMobile ? '5vw' : '5vw', color: 'black'}}>
                         Wins
                     </Typography>
-                    <Typography sx={{position: isMobile ? 'fixed' : '', top: isMobile ? '28vw' : '', right: isMobile ? '0vw' : '', width: '10vw', marginRight: isMobile ? '7vw' : '4vw', marginBottom: isMobile ? '3vw' : '', fontWeight: 800, fontSize: isMobile ? '5vw' : '5vw', color: 'black'}}>
+                    <Typography sx={{position: isMobile ? 'absolute' : '', top: isMobile ? '-6vw' : '', right: isMobile ? '0vw' : '', width: '10vw', marginRight: isMobile ? '7vw' : '4vw', marginBottom: isMobile ? '3vw' : '', fontWeight: 800, fontSize: isMobile ? '5vw' : '5vw', color: 'black'}}>
                         ETH
                     </Typography>
                 </div>
@@ -130,7 +131,7 @@ const LeaderBoard = ( props ) => {
                     winners.map((details, i) => {
                         return (
                             <div key={i}>
-                                <Divider sx />
+                                <Divider />
                                 <WinnerTile place={i + 1} details={details} />
                             </div>
                         )
