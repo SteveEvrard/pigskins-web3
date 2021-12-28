@@ -48,7 +48,7 @@ const Home = ( props ) => {
                         {account ? 
                             <Button disableElevation sx={isMobile ? {marginBottom: '10vw'} : {width: '12vw', height: '4vw', fontSize: '1.6vw', fontWeight: 600}} onClick={goToPurchase} variant='contained' color='primary'>PURCHASE</Button>
                             :
-                            <Button sx={isMobile ? {marginBottom: '10vw'} : {}} size='large' onClick={connect} variant='contained' color='primary'>Connect</Button>
+                            <Button disableElevation sx={isMobile ? {marginBottom: '10vw'} : {}} size='large' onClick={connect} variant='contained' color='primary'>Connect</Button>
                         }
                     </Paper>
                 </div>

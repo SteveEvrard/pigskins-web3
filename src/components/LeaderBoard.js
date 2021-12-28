@@ -109,7 +109,6 @@ const LeaderBoard = ( props ) => {
 
     const WinnerList = () => {
 
-        console.log(winners);
         winners.sort((a, b) => {
             if(b.winCount === a.winCount){
                 return b.ethWon - a.ethWon;
